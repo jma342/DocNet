@@ -7,8 +7,12 @@ public class DocNetProtocol {
     private static final int LOG_IN_SCREEN = 0;
     private static final int MAIN_POSTING_BOARD_SCREEN = 1;
     private static final int PERSONAL_INFORMATION_SCREEN = 2;
+
     private static final int go = 4;
    
+
+    private int stop = 0;
+
     private static final int help = 3;
     private static final int hope = 4;
     private static final int ANNOUNCEMENTS_SCREEN = 3;
