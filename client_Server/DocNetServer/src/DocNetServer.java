@@ -43,7 +43,10 @@ public class DocNetServer {
                 if (con != null) {
                     con.close();
                 }
+            } catch (SQLException ex) {
+            System.out.println(ex.toString());
         }
+
         
         ServerSocket serverSocket = null;
         try {
@@ -87,4 +90,5 @@ public class DocNetServer {
         clientSocket.close();
         serverSocket.close();
     }
+}
 }
