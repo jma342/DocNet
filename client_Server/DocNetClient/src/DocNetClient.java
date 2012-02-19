@@ -1,6 +1,6 @@
 import java.io.*;
 import java.net.*;
-//asdsadsadsa
+
 /*update string comparisons to input.equals*/
 public class DocNetClient {
     public static void main(String[] args) throws IOException {
