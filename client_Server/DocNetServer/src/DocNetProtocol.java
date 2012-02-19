@@ -4,8 +4,6 @@ import java.io.*;
 public class DocNetProtocol {
 
 	//MENUS---jma342---Feb 14th
-	private static final int gitTest2 = 1;
-	private static final int gitTest = 0;
     private static final int LOG_IN_SCREEN = 0;
     private static final int MAIN_POSTING_BOARD_SCREEN = 1;
     private static final int PERSONAL_INFORMATION_SCREEN = 2;
