@@ -49,3 +49,28 @@ java.vm.name,sysinfo,,,"Java HotSpot(TM) Client VM",1329678183312
 java.vm.specification.name,sysinfo,,,"Java Virtual Machine Specification",1329678183312
 java.vm.specification.vendor,sysinfo,,,"Oracle Corporation",1329678183312
 java.vm.specification.version,sysinfo,,,"1.7",1329678183312
+java.vm.vendor,sysinfo,,,"Oracle Corporation",1329678183312
+java.vm.version,sysinfo,,,"22.0-b10",1329678183312
+started,bundle,org.eclipse.m2e.usagedata,1.0.100.20110804-1717,"org.eclipse.m2e.usagedata",1329678183318
+started,bundle,org.eclipse.debug.ui,3.7.101.v20110817_r371,"org.eclipse.debug.ui",1329678186367
+started,bundle,org.eclipse.jdt.debug,3.7.1.v20110802_r371,"org.eclipse.jdt.debug",1329678186368
+executed,command,org.eclipse.debug.ui,3.7.101.v20110817_r371,"org.eclipse.debug.ui.commands.RunLast",1329678186436
+started,bundle,org.eclipse.jdt.debug.ui,3.6.1.v20110803_r371,"org.eclipse.jdt.debug.ui",1329678186516
+started,bundle,org.eclipse.m2e.launching,1.0.100.20110804-1717,"org.eclipse.m2e.launching",1329678186803
+opened,view,org.eclipse.ui.ide,3.7.0.v20110809-1737,"org.eclipse.ui.views.ProblemView",1329678188192
+opened,editor,org.eclipse.jdt.ui,3.7.1.r371_v20110824-0800,"org.eclipse.jdt.ui.CompilationUnitEditor",1329678191069
+activated,editor,org.eclipse.jdt.ui,3.7.1.r371_v20110824-0800,"org.eclipse.jdt.ui.CompilationUnitEditor",1329678191208
+started,bundle,org.eclipse.jdt.junit,3.7.0.v20110505-0800,"org.eclipse.jdt.junit",1329678191278
+executed,command,org.eclipse.debug.ui,3.7.101.v20110817_r371,"org.eclipse.debug.ui.commands.RunLast",1329678192493
+activated,editor,org.eclipse.jdt.ui,3.7.1.r371_v20110824-0800,"org.eclipse.jdt.ui.CompilationUnitEditor",1329678193886
+executed,command,org.eclipse.debug.ui,3.7.101.v20110817_r371,"org.eclipse.debug.ui.commands.RunLast",1329678195809
+activated,view,org.eclipse.ui.console,3.5.100.v20110511,"org.eclipse.ui.console.ConsoleView",1329678198734
+deactivated,workbench,org.eclipse.ui.workbench,3.7.0.I20110519-0100,"",1329678199943
+activated,workbench,org.eclipse.ui.workbench,3.7.0.I20110519-0100,"",1329678287951
+deactivated,workbench,org.eclipse.ui.workbench,3.7.0.I20110519-0100,"",1329678288477
+activated,workbench,org.eclipse.ui.workbench,3.7.0.I20110519-0100,"",1329678517791
+activated,view,org.eclipse.jdt.ui,3.7.1.r371_v20110824-0800,"org.eclipse.jdt.ui.PackageExplorer",1329678520073
+deactivated,workbench,org.eclipse.ui.workbench,3.7.0.I20110519-0100,"",1329678558904
+activated,workbench,org.eclipse.ui.workbench,3.7.0.I20110519-0100,"",1329678762439
+deactivated,workbench,org.eclipse.ui.workbench,3.7.0.I20110519-0100,"",1329678762936
+activated,workbench,org.eclipse.ui.workbench,3.7.0.I20110519-0100,"",1329680560441
