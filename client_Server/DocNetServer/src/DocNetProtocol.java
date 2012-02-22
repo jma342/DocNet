@@ -22,6 +22,7 @@ public class DocNetProtocol {
     
     //current step in a given conversation relative to each menu---jma342---Feb 14th
     private int step_LOG_IN_SCREEN = 0;
+    private int step_LOG_IN_SCREEN_reconfirmPword = 0;
     private int step_MAIN_POSTING_BOARD = 0;
     private int step_PERSONAL_INFORMATION = 0;
     private int step_ANNOUNCEMENTS = 0;
@@ -34,7 +35,14 @@ public class DocNetProtocol {
     private int step_GENDER = 0;//change made - jma342 - Feb 18th
     private int step_ADD_FRIEND = 0;//change made - jma342 - Feb 19th
     private int step_FRIEND_REQUEST = 0;//change made - jma342 - Feb 19th
+    private int step_ERROR_CHECK = 0;//jma342 - Feb 21st
   //current step in a given conversation relative to each menu---jma342---Feb 14th
+    
+    //jma342 -- feb 21st -- both database connections
+    private Connection con_1 = null;
+	private Connection con_2 = null;
+	Statement st = null;
+    ResultSet rs = null;
     
     //field on screen chosen to be edited
     private String editField_On_Screen = "";
@@ -46,7 +54,12 @@ public class DocNetProtocol {
     private int currentScreen = LOG_IN_SCREEN;
     private int nextScreen = 0;
 
-
+  //jma342 -- feb 21st -- added constructor to initialise db connections
+    /*public DocNetProtocol(Connection c1, Connection c2)
+    {
+    	con_1 = c1;
+    	con_2 = c2;
+    }*/
     
     public String processRequest(String input)
     {	
@@ -54,7 +67,7 @@ public class DocNetProtocol {
     	
     	if(currentScreen == LOG_IN_SCREEN)
     	{
-    		output =  loginScreenMenu(null);
+    		output =  loginScreenMenu(input);
     	}
     	else if(currentScreen == MAIN_POSTING_BOARD_SCREEN)
     	{
@@ -399,46 +412,176 @@ public class DocNetProtocol {
     public String loginScreenMenu(String input)
     {
     	String output = "";
+    	String userName = "";
+    	String password = "";
+    	String confirmPassWord = "";
     	
     	//prompt for username
     	if(step_LOG_IN_SCREEN == 0)
     	{
-    		output = "Username: ";
-    		step_LOG_IN_SCREEN++;
-    	}
-    	else if(step_LOG_IN_SCREEN == 1)
-    	{
-    		output = "userInput";
+    		output = "1. New User ";
     		step_LOG_IN_SCREEN++;
     	}
     	
-    	//prompt for password
+    	else if(step_LOG_IN_SCREEN == 1)
+    	{
+    		output = "2. Login: ";
+    		step_LOG_IN_SCREEN++;
+    	}
+    	
     	else if(step_LOG_IN_SCREEN == 2)
     	{
-    		output = "Password: ";
+    		output = "userInput";
     		step_LOG_IN_SCREEN++;
     	}
     	
     	else if(step_LOG_IN_SCREEN == 3)
     	{
-    		output = "userInput";
-    		step_LOG_IN_SCREEN++;
+    		chosen_On_Screen_Action = input;
+    		
+    		output = "";
+    		
+    		this.step_LOG_IN_SCREEN++;
+    	}
+    	else if(this.step_LOG_IN_SCREEN >= 4)
+    	{
+	    if(chosen_On_Screen_Action.equals("1"))//steps for new user
+	    	{	    		
+		    	if(step_LOG_IN_SCREEN == 4)
+		    	{
+		    		output = "Username: ";
+		    		step_LOG_IN_SCREEN++;
+		    	}
+		    	else if(step_LOG_IN_SCREEN == 5)
+		    	{
+		    		output = "userInput";
+		    		step_LOG_IN_SCREEN++;
+		    	}
+		    	
+		    	//prompt for password
+		    	else if(step_LOG_IN_SCREEN == 6)
+		    	{
+		    		userName = input;
+		    		
+		    		output = "Password: ";
+		    		
+		    		
+		    		step_LOG_IN_SCREEN++;
+		    		
+		    	}
+		    	
+		    	else if(step_LOG_IN_SCREEN == 7)
+		    	{
+		    		output = "userInput";
+		    		step_LOG_IN_SCREEN++;
+		    	}
+		    	
+		    	else if(step_LOG_IN_SCREEN == 8)
+		    	{
+		    		password = input;
+		    		
+		    		output = "Re-enter Password:";
+		    		step_LOG_IN_SCREEN++;
+		    	}
+		    	
+		    	else if(step_LOG_IN_SCREEN == 9)
+		    	{
+		    		output = "userInput";
+		    		step_LOG_IN_SCREEN++;
+		    	}
+		    	
+		    	else if(step_LOG_IN_SCREEN == 10)
+		    	{
+		    		if(password.equals(input))
+		    		{
+		    			step_LOG_IN_SCREEN++;
+		    		}
+		    		else
+		    		{
+		    			//if the user enters the wrong password for confirmation
+		    			//the step_error_check variable is used to circulate this prompt
+		    			//until the correct answer is entered
+		    			if(this.step_ERROR_CHECK == 0)
+		    			{
+		    				output = "Please enter correct password: ";
+		    				this.step_ERROR_CHECK++;
+		    			}
+		    			else if(this.step_ERROR_CHECK == 1)
+		    			{
+		    				output = "userInput";
+		    				this.step_ERROR_CHECK = 0;
+		    			}
+		    			
+		    		}
+		    		
+		    	}
+		    	
+		    	//verify username and password -- if failure of either simply indicate either or failed
+		    	else if(step_LOG_IN_SCREEN == 11)
+		    	{
+		    		//addition to database successful
+		    		step_LOG_IN_SCREEN = 0;
+		    		
+		    		//after a successful login user is directed to main posting board
+		    		currentScreen = this.CURRENT_OUTPUT_SCREEN;
+		    		nextScreen = MAIN_POSTING_BOARD_SCREEN;
+		    		
+		    		output = this.screenOutput(nextScreen);
+		    		
+		    	}
+	    	}//steps for new user
+	    	
+	    	else if(chosen_On_Screen_Action.equals("2"))//steps for registered user
+	    	{
+		    	if(step_LOG_IN_SCREEN == 4)
+		    	{
+		    		output = "Username: ";
+		    		step_LOG_IN_SCREEN++;
+		    	}
+		    	else if(step_LOG_IN_SCREEN == 5)
+		    	{
+		    		output = "userInput";
+		    		step_LOG_IN_SCREEN++;
+		    	}
+		    	
+		    	//prompt for password
+		    	else if(step_LOG_IN_SCREEN == 6)
+		    	{
+		    		userName = input;
+		    		
+		    		output = "Password: ";
+		    		
+		    		
+		    		step_LOG_IN_SCREEN++;
+		    		
+		    	}
+		    	
+		    	else if(step_LOG_IN_SCREEN == 7)
+		    	{
+		    		output = "userInput";
+		    		step_LOG_IN_SCREEN++;
+		    	}
+		    
+		    	
+		    	//verify username and password -- if failure of either simply indicate either or failed
+		    	else if(step_LOG_IN_SCREEN == 8)
+		    	{
+		    		password = input;
+		    		
+	        		//if verification successful
+	        		//currently no db connection so verification isnot enforced
+	        		step_LOG_IN_SCREEN = 0;
+	        		
+	        		//after a successful login user is directed to main posting board
+	        		currentScreen = this.CURRENT_OUTPUT_SCREEN;
+	        		nextScreen = MAIN_POSTING_BOARD_SCREEN;
+	        		
+	        		output = this.screenOutput(nextScreen);
+	        		
+	        	}
+	    	}//steps for registered user
     	}
     	
-    	//verify username and password -- if failure of either simply indicate either or failed
-    	else if(step_LOG_IN_SCREEN == 4)
-    	{
-    		//if verification successful
-    		//currently no db connection so verification isnot enforced
-    		step_LOG_IN_SCREEN = 0;
-    		
-    		//after a successful login user is directed to main posting board
-    		currentScreen = this.CURRENT_OUTPUT_SCREEN;
-    		nextScreen = MAIN_POSTING_BOARD_SCREEN;
-    		
-    		output = this.screenOutput(nextScreen);
-    		
-    	}
     	
     	return output;
     		
@@ -707,7 +850,7 @@ public class DocNetProtocol {
 	    	}
 	    	else
 	    	{
-	    		output = "Please select numbers or 1 - 2";
+	    		output = "Please select numbers 1 - 2";
 	    		this.step_GENDER++;
 	    		
 	    	}

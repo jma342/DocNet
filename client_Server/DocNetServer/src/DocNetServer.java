@@ -1,56 +1,48 @@
 import java.net.*;
 import java.io.*;
-<<<<<<< HEAD
 import java.sql.*;
-=======
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
->>>>>>> branch 'master' of ssh://git@github.com/jma342/DocNet.git
+
 
 public class DocNetServer {
     public static void main(String[] args) throws IOException {
 
-    	Connection con = null;
-        Statement st = null;
-        ResultSet rs = null;
+    	//jma 342 -- Feb 21st
+    	
+    	Connection con_1 = null;
+    	Connection con_2 = null;
+        //Statement st = null;
+        //ResultSet rs = null;
         
-        String dbHostname = "docnetdbinstance.chjl3x8ea8tv.us-east-1.rds.amazonaws.com";
-        String dbName = "docnetdb";
-        String dbUrl = "jdbc:mysql:/" + dbHostname + "/" + dbName;
-        String dbUser = "securicor";
-        String dbPassword = "CS54305188";
+        //String dbHostname = "docnetdbinstance.chjl3x8ea8tv.us-east-1.rds.amazonaws.com";
+        String dbHostname = "localhost";
+        String dbUser = "root";
+        
+        String dbName_1 = "docnetdb_1";
+        String dbconn_1 = "jdbc:mysql://" + dbHostname + "/" + dbName_1;
+        String dbName_2 = "docnetdb_2";
+        String dbconn_2 = "jdbc:mysql://" + dbHostname + "/" + dbName_2;
+ 
+        
+        //String dbPassword = "CS54305188";
+        String dbPassword = "";
 
         try {
-            con = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-            st = con.createStatement();
+            con_1 = DriverManager.getConnection(dbconn_1, dbUser, dbPassword);
+            con_2 = DriverManager.getConnection(dbconn_2, dbUser, dbPassword);
+            //st = con.createStatement();
             
-            rs = st.executeQuery("SELECT VERSION()");
+            //rs = st.executeQuery("SELECT VERSION()");
 
-            if (rs.next()) {
+           /* if (rs.next()) {
                 System.out.println(rs.getString(1));
-            }
+            }*/
 
         } catch (SQLException ex) {
             System.out.println(ex.toString());
 
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (st != null) {
-                    st.close();
-                }
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException ex) {
-            System.out.println(ex.toString());
         }
-
+        
+      //jma 342 -- Feb 21st
         
         ServerSocket serverSocket = null;
         try {
@@ -76,6 +68,7 @@ public class DocNetServer {
         
         String inputLine, outputLine;
         
+       // DocNetProtocol dnp = new DocNetProtocol(con_1,con_2);//jma342 -- Feb 21st
         DocNetProtocol dnp = new DocNetProtocol();
 
         outputLine = dnp.processRequest(null);
@@ -93,6 +86,26 @@ public class DocNetServer {
         in.close();
         clientSocket.close();
         serverSocket.close();
-    }
+       try 
+        {
+        	//implement this within protocol
+             /*   if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }*/
+                
+        	if (con_1 != null) {
+                con_1.close();
+            }
+        	if (con_2 != null) {
+                    con_2.close();
+                }
+            } 
+        catch (SQLException ex) 
+        {
+            System.out.println(ex.toString());
+        }
 }
 }
