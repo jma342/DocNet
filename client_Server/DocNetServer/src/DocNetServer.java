@@ -68,8 +68,8 @@ public class DocNetServer {
         
         String inputLine, outputLine;
         
-       // DocNetProtocol dnp = new DocNetProtocol(con_1,con_2);//jma342 -- Feb 21st
-        DocNetProtocol dnp = new DocNetProtocol();
+       DocNetProtocol dnp = new DocNetProtocol(con_1,con_2);//jma342 -- Feb 21st
+        //DocNetProtocol dnp = new DocNetProtocol();
 
         outputLine = dnp.processRequest(null);
        

@@ -55,11 +55,11 @@ public class DocNetProtocol {
     private int nextScreen = 0;
 
   //jma342 -- feb 21st -- added constructor to initialise db connections
-    /*public DocNetProtocol(Connection c1, Connection c2)
+    public DocNetProtocol(Connection c1, Connection c2)
     {
     	con_1 = c1;
     	con_2 = c2;
-    }*/
+    }
     
     public String processRequest(String input)
     {	
