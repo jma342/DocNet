@@ -18,6 +18,7 @@ public class DocNetProtocol {
     private static final int GENDER_SCREEN = 10;//change made - jma342 - Feb 18th
     private static final int ADD_FRIEND_SCREEN = 11;//change made - jma342 - Feb 19th
     private static final int FRIEND_REQUESTS_SCREEN = 12;//change made - jma342 - Feb 19th
+    private static final int PRIVILEGES_SCREEN = 13;//added -- jma 342 - February 24th 2012
     //MENUS---jma342---Feb 14th
     
     //current step in a given conversation relative to each menu---jma342---Feb 14th
@@ -36,6 +37,7 @@ public class DocNetProtocol {
     private int step_ADD_FRIEND = 0;//change made - jma342 - Feb 19th
     private int step_FRIEND_REQUEST = 0;//change made - jma342 - Feb 19th
     private int step_ERROR_CHECK = 0;//jma342 - Feb 21st
+    private int step_PRIVILEGES_SCREEN = 0;//added -- jma 342 - February 24th 2012
   //current step in a given conversation relative to each menu---jma342---Feb 14th
     
     //jma342 -- feb 21st -- both database connections
@@ -149,7 +151,21 @@ public class DocNetProtocol {
     			output = "5.Research Groups";
     			step_SCREEN_OUTPUT++;
     		}
+    		
+    		//added -- jma 342 - February 24th 2012
     		else if(this.step_SCREEN_OUTPUT == 5)
+    		{
+    			output = "6.Priviliges(Posting Boards/Regions)";
+    			step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.step_SCREEN_OUTPUT == 6)
+    		{
+    			output = "7.Log Out";
+    			step_SCREEN_OUTPUT++;
+    		}
+    		//added -- jma 342 - February 24th 2012
+    		
+    		else if(this.step_SCREEN_OUTPUT == 7)
     		{
     			output = "Please select the number(1-5) for the desired region? ";
     			step_SCREEN_OUTPUT++;
@@ -425,17 +441,23 @@ public class DocNetProtocol {
     	
     	else if(step_LOG_IN_SCREEN == 1)
     	{
-    		output = "2. Login: ";
+    		output = "2. Login ";
     		step_LOG_IN_SCREEN++;
     	}
     	
     	else if(step_LOG_IN_SCREEN == 2)
     	{
-    		output = "userInput";
+    		output = "3. Exit: ";
     		step_LOG_IN_SCREEN++;
     	}
     	
     	else if(step_LOG_IN_SCREEN == 3)
+    	{
+    		output = "userInput";
+    		step_LOG_IN_SCREEN++;
+    	}
+    	
+    	else if(step_LOG_IN_SCREEN == 4)
     	{
     		chosen_On_Screen_Action = input;
     		
@@ -443,23 +465,23 @@ public class DocNetProtocol {
     		
     		this.step_LOG_IN_SCREEN++;
     	}
-    	else if(this.step_LOG_IN_SCREEN >= 4)
+    	else if(this.step_LOG_IN_SCREEN >= 5)
     	{
 	    if(chosen_On_Screen_Action.equals("1"))//steps for new user
 	    	{	    		
-		    	if(step_LOG_IN_SCREEN == 4)
+		    	if(step_LOG_IN_SCREEN == 5)
 		    	{
 		    		output = "Username: ";
 		    		step_LOG_IN_SCREEN++;
 		    	}
-		    	else if(step_LOG_IN_SCREEN == 5)
+		    	else if(step_LOG_IN_SCREEN == 6)
 		    	{
 		    		output = "userInput";
 		    		step_LOG_IN_SCREEN++;
 		    	}
 		    	
 		    	//prompt for password
-		    	else if(step_LOG_IN_SCREEN == 6)
+		    	else if(step_LOG_IN_SCREEN == 7)
 		    	{
 		    		userName = input;
 		    		
@@ -470,13 +492,13 @@ public class DocNetProtocol {
 		    		
 		    	}
 		    	
-		    	else if(step_LOG_IN_SCREEN == 7)
+		    	else if(step_LOG_IN_SCREEN == 8)
 		    	{
 		    		output = "userInput";
 		    		step_LOG_IN_SCREEN++;
 		    	}
 		    	
-		    	else if(step_LOG_IN_SCREEN == 8)
+		    	else if(step_LOG_IN_SCREEN == 9)
 		    	{
 		    		password = input;
 		    		
@@ -484,13 +506,13 @@ public class DocNetProtocol {
 		    		step_LOG_IN_SCREEN++;
 		    	}
 		    	
-		    	else if(step_LOG_IN_SCREEN == 9)
+		    	else if(step_LOG_IN_SCREEN == 10)
 		    	{
 		    		output = "userInput";
 		    		step_LOG_IN_SCREEN++;
 		    	}
 		    	
-		    	else if(step_LOG_IN_SCREEN == 10)
+		    	else if(step_LOG_IN_SCREEN == 11)
 		    	{
 		    		if(password.equals(input))
 		    		{
@@ -517,7 +539,7 @@ public class DocNetProtocol {
 		    	}
 		    	
 		    	//verify username and password -- if failure of either simply indicate either or failed
-		    	else if(step_LOG_IN_SCREEN == 11)
+		    	else if(step_LOG_IN_SCREEN == 12)
 		    	{
 		    		//addition to database successful
 		    		step_LOG_IN_SCREEN = 0;
@@ -533,19 +555,19 @@ public class DocNetProtocol {
 	    	
 	    	else if(chosen_On_Screen_Action.equals("2"))//steps for registered user
 	    	{
-		    	if(step_LOG_IN_SCREEN == 4)
+		    	if(step_LOG_IN_SCREEN == 5)
 		    	{
 		    		output = "Username: ";
 		    		step_LOG_IN_SCREEN++;
 		    	}
-		    	else if(step_LOG_IN_SCREEN == 5)
+		    	else if(step_LOG_IN_SCREEN == 6)
 		    	{
 		    		output = "userInput";
 		    		step_LOG_IN_SCREEN++;
 		    	}
 		    	
 		    	//prompt for password
-		    	else if(step_LOG_IN_SCREEN == 6)
+		    	else if(step_LOG_IN_SCREEN == 7)
 		    	{
 		    		userName = input;
 		    		
@@ -556,7 +578,7 @@ public class DocNetProtocol {
 		    		
 		    	}
 		    	
-		    	else if(step_LOG_IN_SCREEN == 7)
+		    	else if(step_LOG_IN_SCREEN == 8)
 		    	{
 		    		output = "userInput";
 		    		step_LOG_IN_SCREEN++;
@@ -564,7 +586,7 @@ public class DocNetProtocol {
 		    
 		    	
 		    	//verify username and password -- if failure of either simply indicate either or failed
-		    	else if(step_LOG_IN_SCREEN == 8)
+		    	else if(step_LOG_IN_SCREEN == 9)
 		    	{
 		    		password = input;
 		    		
@@ -580,6 +602,12 @@ public class DocNetProtocol {
 	        		
 	        	}
 	    	}//steps for registered user
+	    	  
+	    	//added -- jma 342 - February 24th 2012
+	    	else if(chosen_On_Screen_Action.equals("3"))//terminate connection
+	    	{
+	    		output = "killConnection";
+	    	}
     	}
     	
     	
@@ -601,6 +629,7 @@ public class DocNetProtocol {
     			this.nextScreen = this.PERSONAL_INFORMATION_SCREEN;
         		
         		output = this.screenOutput(nextScreen);
+        		step_MAIN_POSTING_BOARD++;
     		}
     		//announcements screen
     		if(input.equals("2"))
@@ -609,6 +638,7 @@ public class DocNetProtocol {
     			this.nextScreen = this.ANNOUNCEMENTS_SCREEN;
         		
         		output = this.screenOutput(nextScreen);
+        		step_MAIN_POSTING_BOARD++;
     		}
     		//research publications screen
     		else if(input.equals("3"))
@@ -617,6 +647,7 @@ public class DocNetProtocol {
     			this.nextScreen = this.RESEARCH_PUBLICATIONS_SCREEN;
         		
         		output = this.screenOutput(nextScreen);
+        		step_MAIN_POSTING_BOARD++;
     		}
     		//public discussions screen
     		if(input.equals("4"))
@@ -625,6 +656,7 @@ public class DocNetProtocol {
     			this.nextScreen = this.PUBLIC_DISCUSSIONS_SCREEN;
         		
         		output = this.screenOutput(nextScreen);
+        		step_MAIN_POSTING_BOARD++;
     		}
     		//research group screen
     		else if(input.equals("5"))
@@ -633,9 +665,30 @@ public class DocNetProtocol {
     			this.nextScreen = this.RESEARCH_GROUPS_SCREEN;
         		
         		output = this.screenOutput(nextScreen);
+        		step_MAIN_POSTING_BOARD++;
     		}
+    		//added -- jma 342 - February 24th 2012
+    		
+    		//privileges screen
+    		else if(input.equals("6"))
+    		{
+    			this.currentScreen = this.CURRENT_OUTPUT_SCREEN;
+    			this.nextScreen = this.PRIVILEGES_SCREEN;
+        		
+        		output = this.screenOutput(nextScreen);
+    		}
+    		
+    		//return to log in screen
+    		else if(input.equals("7"))
+    		{
+    			this.currentScreen = this.LOG_IN_SCREEN;
+        		output =  loginScreenMenu(input);
+        		
+    		}
+    		//added -- jma 342 - February 24th 2012
+
     	}
-    	
+
     	return output;
     }
   //changes made - jma 342 - Feb 18th
