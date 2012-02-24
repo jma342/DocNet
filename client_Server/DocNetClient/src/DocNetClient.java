@@ -34,33 +34,50 @@ public class DocNetClient {
         String fromDocNet;
         String fromDoc="";
 
-        
          
        /* while(!fromDoc.equals("exit"))
         {*/
         while(true)
         {
+        	
         	while (!(fromDocNet = in.readLine()).equals("userInput")) 
             {
-                System.out.println("DocNet: " + fromDocNet);
-                out.println("");
+        		if(fromDocNet.equals("killConnection"))
+        		{
+        			break;
+        		}
+        		
+        		else if(!fromDocNet.equals("killonnection"))
+        		{
+        			System.out.println("DocNet: " + fromDocNet);
+        			out.println("");
+        		}
             }
                 
             
-        	fromDoc = stdIn.readLine();
+        	//waits for user input
+        	if(fromDocNet.equals("userInput"))
+        	{
+	        	fromDoc = stdIn.readLine();
+	        	
+			    if (fromDoc!= null)
+			    {   
+	                out.println(fromDoc);
+			    }
+        	}
         	
-
-		    if (fromDoc!= null)
-		    {
-                //System.out.println("Client: " + fromDoc);
-                
-                out.println(fromDoc);
-		    }
+        	//kills client connection to server
+        	else if(fromDocNet.equals("killConnection"))
+        	{
+        		out.close();
+                in.close();
+                stdIn.close();
+                dnSocket.close();
+                System.out.println("Goodbye");
+        	}
+        	
            }
         
-        /*out.close();
-        in.close();
-        stdIn.close();
-        dnSocket.close();*/
+        
     }
 }
