@@ -74,6 +74,7 @@ public class DocNetClient {
                 stdIn.close();
                 dnSocket.close();
                 System.out.println("Goodbye");
+                break;
         	}
         	
            }
