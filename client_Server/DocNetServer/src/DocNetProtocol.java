@@ -246,11 +246,21 @@ public class DocNetProtocol {
     			output = "13. Friends List";
     			step_SCREEN_OUTPUT++;
     		}
+    		
+    		//jma342 - Feb 25th - 2:42 pm
     		else if(step_SCREEN_OUTPUT == 13)
     		{
-    			output = "Please select the number(1-13) for the desired option? ";
+    			output = "14. Return to Main Posting Board";
     			step_SCREEN_OUTPUT++;
     		}
+    		
+    		else if(step_SCREEN_OUTPUT == 14)
+    		{
+    			output = "Please select the number(1-14) for the desired option? ";
+    			step_SCREEN_OUTPUT++;
+    		}
+    		//jma342 - Feb 25th - 2:42 pm
+    		
     		else
     		{
     			step_SCREEN_OUTPUT = 0;
@@ -302,6 +312,13 @@ public class DocNetProtocol {
     			output ="4. See friend requests";
     			step_SCREEN_OUTPUT++;
     		}
+    		//jma342 - Feb 25th - 2:57pm
+    		else if(this.step_SCREEN_OUTPUT == 6)
+    		{
+    			output ="5. Return to Personal Information";
+    			step_SCREEN_OUTPUT++;
+    		}
+    		//jma342 - Feb 25th - 2:57pm
     		else
     		{
     			output = "userInput";
@@ -620,8 +637,8 @@ public class DocNetProtocol {
     {
     	String output = "";
     	
-    	if(this.step_MAIN_POSTING_BOARD == 0)
-    	{
+    	/*if(this.step_MAIN_POSTING_BOARD == 0)
+    	{*/
     		//personal information screen
     		if(input.equals("1"))
     		{
@@ -629,7 +646,7 @@ public class DocNetProtocol {
     			this.nextScreen = this.PERSONAL_INFORMATION_SCREEN;
         		
         		output = this.screenOutput(nextScreen);
-        		step_MAIN_POSTING_BOARD++;
+        	//	step_MAIN_POSTING_BOARD++;
     		}
     		//announcements screen
     		if(input.equals("2"))
@@ -638,7 +655,7 @@ public class DocNetProtocol {
     			this.nextScreen = this.ANNOUNCEMENTS_SCREEN;
         		
         		output = this.screenOutput(nextScreen);
-        		step_MAIN_POSTING_BOARD++;
+        		//step_MAIN_POSTING_BOARD++;
     		}
     		//research publications screen
     		else if(input.equals("3"))
@@ -647,7 +664,7 @@ public class DocNetProtocol {
     			this.nextScreen = this.RESEARCH_PUBLICATIONS_SCREEN;
         		
         		output = this.screenOutput(nextScreen);
-        		step_MAIN_POSTING_BOARD++;
+        		//step_MAIN_POSTING_BOARD++;
     		}
     		//public discussions screen
     		if(input.equals("4"))
@@ -656,7 +673,7 @@ public class DocNetProtocol {
     			this.nextScreen = this.PUBLIC_DISCUSSIONS_SCREEN;
         		
         		output = this.screenOutput(nextScreen);
-        		step_MAIN_POSTING_BOARD++;
+        		//step_MAIN_POSTING_BOARD++;
     		}
     		//research group screen
     		else if(input.equals("5"))
@@ -665,7 +682,7 @@ public class DocNetProtocol {
     			this.nextScreen = this.RESEARCH_GROUPS_SCREEN;
         		
         		output = this.screenOutput(nextScreen);
-        		step_MAIN_POSTING_BOARD++;
+        		//step_MAIN_POSTING_BOARD++;
     		}
     		//added -- jma 342 - February 24th 2012
     		
@@ -687,7 +704,7 @@ public class DocNetProtocol {
     		}
     		//added -- jma 342 - February 24th 2012
 
-    	}
+    	//}
 
     	return output;
     }
@@ -805,7 +822,8 @@ public class DocNetProtocol {
 	    		step_PERSONAL_INFORMATION++;
 			}
 			
-			//Edit F
+						
+			//Edit Friends list
 			else if(input.equals("13"))
 			{
 				editField_On_Screen = "Friends List";
@@ -814,6 +832,19 @@ public class DocNetProtocol {
 				this.nextScreen = this.FRIENDS_LIST_SCREEN;
 				
 				//retrieve recordset of friends list from database
+	    		output = this.screenOutput(nextScreen /*,recordset of friendslist*/); 
+	    		
+			}
+			
+			//Return to Main Posting Board
+			else if(input.equals("14"))
+			{
+        		
+				step_PERSONAL_INFORMATION = 0;
+				
+				currentScreen = this.CURRENT_OUTPUT_SCREEN;
+				this.nextScreen = this.MAIN_POSTING_BOARD_SCREEN;
+				
 	    		output = this.screenOutput(nextScreen /*,recordset of friendslist*/); 
 	    		
 			}
@@ -927,7 +958,6 @@ public class DocNetProtocol {
     {
     	String output = " ";
     	
-    	
     	if(this.step_FRIENDS_LIST == 0)
     	{
     		//add a friend
@@ -960,6 +990,17 @@ public class DocNetProtocol {
     			this.step_FRIENDS_LIST=0;
     			
     		}
+    		
+    		else if(input.equals("5"))
+    		{
+    			currentScreen = this.CURRENT_OUTPUT_SCREEN;
+    			nextScreen = this.PERSONAL_INFORMATION_SCREEN;
+    			
+    			output = this.screenOutput(nextScreen /*,recordset of friendslist*/);
+    			this.step_FRIENDS_LIST=0;
+    			
+    		}
+
     		
     	}
     	
