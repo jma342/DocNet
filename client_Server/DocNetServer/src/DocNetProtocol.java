@@ -40,6 +40,11 @@ public class DocNetProtocol {
     private int step_PRIVILEGES_SCREEN = 0;//added -- jma 342 - February 24th 2012
   //current step in a given conversation relative to each menu---jma342---Feb 14th
     
+    //yb85 Feb, 25 @6:56pm
+    private String userName = "";
+	private String password = "";
+	private String sqlString = "";
+    
     //jma342 -- feb 21st -- both database connections
     private Connection con_1 = null;
 	private Connection con_2 = null;
@@ -445,9 +450,6 @@ public class DocNetProtocol {
     public String loginScreenMenu(String input)
     {
     	String output = "";
-    	String userName = "";
-    	String password = "";
-    	String confirmPassWord = "";
     	
     	//prompt for username
     	if(step_LOG_IN_SCREEN == 0)
@@ -555,11 +557,45 @@ public class DocNetProtocol {
 		    		
 		    	}
 		    	
-		    	//verify username and password -- if failure of either simply indicate either or failed
+		    	//add user database
 		    	else if(step_LOG_IN_SCREEN == 12)
 		    	{
 		    		//addition to database successful
 		    		step_LOG_IN_SCREEN = 0;
+		    		
+		    		try {
+						st = con_2.createStatement();
+						
+						sqlString = "SELECT count(username) FROM users WHERE username = \'" + userName + "\'";
+						rs = st.executeQuery(sqlString);
+						
+						rs.next();
+						
+						int count = rs.getInt(1);
+						
+						if (count != 0) {
+							output = "Registration failed.\'" + userName + "\' is already registered. Press any key...";
+//							loginScreenMenu(input);
+							step_LOG_IN_SCREEN = 0;
+						}
+						else {
+							sqlString = "INSERT INTO users (username, password) VALUES (\'" + userName + "\', \'" + password + "\')";
+							count = 0;
+							count = st.executeUpdate(sqlString);
+	
+							if (count != 0) {
+								output = "Registration successful.";
+							}
+							else {
+								output = "Registration failed.";
+							}
+							
+							step_LOG_IN_SCREEN = 0;
+						}
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 		    		
 		    		//after a successful login user is directed to main posting board
 		    		currentScreen = this.CURRENT_OUTPUT_SCREEN;
@@ -570,7 +606,7 @@ public class DocNetProtocol {
 		    	}
 	    	}//steps for new user
 	    	
-	    	else if(chosen_On_Screen_Action.equals("2"))//steps for registered user
+	    	else if(chosen_On_Screen_Action.equals("2")) //steps for registered user
 	    	{
 		    	if(step_LOG_IN_SCREEN == 5)
 		    	{
@@ -605,8 +641,26 @@ public class DocNetProtocol {
 		    	//verify username and password -- if failure of either simply indicate either or failed
 		    	else if(step_LOG_IN_SCREEN == 9)
 		    	{
+		    		//password = "";
 		    		password = input;
 		    		
+		    		sqlString = "SELECT * FROM users WHERE username = \'" + userName + "\' AND password = \'" + password + "\'";
+					try {
+						rs = st.executeQuery(sqlString);
+						
+						if (rs.next() == false) {
+							output = "Username and password combination is wrong";
+							step_LOG_IN_SCREEN = 0;
+						}
+						else {
+							output = "Access granted.";
+						}
+						
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
 	        		//if verification successful
 	        		//currently no db connection so verification isnot enforced
 	        		step_LOG_IN_SCREEN = 0;
