@@ -4,6 +4,7 @@ import java.sql.*;
 
 public class DocNetProtocol {
 
+
 	private Variables variables = new Variables();
 	
   //jma342 -- feb 21st -- added constructor to initialise db connections
@@ -457,9 +458,6 @@ public class DocNetProtocol {
     public String loginScreenMenu(String input)
     {
     	String output = "";
-    	String userName = "";
-    	String password = "";
-    	String confirmPassWord = "";
     	
     	//prompt for username
     	if(variables.step_LOG_IN_SCREEN == 0)
@@ -512,7 +510,7 @@ public class DocNetProtocol {
 		    	//prompt for password
 		    	else if(variables.step_LOG_IN_SCREEN == 7)
 		    	{
-		    		userName = input;
+		    		variables.userName = input;
 		    		
 		    		output = "Password: ";
 		    		
@@ -529,7 +527,7 @@ public class DocNetProtocol {
 		    	
 		    	else if(variables.step_LOG_IN_SCREEN == 9)
 		    	{
-		    		password = input;
+		    		variables.password = input;
 		    		
 		    		output = "Re-enter Password:";
 		    		variables.step_LOG_IN_SCREEN++;
@@ -543,7 +541,7 @@ public class DocNetProtocol {
 		    	
 		    	else if(variables.step_LOG_IN_SCREEN == 11)
 		    	{
-		    		if(password.equals(input))
+		    		if(variables.password.equals(input))
 		    		{
 		    			variables.step_LOG_IN_SCREEN++;
 		    		}
@@ -567,11 +565,50 @@ public class DocNetProtocol {
 		    		
 		    	}
 		    	
+
 		    	//verify username and password -- if failure of either simply indicate either or failed
 		    	else if(variables.step_LOG_IN_SCREEN == 12)
 		    	{
 		    		//addition to database successful
 		    		variables.step_LOG_IN_SCREEN = 0;
+		    		
+		    		try {
+						variables.st = variables.con_2.createStatement();
+						
+						variables.sqlString = "SELECT count(username) FROM users WHERE username = \'" + variables.userName + "\'";
+						variables.rs = variables.st.executeQuery(variables.sqlString);
+						
+						variables.rs.next();
+						
+						int count = variables.rs.getInt(1);
+						
+						if (count != 0) {
+							output = "Registration failed.\'" + variables.userName + "\' is already registered. Press any key...";
+//							loginScreenMenu(input);
+							variables.step_LOG_IN_SCREEN = 0;
+						}
+						else {
+							variables.sqlString = "INSERT INTO users (username, password) VALUES " +
+									"(\'" + variables.userName + "\', \'" + variables.password + "\')";
+							count = 0;
+							count = variables.st.executeUpdate(variables.sqlString);
+	
+							if (count != 0) {
+								output = "Registration successful.";
+							}
+							else {
+								output = "Registration failed.";
+							}
+							
+							variables.step_LOG_IN_SCREEN = 0;
+						}
+					} 
+		    		catch (SQLException e) 
+		    		{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
 		    		
 		    		//after a successful login user is directed to main posting board
 		    		variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
@@ -582,6 +619,7 @@ public class DocNetProtocol {
 		    	}
 	    	}//steps for new user
 	    	
+
 	    	else if(variables.chosen_On_Screen_Action.equals("2"))//steps for registered user
 	    	{
 		    	if(variables.step_LOG_IN_SCREEN == 5)
@@ -598,7 +636,7 @@ public class DocNetProtocol {
 		    	//prompt for password
 		    	else if(variables.step_LOG_IN_SCREEN == 7)
 		    	{
-		    		userName = input;
+		    		variables.userName = input;
 		    		
 		    		output = "Password: ";
 		    		
@@ -617,8 +655,31 @@ public class DocNetProtocol {
 		    	//verify username and password -- if failure of either simply indicate either or failed
 		    	else if(variables.LOG_IN_SCREEN == 9)
 		    	{
-		    		password = input;
+		    		//password = "";
+		    		variables.password = input;
 		    		
+		    		variables.sqlString = "SELECT * FROM users WHERE username = \'" + 
+		    				variables.userName + "\' AND password = \'" + variables.password + "\'";
+					try {
+						variables.rs = variables.st.executeQuery(variables.sqlString);
+						
+						if (variables.rs.next() == false) 
+						{
+							output = "Username and password combination is wrong";
+							variables.step_LOG_IN_SCREEN = 0;
+						}
+						else 
+						{
+							output = "Access granted.";
+						}
+						
+					} 
+					catch (SQLException e) 
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
 	        		//if verification successful
 	        		//currently no db connection so verification isnot enforced
 	        		variables.step_LOG_IN_SCREEN = 0;

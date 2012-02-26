@@ -53,7 +53,6 @@ public class DocNetClient {
         			out.println("");
         		}
             }
-                
             
         	//waits for user input
         	if(fromDocNet.equals("userInput"))

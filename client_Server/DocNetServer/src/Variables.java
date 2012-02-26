@@ -77,6 +77,9 @@ public class Variables
     
     //holds the action chosen to be executed
     public String chosen_On_Screen_Action = "";
+    public String userName = "";
+    public String password = "";
+    public String sqlString = "";
     
     //current screen user is interfacing with
     public int currentScreen = LOG_IN_SCREEN;
