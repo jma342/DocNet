@@ -84,5 +84,7 @@ public class Variables
     //current screen user is interfacing with
     public int currentScreen = LOG_IN_SCREEN;
     public int nextScreen = 0;
+    
+    public boolean failedLogIn = false;//jma342 - feb26th - used to determine if user login failed.
 
 }

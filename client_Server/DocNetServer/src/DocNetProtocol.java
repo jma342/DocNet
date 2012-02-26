@@ -543,6 +543,8 @@ public class DocNetProtocol {
 		    	{
 		    		if(variables.password.equals(input))
 		    		{
+		    			//System.out.println("passwords match");
+		    			
 		    			variables.step_LOG_IN_SCREEN++;
 		    		}
 		    		else
@@ -565,58 +567,87 @@ public class DocNetProtocol {
 		    		
 		    	}
 		    	
-
-		    	//verify username and password -- if failure of either simply indicate either or failed
+		    	//adding new user
 		    	else if(variables.step_LOG_IN_SCREEN == 12)
 		    	{
 		    		//addition to database successful
-		    		variables.step_LOG_IN_SCREEN = 0;
 		    		
-		    		try {
+		    		int rsCount = 0;//jma342 - feb26 10:51 pm - holds the recordsetCount
+		    		
+		    		try 
+		    		{
 						variables.st = variables.con_2.createStatement();
 						
-						variables.sqlString = "SELECT count(username) FROM users WHERE username = \'" + variables.userName + "\'";
+						variables.sqlString = "SELECT username FROM users WHERE username = \'" + variables.userName + "\'";
 						variables.rs = variables.st.executeQuery(variables.sqlString);
 						
-						variables.rs.next();
-						
-						int count = variables.rs.getInt(1);
-						
-						if (count != 0) {
-							output = "Registration failed.\'" + variables.userName + "\' is already registered. Press any key...";
-//							loginScreenMenu(input);
-							variables.step_LOG_IN_SCREEN = 0;
+						//jma342 - feb26 10:51 pm - determines if recordset has anything
+						while(variables.rs.next())
+						{
+							rsCount++;
+							break;
 						}
-						else {
+						
+						if (rsCount != 0) 
+						{
+							output = "Registration failed.\'" + variables.userName + "\' is already registered. " +
+									"Press any key to continue...";
+							variables.failedLogIn = true;
+							variables.step_LOG_IN_SCREEN++;
+						}
+						else 
+						{
 							variables.sqlString = "INSERT INTO users (username, password) VALUES " +
 									"(\'" + variables.userName + "\', \'" + variables.password + "\')";
-							count = 0;
-							count = variables.st.executeUpdate(variables.sqlString);
+							rsCount = 0;
+							rsCount = variables.st.executeUpdate(variables.sqlString);
 	
-							if (count != 0) {
+							if (rsCount != 0) 
+							{
 								output = "Registration successful.";
+								variables.failedLogIn = false;
+								variables.step_LOG_IN_SCREEN++;
 							}
-							else {
-								output = "Registration failed.";
+							else 
+							{
+								output = "Registration failed....press any key to continue";
+								variables.failedLogIn = true;
+								variables.step_LOG_IN_SCREEN++;
 							}
 							
-							variables.step_LOG_IN_SCREEN = 0;
+							
 						}
-					} 
+					}
 		    		catch (SQLException e) 
 		    		{
 						// TODO Auto-generated catch block
 						e.printStackTrace();
+						
 					}
+		    	}
+		    		
 
-		    		
-		    		//after a successful login user is directed to main posting board
-		    		variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
-		    		variables.nextScreen = variables.MAIN_POSTING_BOARD_SCREEN;
-		    		
-		    		output = this.screenOutput(variables.nextScreen);
+		    	//after a successful login user is directed to main posting board
+		    	else if(variables.step_LOG_IN_SCREEN == 13)
+		    	{
+		    		//jma342 - feb 26th 11:15pm - refreshes the log in screen on failed login attempts
+		    		if(variables.failedLogIn)
+		    		{
+		    			output = "userInput";
+		    			variables.failedLogIn = false;
+		    			variables.step_LOG_IN_SCREEN = 0;
+		    		}
+		    		else
+		    		{
+			    		variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+			    		variables.nextScreen = variables.MAIN_POSTING_BOARD_SCREEN;
+			    		
+			    		output = this.screenOutput(variables.nextScreen);
+			    		variables.step_LOG_IN_SCREEN = 0;
+		    		}
 		    		
 		    	}
+		    	
 	    	}//steps for new user
 	    	
 
