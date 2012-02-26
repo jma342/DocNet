@@ -2,6 +2,12 @@ import java.net.*;
 import java.io.*;
 import java.sql.*;
 
+/*TIP TO YERZHAN LOOK TO PLACE YOUR DATABASE INSERTION, DELETION AND RETRIEVAL IN A 
+ * FUNCTION FOR EASE OF USE....SO YOU WOULD PASS THE NECESSARY PARAMETERS TO EACH OF THE FUNCTIONS
+ * TO EXECUTE THE REQUISITE QUERIES
+ * 
+ * TIP TO JAMAAL CREATE THE VIEW FRIEND PROFILE EQUIVALENTS OF SCREENS MERGED IN FROM CINDY*/
+
 public class DocNetProtocol {
 
 
@@ -30,6 +36,31 @@ public class DocNetProtocol {
     	else if(variables.currentScreen == variables.PERSONAL_INFORMATION_SCREEN)
     	{
     		output =  personalInformationScreen(input);
+    	}
+    	
+    	//jma342 - feb 25 1:52AM - Merging cindy's code
+    	else if(variables.currentScreen == variables.RESEARCH_PUBLICATIONS_SCREEN)
+    	{
+    		output = researchPublicationsScreen(input);
+    	}
+    	
+    	else if(variables.currentScreen == variables.ANNOUNCEMENTS_SCREEN)
+    	{
+    	    output = announcementScreen(input);
+    	}
+    	else if(variables.currentScreen == variables.PUBLIC_DISCUSSIONS_SCREEN)
+    	{
+    		output = discussionScreen(input);
+    	}
+    	else if(variables.currentScreen == variables.PUBLIC_DISCUSSION_TOPIC_SCREEN)
+    	{
+    		output = discussionTopicScreen(input);
+    	}
+    	//jma342 - feb 25 1:52AM - Merging cindy's code
+    	
+    	else if(variables.currentScreen == variables.CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN)
+    	{
+    		output = created_PubDisc_ResGrp_Priviliges_Screen(input);
     	}
     	
     	//change made - jma 342 - feb 18th
@@ -261,6 +292,121 @@ public class DocNetProtocol {
     	}
     	//changes made - jma 342 - Feb 18th
     	
+    	//jma342 - Feb26th 1:54AM - merging in Cindy's code
+    	else if(screen == this.variables.RESEARCH_PUBLICATIONS_SCREEN)
+    	{
+    		if (this.variables.step_SCREEN_OUTPUT==0)
+    		{
+    			//get research publications from db to display
+        		output = "get publications from db";
+        		variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if (variables.step_SCREEN_OUTPUT==1)
+    		{
+    			output = "1. Add a publication";
+    			variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if (variables.step_SCREEN_OUTPUT==2)
+    		{
+    			output = "2. Delete a publication";
+    			variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(variables.step_SCREEN_OUTPUT ==3)
+    		{
+    			output = "Please select number to perform desired action: ";
+    			variables.step_SCREEN_OUTPUT++;
+    		}
+    		else
+    		{
+    			variables.step_SCREEN_OUTPUT = 0;
+    			output = "userInput";
+    			variables.currentScreen = variables.nextScreen;
+    		}
+    	    
+    	}
+    	
+    	//jma342 - Feb26th 1:54AM - merging in Cindy's code
+    	else if(screen == this.variables.ANNOUNCEMENTS_SCREEN)
+    	{
+    		if(variables.step_SCREEN_OUTPUT == 0)
+    		{
+    		  output = "display the announcement retrived from database\n";
+    		  variables.step_SCREEN_OUTPUT++;
+    		  
+    		}
+    		else if(variables.step_SCREEN_OUTPUT== 1)
+    		{
+    			output = "1. Add an announcement";
+    			variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(variables.step_SCREEN_OUTPUT ==2)
+    		{
+    			output = "2. Delete an announcement";
+    			variables.step_SCREEN_OUTPUT++;
+    		}
+    		else
+    		{
+    			variables.step_SCREEN_OUTPUT = 0;
+    			output = "userInput";
+    			variables.currentScreen = variables.nextScreen;
+    		}
+    	}
+    	
+    	//jma342 - Feb26th 1:54AM - merging in Cindy's code
+    	else if(screen==this.variables.PUBLIC_DISCUSSIONS_SCREEN)
+    	{
+    		if(variables.step_SCREEN_OUTPUT ==0)
+    		{
+    			output = "retrieve public discussion topics from database";
+    			variables.step_SCREEN_OUTPUT++;
+    		}
+    	
+    		else if(variables.step_SCREEN_OUTPUT == 1)
+    		{
+    			output = "1. Add a new discussion";
+    			variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(variables.step_SCREEN_OUTPUT == 2)
+    		{
+    			output = "2. Delete a discussion";
+    			variables.step_SCREEN_OUTPUT++;
+    		}
+    		else
+    		{
+    			variables.step_SCREEN_OUTPUT = 0;
+    			output = "userInput";
+    			variables.currentScreen = variables.nextScreen;
+    		}
+    	}
+    	
+    	//jma342 - Feb26th 1:54AM - merging in Cindy's code
+    	else if(screen==this.variables.PUBLIC_DISCUSSION_TOPIC_SCREEN)
+    	{
+    		if(variables.step_SCREEN_OUTPUT ==0)
+    		{
+    			output = "retrieve discussion comments from database";
+    			variables.step_SCREEN_OUTPUT++;
+    		}
+
+    		else if(variables.step_SCREEN_OUTPUT == 1)
+    		{
+    			output = "1. Add a new comment";
+    			variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(variables.step_SCREEN_OUTPUT == 6)
+    		{
+    			output = "2. Delete a comment";
+    			variables.step_SCREEN_OUTPUT++;
+    		}
+    		else
+    		{
+    			variables.step_SCREEN_OUTPUT = 0;
+    			output = "userInput";
+    			variables.currentScreen = variables.nextScreen;
+    		}
+    	}
+    	//jma342 - Feb26th 1:54AM - merging in Cindy's code
+    	
     	//change made - jma 342 - feb 19th
     	else if(screen == this.variables.user_FRIENDS_LIST_SCREEN || screen == this.variables.FRIEND_FRIENDS_LIST_SCREEN)
     	{
@@ -350,6 +496,28 @@ public class DocNetProtocol {
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(this.variables.step_SCREEN_OUTPUT == 1)
+    		{
+    			output = "userInput";
+    			this.variables.step_SCREEN_OUTPUT = 0;
+    			variables.currentScreen = variables.nextScreen;
+    		}
+    	}
+    	
+    	//jma342 - feb26th - 3:58 am
+    	else if(screen == this.variables.CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN)
+    	{
+    	
+    		if(this.variables.step_SCREEN_OUTPUT == 0)
+    		{
+    			output = "1. Set View Privileges";
+    			variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 1)
+    		{
+    			output = "2. Set Post Privileges";
+				variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 2)
     		{
     			output = "userInput";
     			this.variables.step_SCREEN_OUTPUT = 0;
@@ -814,148 +982,6 @@ public class DocNetProtocol {
     }
   //changes made - jma 342 - Feb 18th
 
-    //changes made - jma 342 - Feb 25th - function that allows a user to access various functions of
-    //a friends posting board
-    public String friendMainPostingBoardSreen(String input)
-    {
-    	String output = "";
-    	
-    	if(this.variables.step_FRIEND_MAIN_POSTING_BOARD_SCREEN == 0)
-    	{
-    		//friend personal information screen
-    		if(input.equals("1"))
-    		{
-    			//check privileges to determine if user is allowed to view this friends personal info
-    			if(true)//allowed then do following
-    			{
-	    			this.variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
-	    			this.variables.nextScreen = this.variables.FRIEND_PERSONAL_INFORMATION_SCREEN;
-	    			this.variables.step_FRIEND_MAIN_POSTING_BOARD_SCREEN = 0;
-	        		output = this.screenOutput(variables.nextScreen);
-    			}
-	        	//end if
-	        	else
-	        	{
-	        		output = "Sorry. Your are not allowed to view this region...press any key to continue";
-	        		
-	        		this.variables.step_FRIEND_MAIN_POSTING_BOARD_SCREEN++;
-	        	}
-	        	//end else
-        	//	step_MAIN_POSTING_BOARD++;
-    		}
-    		//friend announcements screen
-    		if(input.equals("2"))
-    		{
-    			//check privileges to determine if user is allowed to view this friends personal info
-    			//if allowed then do following
-    			if(true)
-    			{
-    				
-    			
-	    			this.variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
-	    			this.variables.nextScreen = this.variables.FRIEND_ANNOUNCEMENTS_SCREEN;
-	        		
-	    			this.variables.step_FRIEND_MAIN_POSTING_BOARD_SCREEN = 0;
-	        		output = this.screenOutput(variables.nextScreen);
-    			}
-        		
-        		//end if
-	        	else
-	        	{
-	        		output = "Sorry. Your are not allowed to view this region...press any key to continue";
-	        		
-	        		this.variables.step_FRIEND_MAIN_POSTING_BOARD_SCREEN++;
-	        	}
-	        	//end else
-        		
-    		}
-    		//friend research publications screen
-    		else if(input.equals("3"))
-    		{
-    			//check privileges to determine if user is allowed to view this friends personal info
-    			//if allowed then do following
-    			if(true)
-    			{
-	    			this.variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
-	    			this.variables.nextScreen = this.variables.FRIEND_RESEARCH_PUBLICATIONS_SCREEN;
-	        		
-	        		output = this.screenOutput(variables.nextScreen);
-	        		this.variables.step_FRIEND_MAIN_POSTING_BOARD_SCREEN = 0;
-    			}
-        		
-        		//end if
-	        	else
-	        	{
-	        		output = "Sorry. Your are not allowed to view this region...press any key to continue";
-	        		
-	        		this.variables.step_FRIEND_MAIN_POSTING_BOARD_SCREEN++;
-	        	}
-	        	//end else
-    		}
-    		//friend public discussions screen
-    		if(input.equals("4"))
-    		{
-    			//check privileges to determine if user is allowed to view this friends personal info
-    			//if allowed then do following
-    			if(true)
-    			{
-	    			this.variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
-	    			this.variables.nextScreen = this.variables.FRIEND_PUBLIC_DISCUSSIONS_SCREEN;
-	    			this.variables.step_FRIEND_MAIN_POSTING_BOARD_SCREEN = 0;
-	        		output = this.screenOutput(variables.nextScreen);
-    			}
-        		
-        		//end if
-	        	else
-	        	{
-	        		output = "Sorry. Your are not allowed to view this region...press any key to continue";
-	        		
-	        		this.variables.step_FRIEND_MAIN_POSTING_BOARD_SCREEN++;
-	        	}
-    		}
-    		//research group screen
-    		else if(input.equals("5"))
-    		{
-    			//check privileges to determine if user is allowed to view this friends personal info
-    			//if allowed then do following
-    			if(true)
-    			{
-    				this.variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
-    				this.variables.nextScreen = this.variables.FRIEND_RESEARCH_GROUPS_SCREEN;
-    				this.variables.step_FRIEND_MAIN_POSTING_BOARD_SCREEN = 0;
-    				output = this.screenOutput(variables.nextScreen);
-    			}
-        		
-        		//end if
-	        	else
-	        	{
-	        		output = "Sorry. Your are not allowed to view this region...press any key to continue";
-	        		
-	        		this.variables.step_FRIEND_MAIN_POSTING_BOARD_SCREEN++;
-	        	}
-	        	//end else
-    		}
-    		//return to friends list screen
-    		else if(input.equals("6"))
-    		{
-    			this.variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
-    			this.variables.nextScreen = this.variables.user_FRIENDS_LIST_SCREEN;
-        		
-        		output = this.screenOutput(variables.nextScreen);
-        		this.variables.step_FRIEND_MAIN_POSTING_BOARD_SCREEN = 0;
-    		}
-    		//added -- jma 342 - February 24th 2012
-    		
-    	}
-    	else if(this.variables.step_FRIEND_MAIN_POSTING_BOARD_SCREEN == 1)
-    	{
-    		output = "userInput";
-    		this.variables.step_FRIEND_MAIN_POSTING_BOARD_SCREEN = 0;
-    	}
-    	return output;
-    }
-  //changes made - jma 342 - Feb 25th - 4:43pm
-
     //changes made - jma 342 - feb 18th
     public String personalInformationScreen(String input)
     {
@@ -1126,7 +1152,603 @@ public class DocNetProtocol {
     	return output;
     }
     
-    //changes made - jma 342 - feb 25th - allows user to view a friend's personal information
+    // for research publication screen--rw446 Feb 18th
+    public String researchPublicationsScreen(String input){
+    	String output = "";
+    	
+    	if(this.variables.step_RESEARCH_PUBLICATIONS==0)
+    	{
+    		//add a new publications
+    		if (input.equals("1"))
+    		{
+    			this.variables.chosen_On_Screen_Action = input;
+    			
+    			output = "Please enter the author and name of the " +
+    					"publications(eg. John Smith 'Cancer Research'):";
+    			
+    			this.variables.step_RESEARCH_PUBLICATIONS++;
+    			
+    		}
+    		
+    		//delete a publications
+    		else if (input.equals("2"))
+    		{
+    			this.variables.chosen_On_Screen_Action = input;
+    			
+    			output = "Please select the publications that you want to delete";
+    			
+    			this.variables.step_RESEARCH_PUBLICATIONS++;
+    			
+    		}
+    	}
+    	
+    	else if(this.variables.step_RESEARCH_PUBLICATIONS == 1)
+    	{
+    		output = "userInput";
+    		this.variables.step_RESEARCH_PUBLICATIONS++;
+    		
+    	}
+    	else if (this.variables.step_RESEARCH_PUBLICATIONS == 2)
+    	{
+    		
+    		if(this.variables.chosen_On_Screen_Action.equals("1")) 
+    		{
+    			/*add the publicaitons to db*/
+    			
+    			output = "Research Publications has been added...Press anykey to continue";
+    			
+    			this.variables.step_RESEARCH_PUBLICATIONS++;
+    			
+    		}
+    		//delete publications
+    		else if (this.variables.chosen_On_Screen_Action.equals("2"))
+    		{
+    		   /*verify with the db to delete the publications*/
+    			
+    			output = "Research Publication has been deleted...press any key to continue";
+    			
+    			this.variables.step_RESEARCH_PUBLICATIONS++;
+    		}
+    	}
+    	
+    	else if (this.variables.step_RESEARCH_PUBLICATIONS ==3)
+    	{
+    		output = "userInput";
+    		this.variables.step_RESEARCH_PUBLICATIONS++;
+    	}
+    	
+    	else if (this.variables.step_RESEARCH_PUBLICATIONS == 4)
+    	{
+    		variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+    		variables.nextScreen = this.variables.RESEARCH_PUBLICATIONS_SCREEN;
+    		
+    		output = this.screenOutput(variables.currentScreen);//update screen
+    		variables.step_RESEARCH_PUBLICATIONS=0;
+    	}
+    	return output;
+    }
+    
+    //for announcement screen --rw446 Feb 18th
+    public String announcementScreen(String input)
+    {
+    	String output = "";
+    	
+    	if(this.variables.step_ANNOUNCEMENTS==0)
+    	{
+    		
+    		//add a new announcement
+    		if (input.equals("1"))
+    		{
+    			this.variables.chosen_On_Screen_Action = input;
+    			
+    			output = "Please enter announcement:";
+    			
+    			this.variables.step_ANNOUNCEMENTS++;
+    			
+    		}
+    		
+    		//delete an announcement
+    		else if (input.equals("2"))
+    		{
+    			this.variables.chosen_On_Screen_Action = input;
+    			
+    			output = "Please select the announcement that you want to delete";
+    			
+    			this.variables.step_ANNOUNCEMENTS++;
+    			
+    		}
+    	
+    	}
+    	
+    	else if(this.variables.step_ANNOUNCEMENTS == 1)
+    	{
+    		output = "userInput";
+    		this.variables.step_ANNOUNCEMENTS++;
+    		
+    	}
+    	else if (this.variables.step_ANNOUNCEMENTS == 2)
+    	{
+    		
+    		if(this.variables.chosen_On_Screen_Action.equals("1")) 
+    		{
+    			/*add the announcement to db + Along with the date and time appeneded to the front of the message*/
+    			
+    			output = "Annoucement has been added...Press anykey to continue";
+    			
+    			this.variables.step_ANNOUNCEMENTS++;
+    			
+    		}
+    		//delete publications
+    		else if (this.variables.chosen_On_Screen_Action.equals("2"))
+    		{
+    		   /*delete selected announcement*/
+    			
+    			output = "Announcement has been deleted...press any key to continue";
+    			
+    			this.variables.step_ANNOUNCEMENTS++;
+    		}
+    	}
+    	
+    	else if (this.variables.step_ANNOUNCEMENTS ==3)
+    	{
+    		output = "userInput";
+    		this.variables.step_ANNOUNCEMENTS++;
+    	}
+    	
+    	else if (this.variables.step_ANNOUNCEMENTS == 4)
+    	{
+    		variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+    		variables.nextScreen = this.variables.ANNOUNCEMENTS_SCREEN;
+    		
+    		output = this.screenOutput(variables.currentScreen);//update screen
+    		variables.step_ANNOUNCEMENTS=0;
+    	}
+    	return output;
+    }
+    
+    // for public discussion screen--rw446 Feb 18th
+    //remember to segment the listing of discussions in this screen
+    //by those owned by the user and those that are not owned by the user
+    public String discussionScreen(String input)
+    {
+    	String output = "";
+    	
+    	if(this.variables.step_PUBLIC_DISCUSSIONS==0)
+    	{   
+    		//create new discussion
+    		if(input.equals("1"))
+    		{
+                this.variables.chosen_On_Screen_Action = input;
+    			
+    			output = "Please enter the title of the new discussion";
+    			
+    			this.variables.step_PUBLIC_DISCUSSIONS++;
+    		}
+    		
+    		//delete a discussion
+    		else if(input.equals("2"))
+    		{
+    			this.variables.chosen_On_Screen_Action = input;
+    			output = "Please enter the number of the discussion you want to delete";
+    			this.variables.step_PUBLIC_DISCUSSIONS++;
+    		}
+    	}
+    	
+    	else if (this.variables.step_PUBLIC_DISCUSSIONS ==1)
+    	{
+    		output = "userInput";
+    		this.variables.step_PUBLIC_DISCUSSIONS++;
+    	}
+    	
+    	else if(this.variables.step_PUBLIC_DISCUSSIONS==2)
+    	{
+    		
+    		if(this.variables.chosen_On_Screen_Action.equals("1"))
+    		{
+    			//insert discussion into discussions table in db
+    			//retrieve id of discussion last inserted and store in variables.publicDiscussionID;
+    			output = "Discussion has been created...press any key to continue";
+    			variables.createdPublicDiscussion = true;
+    			this.variables.step_PUBLIC_DISCUSSIONS++;
+    		}
+    		
+    		//confirm the desire to delete selected chosen discussion.
+    		else if(this.variables.chosen_On_Screen_Action.equals("2"))
+    		{
+    			output = "Are you sure(Yes,No): ";
+    			
+    			this.variables.step_PUBLIC_DISCUSSIONS++;
+    		}
+    	}
+    	
+    	else if (this.variables.step_PUBLIC_DISCUSSIONS ==3)
+    	{
+    		
+			output = "userInput";
+    		this.variables.step_PUBLIC_DISCUSSIONS++;	
+    		
+    	}
+    	
+    	else if (this.variables.step_PUBLIC_DISCUSSIONS ==4)
+    	{
+    		if(this.variables.chosen_On_Screen_Action.equals("1"))
+    		{
+    			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+	    		variables.nextScreen = this.variables.CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN;
+	    		
+	    		output = this.screenOutput(variables.currentScreen);
+	    		variables.step_PUBLIC_DISCUSSIONS=0;
+    		}
+    		
+    		//after the user confirms the choice either carry out delete operation or cancel the delete operation
+    		else if(this.variables.chosen_On_Screen_Action.equals("2"))
+    		{
+    			if(input.toLowerCase().equals("yes"))
+    			{
+    				/*delete the topic from db*/
+    				output = "Discussion has been deleted...press any key to continue";
+    				
+    				this.variables.step_PUBLIC_DISCUSSIONS++;
+    			}
+    			else if(input.toLowerCase().equals("no"))
+    			{
+    				output = "Deletion operation cancelled...press any key to continue";
+    				
+    				this.variables.step_PUBLIC_DISCUSSIONS++;
+    			}
+    		}
+    		
+    	}
+    	else if (this.variables.step_PUBLIC_DISCUSSIONS == 5)
+    	{
+    		
+    		if(this.variables.chosen_On_Screen_Action.equals("2"))
+    		{
+    			output = "userInput";
+        		this.variables.step_PUBLIC_DISCUSSIONS++;
+    		}
+    	}
+    	
+    	else if (this.variables.step_PUBLIC_DISCUSSIONS == 6)
+    	{
+    		//delete operation protocol is complete...so refresh disucssions screen
+    		if(this.variables.chosen_On_Screen_Action.equals("2"))
+    		{    			
+    			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+	    		variables.nextScreen = this.variables.PUBLIC_DISCUSSIONS_SCREEN;
+	    		
+	    		output = this.screenOutput(variables.currentScreen);//update screen
+	    		variables.step_PUBLIC_DISCUSSIONS=0;
+    		}
+    	}
+    	
+    	return output;
+    }
+    
+    //new screen for display all comments for one specific topic--rw446 Feb 18th
+    public String discussionTopicScreen(String input)
+    {
+    	String output = "";
+    	if(this.variables.step_PUBLIC_DISCUSSION_TOPIC==0)
+    	{
+    		if(input.equals("a"))
+    		{
+    			this.variables.chosen_On_Screen_Action = input;
+    			output = "Please enter the comments\n";
+    			this.variables.step_PUBLIC_DISCUSSION_TOPIC++;
+    		}
+    		else if(input.equals("b"))
+    		{
+    			this.variables.chosen_On_Screen_Action = input;
+    			output = "Please seletc the comment you want to delete\n";
+    			this.variables.step_PUBLIC_DISCUSSION_TOPIC++;
+    		}
+    	}
+    	else if(this.variables.step_PUBLIC_DISCUSSION_TOPIC==1)
+    	{
+    		output="userInput";
+    		this.variables.step_PUBLIC_DISCUSSION_TOPIC++;
+    	}
+    	else if(this.variables.step_PUBLIC_DISCUSSION_TOPIC==2)
+    	{
+    		if(this.variables.chosen_On_Screen_Action.equals("a"))
+    		{
+    			/*add comments to database*/
+    			output = "Comments has been added to db...press anykey to continue\n";
+    			this.variables.step_PUBLIC_DISCUSSION_TOPIC++;
+    			
+    		}
+    		else if(this.variables.chosen_On_Screen_Action.equals("b"))
+    		{
+    			/*delete comments from database*/
+    			output = "Comments has been deleted successfully..press anykey to continue\n";
+    			this.variables.step_PUBLIC_DISCUSSION_TOPIC++;
+    		}
+    	}
+    	else if(this.variables.step_PUBLIC_DISCUSSION_TOPIC==3)
+    	{
+    		output = "userInput";
+    		this.variables.step_PUBLIC_DISCUSSION_TOPIC++;
+    	}
+    	else if(this.variables.step_PUBLIC_DISCUSSION_TOPIC==4)
+    	{
+    		variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+    		variables.nextScreen = this.variables.PUBLIC_DISCUSSION_TOPIC_SCREEN;
+    		
+    		output = this.screenOutput(variables.currentScreen);//update screen
+    		variables.step_PUBLIC_DISCUSSION_TOPIC=0;
+    	}
+    	return output;
+    }
+
+   public String created_PubDisc_ResGrp_Priviliges_Screen(String input)
+   {
+	   String output = "";
+	   
+		if(this.variables.step_CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN == 0)
+	   	{
+	   		//set view privileges
+	   		if(input.equals("1") || input.equals("2"))
+	   		{
+	   			output = "display the group options from db";
+	   			variables.chosen_On_Screen_Action = input;
+	   			this.variables.step_CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN++;
+	   			
+	   		}
+	   		
+	   	}
+		
+		//set post privileges
+		else if(this.variables.step_CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN == 1)
+		{
+			output = "Please select the number for desired group";
+   			
+   			this.variables.step_CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN++;
+   			
+		}
+		
+		else if(this.variables.step_CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN == 2)
+		{
+			output = "userInput";
+   			
+   			this.variables.step_CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN++;
+		}
+		
+		else if(this.variables.step_CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN == 3)
+		{
+			//view privileges
+			if(variables.chosen_On_Screen_Action.equals("1"))
+			{
+				if(variables.createdPublicDiscussion)
+				{
+					/*added choosen group number along with discussion id and user id to the view privileges table
+					 * for discussions
+					 */
+					
+					if(!input.equals("4"))
+					{
+						output = "View Privileges have been set for discussion..press any key to continue";
+						this.variables.step_CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN++;
+					}
+					
+					//add else which would take you to a screen to select specific friends
+				}
+				
+				else if(variables.createdResearchGroup)
+				{
+					/*added choosen group number along with res grp id and user id to the view privileges table
+					 * for res grps
+					 */
+					
+					if(!input.equals("4"))
+					{
+						output = "View Privileges have been set for discussion..press any key to continue";
+						this.variables.step_CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN++;
+					}
+					
+					//add else which would take you to a screen to select specific friends
+				}
+			}
+			//post privileges
+			else if(variables.chosen_On_Screen_Action.equals("2"))
+			{
+				if(variables.createdPublicDiscussion)
+				{
+					/*added choosen group number along with discussion id and user id to the post privileges table
+					 * for discussions
+					 */
+					
+					if(!input.equals("4"))
+					{
+						output = "Post Privileges have been set for discussion..press any key to continue";
+						this.variables.step_CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN++;
+					}
+					
+					//add else which would take you to a screen to select specific friends
+				}
+				
+				else if(variables.createdResearchGroup)
+				{
+					/*added choosen group number along with res grp id and user id to the post privileges table
+					 * for res grps
+					 */
+					
+					if(!input.equals("4"))
+					{
+						output = "View Privileges have been set for discussion..press any key to continue";
+						this.variables.step_CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN++;
+					}
+					
+					//add else which would take you to a screen to select specific friends
+				}
+			}
+			
+			else if(this.variables.step_CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN == 4)
+			{
+				output = "userInput";
+	   			
+	   			this.variables.step_CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN++;
+	   			
+			}
+			
+			else if(this.variables.step_CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN == 5)
+			{
+				//at this stage..check to see if both sets of privileges have been set...this would indicate
+				//if to refresh the current screen or return to the parent screen...use boolean variables
+				//do indicate when both privileges have been set.
+				
+				//requisite created discussion/res grp bools back to false on completion
+	   			
+			}
+				
+		}
+
+		
+	   return output;
+   }
+    //changes made - jma 342 - Feb 25th - function that allows a user to access various functions of
+    //a friends posting board
+    public String friendMainPostingBoardSreen(String input)
+    {
+    	String output = "";
+    	
+    	if(this.variables.step_FRIEND_MAIN_POSTING_BOARD_SCREEN == 0)
+    	{
+    		//friend personal information screen
+    		if(input.equals("1"))
+    		{
+    			//check privileges to determine if user is allowed to view this friends personal info
+    			if(true)//allowed then do following
+    			{
+	    			this.variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+	    			this.variables.nextScreen = this.variables.FRIEND_PERSONAL_INFORMATION_SCREEN;
+	    			this.variables.step_FRIEND_MAIN_POSTING_BOARD_SCREEN = 0;
+	        		output = this.screenOutput(variables.nextScreen);
+    			}
+	        	//end if
+	        	else
+	        	{
+	        		output = "Sorry. Your are not allowed to view this region...press any key to continue";
+	        		
+	        		this.variables.step_FRIEND_MAIN_POSTING_BOARD_SCREEN++;
+	        	}
+	        	//end else
+        	//	step_MAIN_POSTING_BOARD++;
+    		}
+    		//friend announcements screen
+    		if(input.equals("2"))
+    		{
+    			//check privileges to determine if user is allowed to view this friends personal info
+    			//if allowed then do following
+    			if(true)
+    			{
+    				
+    			
+	    			this.variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+	    			this.variables.nextScreen = this.variables.FRIEND_ANNOUNCEMENTS_SCREEN;
+	        		
+	    			this.variables.step_FRIEND_MAIN_POSTING_BOARD_SCREEN = 0;
+	        		output = this.screenOutput(variables.nextScreen);
+    			}
+        		
+        		//end if
+	        	else
+	        	{
+	        		output = "Sorry. Your are not allowed to view this region...press any key to continue";
+	        		
+	        		this.variables.step_FRIEND_MAIN_POSTING_BOARD_SCREEN++;
+	        	}
+	        	//end else
+        		
+    		}
+    		//friend research publications screen
+    		else if(input.equals("3"))
+    		{
+    			//check privileges to determine if user is allowed to view this friends personal info
+    			//if allowed then do following
+    			if(true)
+    			{
+	    			this.variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+	    			this.variables.nextScreen = this.variables.FRIEND_RESEARCH_PUBLICATIONS_SCREEN;
+	        		
+	        		output = this.screenOutput(variables.nextScreen);
+	        		this.variables.step_FRIEND_MAIN_POSTING_BOARD_SCREEN = 0;
+    			}
+        		
+        		//end if
+	        	else
+	        	{
+	        		output = "Sorry. Your are not allowed to view this region...press any key to continue";
+	        		
+	        		this.variables.step_FRIEND_MAIN_POSTING_BOARD_SCREEN++;
+	        	}
+	        	//end else
+    		}
+    		//friend public discussions screen
+    		if(input.equals("4"))
+    		{
+    			//check privileges to determine if user is allowed to view this friends personal info
+    			//if allowed then do following
+    			if(true)
+    			{
+	    			this.variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+	    			this.variables.nextScreen = this.variables.FRIEND_PUBLIC_DISCUSSIONS_SCREEN;
+	    			this.variables.step_FRIEND_MAIN_POSTING_BOARD_SCREEN = 0;
+	        		output = this.screenOutput(variables.nextScreen);
+    			}
+        		
+        		//end if
+	        	else
+	        	{
+	        		output = "Sorry. Your are not allowed to view this region...press any key to continue";
+	        		
+	        		this.variables.step_FRIEND_MAIN_POSTING_BOARD_SCREEN++;
+	        	}
+    		}
+    		//research group screen
+    		else if(input.equals("5"))
+    		{
+    			//check privileges to determine if user is allowed to view this friends personal info
+    			//if allowed then do following
+    			if(true)
+    			{
+    				this.variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+    				this.variables.nextScreen = this.variables.FRIEND_RESEARCH_GROUPS_SCREEN;
+    				this.variables.step_FRIEND_MAIN_POSTING_BOARD_SCREEN = 0;
+    				output = this.screenOutput(variables.nextScreen);
+    			}
+        		
+        		//end if
+	        	else
+	        	{
+	        		output = "Sorry. Your are not allowed to view this region...press any key to continue";
+	        		
+	        		this.variables.step_FRIEND_MAIN_POSTING_BOARD_SCREEN++;
+	        	}
+	        	//end else
+    		}
+    		//return to friends list screen
+    		else if(input.equals("6"))
+    		{
+    			this.variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+    			this.variables.nextScreen = this.variables.user_FRIENDS_LIST_SCREEN;
+        		
+        		output = this.screenOutput(variables.nextScreen);
+        		this.variables.step_FRIEND_MAIN_POSTING_BOARD_SCREEN = 0;
+    		}
+    		//added -- jma 342 - February 24th 2012
+    		
+    	}
+    	else if(this.variables.step_FRIEND_MAIN_POSTING_BOARD_SCREEN == 1)
+    	{
+    		output = "userInput";
+    		this.variables.step_FRIEND_MAIN_POSTING_BOARD_SCREEN = 0;
+    	}
+    	return output;
+    }
+  //changes made - jma 342 - Feb 25th - 4:43pm
+
+     //changes made - jma 342 - feb 25th - allows user to view a friend's personal information
     public String friendPersonalInformationScreen(String input)
     {
     	String output = "";
