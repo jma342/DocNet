@@ -3,10 +3,12 @@ import java.io.*;
 import java.sql.*;
 
 
-public class DocNetServer {
+public class DocNetServer 
+{
 	private static final int PORT_NUMBER = 427;
 	
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException 
+    {
 
     	//jma 342 -- Feb 21st
     	
@@ -28,11 +30,14 @@ public class DocNetServer {
         //String dbPassword = "CS54305188";
         String dbPassword = "";
 
-        try {
+        try 
+        {
             con_1 = DriverManager.getConnection(dbconn_1, dbUser, dbPassword);
             con_2 = DriverManager.getConnection(dbconn_2, dbUser, dbPassword);
             System.out.println("Connected to DB");
-        } catch (SQLException ex) {
+        } 
+        catch (SQLException ex) 
+        {
             System.out.println(ex.toString());
 
         }
@@ -40,9 +45,12 @@ public class DocNetServer {
         ServerSocket serverSocket = null;
         boolean listening = true;
  
-        try {
+        try 
+        {
             serverSocket = new ServerSocket(PORT_NUMBER);
-        } catch (IOException e) {
+        } 
+        catch (IOException e) 
+        {
             System.err.println("Could not listen on port: " + PORT_NUMBER);
             System.exit(-1);
         }
@@ -55,15 +63,19 @@ public class DocNetServer {
         serverSocket.close();
         System.out.println("Server stopped");
         
-        try {
-        	if (con_1 != null) {
+        try 
+        {
+        	if (con_1 != null) 
+        	{
         		con_1.close();
         	}
-        	if (con_2 != null) {
+        	if (con_2 != null) 
+        	{
         		con_2.close();
         	}
         } 
-        catch (SQLException ex) {
+        catch (SQLException ex) 
+        {
         	System.out.println(ex.toString());
         }
         System.out.println("Disconnected from DB");
