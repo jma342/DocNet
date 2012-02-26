@@ -12,13 +12,26 @@ public class DocNetProtocol {
     private static final int RESEARCH_PUBLICATIONS_SCREEN = 4;
     private static final int PUBLIC_DISCUSSIONS_SCREEN = 5;
     private static final int RESEARCH_GROUPS_SCREEN = 6;
-    private static final int FRIENDS_LIST_SCREEN = 7;
+    private static final int user_FRIENDS_LIST_SCREEN = 7;
     private static final int CURRENT_OUTPUT_SCREEN = 8;
     private static final int MARITAL_STATUS_SCREEN = 9;//change made - jma342 - Feb 18th
     private static final int GENDER_SCREEN = 10;//change made - jma342 - Feb 18th
     private static final int ADD_FRIEND_SCREEN = 11;//change made - jma342 - Feb 19th
-    private static final int FRIEND_REQUESTS_SCREEN = 12;//change made - jma342 - Feb 19th
+    private static final int user_FRIEND_REQUESTS_SCREEN = 12;//change made - jma342 - Feb 19th
     private static final int PRIVILEGES_SCREEN = 13;//added -- jma 342 - February 24th 2012
+    
+    
+    /*screens for accessing a friend's screens*/
+    private static final int FRIEND_MAIN_POSTING_BOARD_SCREEN = 14;//added -- jma 342 - February 25th 2012
+    private static final int FRIEND_PERSONAL_INFORMATION_SCREEN = 15;//added -- jma 342 - February 25th 2012
+    private static final int FRIEND_ANNOUNCEMENTS_SCREEN = 16;//added -- jma 342 - February 25th 2012
+    private static final int FRIEND_RESEARCH_PUBLICATIONS_SCREEN = 17;//added -- jma 342 - February 25th 2012
+    private static final int FRIEND_PUBLIC_DISCUSSIONS_SCREEN = 18;//added -- jma 342 - February 25th 2012
+    private static final int FRIEND_RESEARCH_GROUPS_SCREEN = 19;//added -- jma 342 - February 25th 2012
+    private static final int FRIEND_FRIENDS_LIST_SCREEN = 20;//added -- jma 342 - February 25th 2012
+    
+    /*screens for accessing a friend's screens*/
+    
     //MENUS---jma342---Feb 14th
     
     //current step in a given conversation relative to each menu---jma342---Feb 14th
@@ -35,9 +48,20 @@ public class DocNetProtocol {
     private int step_MARITAL_STATUS = 0;//change made - jma342 - Feb 18th
     private int step_GENDER = 0;//change made - jma342 - Feb 18th
     private int step_ADD_FRIEND = 0;//change made - jma342 - Feb 19th
-    private int step_FRIEND_REQUEST = 0;//change made - jma342 - Feb 19th
+    private int step_user_FRIEND_REQUEST = 0;//change made - jma342 - Feb 19th
     private int step_ERROR_CHECK = 0;//jma342 - Feb 21st
     private int step_PRIVILEGES_SCREEN = 0;//added -- jma 342 - February 24th 2012
+    
+    /*current step in screens for accessing a friend's screens*/
+    private int step_FRIEND_MAIN_POSTING_BOARD_SCREEN = 0;//added -- jma 342 - February 25th 2012
+    private int step_FRIEND_PERSONAL_INFORMATION_SCREEN = 0;//added -- jma 342 - February 25th 2012
+    private int step_FRIEND_ANNOUNCEMENTS_SCREEN = 0;//added -- jma 342 - February 25th 2012
+    private int step_FRIEND_RESEARCH_PUBLICATIONS_SCREEN = 0;//added -- jma 342 - February 25th 2012
+    private int step_FRIEND_PUBLIC_DISCUSSIONS_SCREEN = 0;//added -- jma 342 - February 25th 2012
+    private int step_FRIEND_RESEARCH_GROUPS_SCREEN = 0;//added -- jma 342 - February 25th 2012
+    private int step_FRIEND_user_FRIENDS_LIST_SCREEN = 0;//added -- jma 342 - February 25th 2012
+    /*current step in screens for accessing a friend's screens*/
+    
   //current step in a given conversation relative to each menu---jma342---Feb 14th
     
     //yb85 Feb, 25 @6:56pm
@@ -97,9 +121,9 @@ public class DocNetProtocol {
     	}
     	//change made - jma 342 - feb 18th
     	
-    	else if(currentScreen == FRIENDS_LIST_SCREEN)
+    	else if(currentScreen == user_FRIENDS_LIST_SCREEN)
     	{
-    		output = this.friendsListSreen(input);
+    		output = this.user_friendsListSreen(input);
     	}
     	
     	//change made - jma 342 - feb 19th
@@ -108,11 +132,26 @@ public class DocNetProtocol {
     		output = this.addFriendSreen(input);
     	}
     	
-    	else if(currentScreen == this.FRIEND_REQUESTS_SCREEN)
+    	else if(currentScreen == this.user_FRIEND_REQUESTS_SCREEN)
     	{
-    		output = this.friendRequestScreen(input);
+    		output = this.user_friendRequestScreen(input);
     	}
     	//change made - jma 342 - feb 19th
+    	
+    	//change made - jma342 - feb25th
+    	else if(currentScreen == this.FRIEND_MAIN_POSTING_BOARD_SCREEN)
+    	{
+    		output = this.friendMainPostingBoardSreen(input);
+    	}
+    	else if(currentScreen == this.FRIEND_PERSONAL_INFORMATION_SCREEN)
+    	{
+    		output = this.friendPersonalInformationScreen(input);
+    	}
+    	else if(currentScreen == this.FRIEND_FRIENDS_LIST_SCREEN)
+    	{
+    		output = this.friend_friendsListSreen(input);
+    	}
+    	//change made - jma342 - feb25th
     	
     	else if(currentScreen == CURRENT_OUTPUT_SCREEN)
     	{
@@ -127,8 +166,8 @@ public class DocNetProtocol {
     {
     	String output = "";
     	
-    	//changes made - jma 342 - Feb 18th
-    	if(screen == this.MAIN_POSTING_BOARD_SCREEN)
+    	//changes made - jma 342 - Feb 25th 4:20pm
+    	if(screen == this.MAIN_POSTING_BOARD_SCREEN || screen == this.FRIEND_MAIN_POSTING_BOARD_SCREEN)
     	{
     		
     		if(this.step_SCREEN_OUTPUT == 0)
@@ -153,19 +192,36 @@ public class DocNetProtocol {
     		}
     		else if(this.step_SCREEN_OUTPUT == 4)
     		{
+    				
     			output = "5.Research Groups";
+    			
     			step_SCREEN_OUTPUT++;
     		}
     		
-    		//added -- jma 342 - February 24th 2012
     		else if(this.step_SCREEN_OUTPUT == 5)
     		{
-    			output = "6.Priviliges(Posting Boards/Regions)";
+    			//changes made - jma 342 - Feb 25th 4:20pm - only allows this option to be viewed if 
+    			//owner of main posting board is person viewing it
+    			if(screen == this.MAIN_POSTING_BOARD_SCREEN)
+    			{
+    				output = "6.Priviliges(Posting Boards/Regions)";
+    			}
+    			else if(screen == this.FRIEND_MAIN_POSTING_BOARD_SCREEN)
+    			{
+    				output = "6.Return to Friends List Screen";
+    			}
+    			
     			step_SCREEN_OUTPUT++;
     		}
     		else if(this.step_SCREEN_OUTPUT == 6)
     		{
-    			output = "7.Log Out";
+    			//changes made - jma 342 - Feb 25th 4:20pm - only allows this option to be viewed if 
+    			//owner of main posting board is person viewing it
+    			if(screen == this.MAIN_POSTING_BOARD_SCREEN)
+    			{
+    				output = "7.Log Out";
+    			}
+    			
     			step_SCREEN_OUTPUT++;
     		}
     		//added -- jma 342 - February 24th 2012
@@ -182,7 +238,7 @@ public class DocNetProtocol {
     			output = "userInput";
     		}
     	}
-    	else if(screen == this.PERSONAL_INFORMATION_SCREEN)
+    	else if(screen == this.PERSONAL_INFORMATION_SCREEN || screen == this.FRIEND_PERSONAL_INFORMATION_SCREEN)
     	{
     		//try to figure how to clearscreen
     		if(this.step_SCREEN_OUTPUT == 0)
@@ -255,7 +311,14 @@ public class DocNetProtocol {
     		//jma342 - Feb 25th - 2:42 pm
     		else if(step_SCREEN_OUTPUT == 13)
     		{
-    			output = "14. Return to Main Posting Board";
+    			if(screen == this.PERSONAL_INFORMATION_SCREEN)
+    			{
+    				output = "14. Return to Main Posting Board";
+    			}
+    			else if(screen == this.FRIEND_PERSONAL_INFORMATION_SCREEN)
+    			{
+    				output = "14. Return to Friend's Main Posting Board";
+    			}
     			step_SCREEN_OUTPUT++;
     		}
     		
@@ -277,7 +340,7 @@ public class DocNetProtocol {
     	//changes made - jma 342 - Feb 18th
     	
     	//change made - jma 342 - feb 19th
-    	else if(screen == this.FRIENDS_LIST_SCREEN)
+    	else if(screen == this.user_FRIENDS_LIST_SCREEN || screen == this.FRIEND_FRIENDS_LIST_SCREEN)
     	{
     		if(this.step_SCREEN_OUTPUT == 0)
     		{
@@ -298,8 +361,22 @@ public class DocNetProtocol {
     		
     		else if(this.step_SCREEN_OUTPUT == 2)
     		{
-    			output = "1. Add a friend";
-    			step_SCREEN_OUTPUT++;
+    			//jma342 - Feb 25th - 7:00pm - allows user to view a friend's friend list
+    			//with only the necessary actions.
+    			
+    			if(screen == this.user_FRIENDS_LIST_SCREEN)
+    			{
+    				output = "1. Add a friend";
+    				step_SCREEN_OUTPUT++;
+    			}
+    			else if(screen == this.FRIEND_FRIENDS_LIST_SCREEN)
+    			{
+    				this.step_SCREEN_OUTPUT = 6;
+    			}
+    			
+    			//jma342 - Feb 25th - 7:00pm - allows user to view a friend's friend list
+    			//with only the necessary actions.
+    			
     		}
     		
     		else if(this.step_SCREEN_OUTPUT == 3)
@@ -320,8 +397,17 @@ public class DocNetProtocol {
     		//jma342 - Feb 25th - 2:57pm
     		else if(this.step_SCREEN_OUTPUT == 6)
     		{
-    			output ="5. Return to Personal Information";
+    			if(screen == this.user_FRIENDS_LIST_SCREEN)
+    			{
+    				output ="5. Return to Personal Information";
+
+    			}
+    			else if(screen == this.FRIEND_FRIENDS_LIST_SCREEN)
+    			{
+    				output ="1. Return to Friend's Personal Information";
+    			}
     			step_SCREEN_OUTPUT++;
+    			
     		}
     		//jma342 - Feb 25th - 2:57pm
     		else
@@ -335,10 +421,10 @@ public class DocNetProtocol {
     	
     	else if(screen == this.ADD_FRIEND_SCREEN)
     	{
-    		
+    		//jma342 - Feb 25 - 3:22pm - informs user to return to previous screen
     		if(this.step_SCREEN_OUTPUT == 0)
     		{
-    			output = "Please enter the first name and last name(eg. John Doe):";
+    			output = "Please enter the first name and last name(eg. John Doe, enter EXIT to return to previous screen):";
     			step_SCREEN_OUTPUT++;
     		}
     		else if(this.step_SCREEN_OUTPUT == 1)
@@ -349,7 +435,7 @@ public class DocNetProtocol {
     		}
     	}
     	
-    	else if(screen == this.FRIEND_REQUESTS_SCREEN)
+    	else if(screen == this.user_FRIEND_REQUESTS_SCREEN)
     	{
     	
     		if(this.step_SCREEN_OUTPUT == 0)
@@ -362,7 +448,7 @@ public class DocNetProtocol {
     		}
     		else if(this.step_SCREEN_OUTPUT == 1)
     		{
-				output = "Please enter the number of the desired friend from the list";
+				output = "Please enter the number of the desired friend from the list(enter -1 to cancel)";
 				step_SCREEN_OUTPUT++;
     		}
     		else if(this.step_SCREEN_OUTPUT == 2)
@@ -764,6 +850,148 @@ public class DocNetProtocol {
     }
   //changes made - jma 342 - Feb 18th
 
+    //changes made - jma 342 - Feb 25th - function that allows a user to access various functions of
+    //a friends posting board
+    public String friendMainPostingBoardSreen(String input)
+    {
+    	String output = "";
+    	
+    	if(this.step_FRIEND_MAIN_POSTING_BOARD_SCREEN == 0)
+    	{
+    		//friend personal information screen
+    		if(input.equals("1"))
+    		{
+    			//check privileges to determine if user is allowed to view this friends personal info
+    			if(true)//allowed then do following
+    			{
+	    			this.currentScreen = this.CURRENT_OUTPUT_SCREEN;
+	    			this.nextScreen = this.FRIEND_PERSONAL_INFORMATION_SCREEN;
+	    			this.step_FRIEND_MAIN_POSTING_BOARD_SCREEN = 0;
+	        		output = this.screenOutput(nextScreen);
+    			}
+	        	//end if
+	        	else
+	        	{
+	        		output = "Sorry. Your are not allowed to view this region...press any key to continue";
+	        		
+	        		this.step_FRIEND_MAIN_POSTING_BOARD_SCREEN++;
+	        	}
+	        	//end else
+        	//	step_MAIN_POSTING_BOARD++;
+    		}
+    		//friend announcements screen
+    		if(input.equals("2"))
+    		{
+    			//check privileges to determine if user is allowed to view this friends personal info
+    			//if allowed then do following
+    			if(true)
+    			{
+    				
+    			
+	    			this.currentScreen = this.CURRENT_OUTPUT_SCREEN;
+	    			this.nextScreen = this.FRIEND_ANNOUNCEMENTS_SCREEN;
+	        		
+	    			this.step_FRIEND_MAIN_POSTING_BOARD_SCREEN = 0;
+	        		output = this.screenOutput(nextScreen);
+    			}
+        		
+        		//end if
+	        	else
+	        	{
+	        		output = "Sorry. Your are not allowed to view this region...press any key to continue";
+	        		
+	        		this.step_FRIEND_MAIN_POSTING_BOARD_SCREEN++;
+	        	}
+	        	//end else
+        		
+    		}
+    		//friend research publications screen
+    		else if(input.equals("3"))
+    		{
+    			//check privileges to determine if user is allowed to view this friends personal info
+    			//if allowed then do following
+    			if(true)
+    			{
+	    			this.currentScreen = this.CURRENT_OUTPUT_SCREEN;
+	    			this.nextScreen = this.FRIEND_RESEARCH_PUBLICATIONS_SCREEN;
+	        		
+	        		output = this.screenOutput(nextScreen);
+	        		this.step_FRIEND_MAIN_POSTING_BOARD_SCREEN = 0;
+    			}
+        		
+        		//end if
+	        	else
+	        	{
+	        		output = "Sorry. Your are not allowed to view this region...press any key to continue";
+	        		
+	        		this.step_FRIEND_MAIN_POSTING_BOARD_SCREEN++;
+	        	}
+	        	//end else
+    		}
+    		//friend public discussions screen
+    		if(input.equals("4"))
+    		{
+    			//check privileges to determine if user is allowed to view this friends personal info
+    			//if allowed then do following
+    			if(true)
+    			{
+	    			this.currentScreen = this.CURRENT_OUTPUT_SCREEN;
+	    			this.nextScreen = this.FRIEND_PUBLIC_DISCUSSIONS_SCREEN;
+	    			this.step_FRIEND_MAIN_POSTING_BOARD_SCREEN = 0;
+	        		output = this.screenOutput(nextScreen);
+    			}
+        		
+        		//end if
+	        	else
+	        	{
+	        		output = "Sorry. Your are not allowed to view this region...press any key to continue";
+	        		
+	        		this.step_FRIEND_MAIN_POSTING_BOARD_SCREEN++;
+	        	}
+    		}
+    		//research group screen
+    		else if(input.equals("5"))
+    		{
+    			//check privileges to determine if user is allowed to view this friends personal info
+    			//if allowed then do following
+    			if(true)
+    			{
+    				this.currentScreen = this.CURRENT_OUTPUT_SCREEN;
+    				this.nextScreen = this.FRIEND_RESEARCH_GROUPS_SCREEN;
+    				this.step_FRIEND_MAIN_POSTING_BOARD_SCREEN = 0;
+    				output = this.screenOutput(nextScreen);
+    			}
+        		
+        		//end if
+	        	else
+	        	{
+	        		output = "Sorry. Your are not allowed to view this region...press any key to continue";
+	        		
+	        		this.step_FRIEND_MAIN_POSTING_BOARD_SCREEN++;
+	        	}
+	        	//end else
+    		}
+    		//return to friends list screen
+    		else if(input.equals("6"))
+    		{
+    			this.currentScreen = this.CURRENT_OUTPUT_SCREEN;
+    			this.nextScreen = this.user_FRIENDS_LIST_SCREEN;
+        		
+        		output = this.screenOutput(nextScreen);
+        		this.step_FRIEND_MAIN_POSTING_BOARD_SCREEN = 0;
+    		}
+    		//added -- jma 342 - February 24th 2012
+    		
+    	}
+    	else if(this.step_FRIEND_MAIN_POSTING_BOARD_SCREEN == 1)
+    	{
+    		output = "userInput";
+    		this.step_FRIEND_MAIN_POSTING_BOARD_SCREEN = 0;
+    	}
+    	return output;
+    }
+  //changes made - jma 342 - Feb 25th - 4:43pm
+
     //changes made - jma 342 - feb 18th
     public String personalInformationScreen(String input)
     {
@@ -883,7 +1111,7 @@ public class DocNetProtocol {
 				editField_On_Screen = "Friends List";
 				
 				currentScreen = this.CURRENT_OUTPUT_SCREEN;
-				this.nextScreen = this.FRIENDS_LIST_SCREEN;
+				this.nextScreen = this.user_FRIENDS_LIST_SCREEN;
 				
 				//retrieve recordset of friends list from database
 	    		output = this.screenOutput(nextScreen /*,recordset of friendslist*/); 
@@ -933,6 +1161,45 @@ public class DocNetProtocol {
     	
     	return output;
     }
+    
+    //changes made - jma 342 - feb 25th - allows user to view a friend's personal information
+    public String friendPersonalInformationScreen(String input)
+    {
+    	String output = "";
+    	
+    	if(this.step_PERSONAL_INFORMATION == 0)
+    	{
+			//View Friend's Friends list
+			if(input.equals("13"))
+			{
+				editField_On_Screen = "Friends List";
+				
+				currentScreen = this.CURRENT_OUTPUT_SCREEN;
+				this.nextScreen = this.FRIEND_FRIENDS_LIST_SCREEN;
+				
+				//retrieve recordset of friends list from database
+	    		output = this.screenOutput(nextScreen /*,recordset of friendslist*/); 
+	    		
+			}
+			
+			//Return to Friend Main Posting Board
+			else if(input.equals("14"))
+			{
+        		
+				step_PERSONAL_INFORMATION = 0;
+				
+				currentScreen = this.CURRENT_OUTPUT_SCREEN;
+				this.nextScreen = this.FRIEND_MAIN_POSTING_BOARD_SCREEN;
+				
+	    		output = this.screenOutput(nextScreen /*,recordset of friendslist*/); 
+	    		
+			}
+			
+    	}
+    	
+    	return output;
+    }
+
     
     //change made - jma 342 - Feb 18th
     public String maritalStatusScreen(String input)
@@ -1008,7 +1275,7 @@ public class DocNetProtocol {
 
 
   //change made - jma 342 - Feb 19th	
-    public String friendsListSreen(String input)
+    public String user_friendsListSreen(String input)
     {
     	String output = " ";
     	
@@ -1030,15 +1297,26 @@ public class DocNetProtocol {
     		{
     			this.chosen_On_Screen_Action = input;
     			
-        		output = "Please enter the number of the desired friend from the list";
+        		output = "Please enter the number of the desired friend from the list(enter -1 to cancel):";
         	
         		this.step_FRIENDS_LIST++;
     		}
     		
+    		//View Friends profile screen
+    		else if(input.equals("3"))
+    		{
+    			this.chosen_On_Screen_Action = input;
+    			
+        		output = "Please enter the number of the desired friend from the list(enter -1 to cancel):";
+        	
+        		this.step_FRIENDS_LIST++;
+    		}
+    		
+    		//Friend requests screen
     		else if(input.equals("4"))
     		{
     			currentScreen = this.CURRENT_OUTPUT_SCREEN;
-    			nextScreen = this.FRIEND_REQUESTS_SCREEN;
+    			nextScreen = this.user_FRIEND_REQUESTS_SCREEN;
     			
     			output = this.screenOutput(nextScreen /*,recordset of friendslist*/);
     			this.step_FRIENDS_LIST=0;
@@ -1068,15 +1346,47 @@ public class DocNetProtocol {
     	{
     		if(this.chosen_On_Screen_Action.equals("2"))
     		{
-    			/*rs.recordset("delete from friends where
-    			userid = userid and friend id = 'id of the friend chosen' or 
-    			userid = 'id of the friend chosen' and friend id = 'user id')*/
-    			
-    			//output = build a string with records from above recordset
-    			
-    			output = "Friend has been deleted...press any key to continue:";
-  
-    			this.step_FRIENDS_LIST++;
+    			//jma342 - Feb 25th - 3:54pm allows user to cancel deletion operation
+    			if(input.equals("-1"))
+    			{
+    				output = "Friend deletion has been cancelled...press any key to continue:";
+    				this.step_FRIENDS_LIST++;
+    			}
+    			else
+    			{
+	    			/*rs.recordset("delete from friends where
+	    			userid = userid and friend id = 'id of the friend chosen' or 
+	    			userid = 'id of the friend chosen' and friend id = 'user id')*/
+	    			
+	    			//output = build a string with records from above recordset
+	    			
+	    			output = "Friend has been deleted...press any key to continue:";
+	  
+	    			this.step_FRIENDS_LIST++;
+    			}
+    			//jma342 - Feb 25th - 3:54pm allows user to cancel deletion operation
+    		}
+    		
+    		else if(this.chosen_On_Screen_Action.equals("3"))
+    		{
+    			//jma342 - Feb 25th - 3:54pm allows user to cancel viewing friend's profile operation
+    			if(input.equals("-1"))
+    			{
+    				output = "Viewing a Friend's profile has been cancelled...press any key to continue:";
+    				this.step_FRIENDS_LIST++;
+    			}
+    			else
+    			{
+	    			/*retrieve recordset with selected friend's necessary information*/
+	    			
+    				currentScreen = this.CURRENT_OUTPUT_SCREEN;
+        			nextScreen = this.FRIEND_MAIN_POSTING_BOARD_SCREEN;
+        			
+        			output = this.screenOutput(nextScreen /*,recordset of friendslist*/);
+        			this.step_FRIENDS_LIST=0;
+        			
+    			}
+    			//jma342 - Feb 25th - 3:54pm allows user to cancel deletion operation
     		}
     	}
     	
@@ -1091,7 +1401,7 @@ public class DocNetProtocol {
     		if(this.chosen_On_Screen_Action.equals("2"))
     		{
     			currentScreen = this.CURRENT_OUTPUT_SCREEN;
-    			nextScreen = this.FRIENDS_LIST_SCREEN;
+    			nextScreen = this.user_FRIENDS_LIST_SCREEN;
     			
     			output = this.screenOutput(nextScreen /*,recordset of friendslist*/);
     			this.step_FRIENDS_LIST = 0;
@@ -1101,7 +1411,34 @@ public class DocNetProtocol {
     	return output;
     }
     //change made - jma 342 - Feb 19th
-    
+
+    //change made - jma 342 - Feb 25th 7:10pm -- allows a user to view a friend's
+    //friend list with the only possibl action of returning to the
+    //previous screen
+    public String friend_friendsListSreen(String input)
+    {
+    	String output = " ";
+    	
+    /*	if(this.step_FRIENDS_LIST == 0)
+    	{
+   */ 		//return to friend's personal information
+    		if(input.equals("1"))
+    		{
+    			currentScreen = this.CURRENT_OUTPUT_SCREEN;
+    			nextScreen = this.FRIEND_PERSONAL_INFORMATION_SCREEN;
+    			
+    			output = this.screenOutput(nextScreen /*,recordset of friendslist*/);
+    			
+    //			this.step_FRIENDS_LIST=0;
+    		}
+    	//}
+    		
+    		return output;
+    }
+  //change made - jma 342 - Feb 25th 7:10pm -- allows a user to view a friend's
+    //friend list with the only possibl action of returning to the
+    //previous screen
+
   //change made - jma 342 - Feb 19th
     public String addFriendSreen(String input)
     {
@@ -1109,17 +1446,31 @@ public class DocNetProtocol {
     	
     	if(this.step_ADD_FRIEND == 0)
     	{
-    		/*rs.recordset("Select First Name, Last Name, Home Address where
-			firstname = 'firstname' and lastname = 'lastname'")*/
-		
-    		//allow recordset to move to next record on
-			//reentry in to this function
-			//once the last record is added to the output variable
+    		if(input.toLowerCase().equals("exit"))
+    		{
+    			currentScreen = this.CURRENT_OUTPUT_SCREEN;
+    			nextScreen = this.user_FRIENDS_LIST_SCREEN;
+    			
+    			output = this.screenOutput(nextScreen /*,recordset of friendslist*/);
+    			this.step_ADD_FRIEND = 0;
+    		}
     		
-    		output = "Please select the desired friend by entering a number";
-    		step_ADD_FRIEND++;
-			//increment step_AddFriend
-    	
+    		//jma342 - Feb 25 - 3:28PM 
+    		else
+    		{
+	    		/*rs.recordset("Select First Name, Last Name, Home Address where
+				firstname = 'firstname' and lastname = 'lastname'")*/
+			
+	    		//allow recordset to move to next record on
+				//reentry in to this function
+				//once the last record is added to the output variable
+    		
+	    		//jma342 - Feb 25 - 3:28PM - added the ability for the user to cancel operation by entering -1
+	    		output = "Please select the desired friend by entering a number(enter -1 to cancel)";
+	    		step_ADD_FRIEND++;
+				//increment step_AddFriend
+    		}
+    		//jma342 - Feb 25 - 3:28PM 
     	}
     	
     	else if(this.step_ADD_FRIEND == 1)
@@ -1130,12 +1481,27 @@ public class DocNetProtocol {
     	
     	else if(this.step_ADD_FRIEND == 2)
     	{
-	    	/*rs.recordset("Insert userID, input into
-			 * friendRequest table)
-			 */
-			output = "Friend request has been sent...press any key to continue";
-			
-			step_ADD_FRIEND++;
+    		//jma342 - Feb 25 - 3:30PM - allows user to return to parent screen after cancelling current operation 
+    		if(input.equals("-1"))
+    		{
+    			
+    			this.step_ADD_FRIEND++;
+    			
+    			output = "Friend request has been cancelled...press any key to continue";
+    			
+    		}
+    		//jma342 - Feb 25 - 3:30PM - returns to parent screen after cancelling current operation 
+    		
+    		else
+    		{
+    			/*rs.recordset("Insert userID, input into
+    			 * friendRequest table)
+    			 */
+    			output = "Friend request has been sent...press any key to continue";
+    			
+    			step_ADD_FRIEND++;
+    		}
+    		
     	}
     	
     	else if(this.step_ADD_FRIEND == 3)
@@ -1147,7 +1513,7 @@ public class DocNetProtocol {
     	else if(this.step_ADD_FRIEND == 4)
     	{
     		currentScreen = this.CURRENT_OUTPUT_SCREEN;
-			nextScreen = this.FRIENDS_LIST_SCREEN;
+			nextScreen = this.user_FRIENDS_LIST_SCREEN;
 			
 			output = this.screenOutput(nextScreen /*,recordset of friendslist*/);
 			this.step_ADD_FRIEND = 0;
@@ -1156,27 +1522,41 @@ public class DocNetProtocol {
     	return output;
     }
     
-    public String friendRequestScreen(String input)
+    public String user_friendRequestScreen(String input)
     {
     	String output = "";
     	
-    	if(this.step_FRIEND_REQUEST == 0)
+    	if(this.step_user_FRIEND_REQUEST == 0)
     	{
-    		//display the friend request chosen
-    		//output =
-    		step_FRIEND_REQUEST++;
+    		//jma342 - Feb 25th - 3:49pm - allows user to cancel the operation of accepting a friend request
+    		if(input.equals("-1"))
+    		{
+    			currentScreen = this.CURRENT_OUTPUT_SCREEN;
+    			nextScreen = this.user_FRIENDS_LIST_SCREEN;
+    			
+    			output = this.screenOutput(nextScreen /*,recordset of friendslist*/);
+    			this.step_user_FRIEND_REQUEST = 0;
+    		}
+    		else
+    		{
+    			//display the friend request chosen
+        		//output =
+        		step_user_FRIEND_REQUEST++;
+    		}
+    		
+    		//jma342 - Feb 25th - 3:49pm - allows user to cancel the operation of accepting a friend request
     	}
-    	else if(this.step_FRIEND_REQUEST == 1)
+    	else if(this.step_user_FRIEND_REQUEST == 1)
     	{
     		output = "Please enter A - accept or D - Deny:";
-    		step_FRIEND_REQUEST++;
+    		step_user_FRIEND_REQUEST++;
     	}
-    	else if(this.step_FRIEND_REQUEST == 2)
+    	else if(this.step_user_FRIEND_REQUEST == 2)
     	{
     		output = "userInput";
-    		step_FRIEND_REQUEST++;
+    		step_user_FRIEND_REQUEST++;
     	}
-    	else if(this.step_FRIEND_REQUEST == 3)
+    	else if(this.step_user_FRIEND_REQUEST == 3)
     	{
     	
     		if(input.equals("A") || input.equals("D"))
@@ -1188,21 +1568,21 @@ public class DocNetProtocol {
     		}
     		
     		output = "Request accepted/denied...press any key to continue";
-    		step_FRIEND_REQUEST++;
+    		step_user_FRIEND_REQUEST++;
     	}
-    	else if(step_FRIEND_REQUEST == 4)
+    	else if(step_user_FRIEND_REQUEST == 4)
     	{
     		output = "userInput";
-    		step_FRIEND_REQUEST++;
+    		step_user_FRIEND_REQUEST++;
     	}
     	
-    	else if(step_FRIEND_REQUEST == 5)
+    	else if(step_user_FRIEND_REQUEST == 5)
     	{
     		currentScreen = this.CURRENT_OUTPUT_SCREEN;
-			nextScreen = this.FRIEND_REQUESTS_SCREEN;
+			nextScreen = this.user_FRIEND_REQUESTS_SCREEN;
 			
 			output = this.screenOutput(nextScreen /*,recordset of friendslist*/);
-			this.step_FRIEND_REQUEST = 0;
+			this.step_user_FRIEND_REQUEST = 0;
     	}
     	
     	return output;
