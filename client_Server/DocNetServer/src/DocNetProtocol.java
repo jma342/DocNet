@@ -201,7 +201,7 @@ public class DocNetProtocol {
     			{
     				output = "6.Priviliges(Posting Boards/Regions)";
     			}
-    			else if(screen == this.step_FRIEND_MAIN_POSTING_BOARD_SCREEN)
+    			else if(screen == this.FRIEND_MAIN_POSTING_BOARD_SCREEN)
     			{
     				output = "6.Return to Friends List Screen";
     			}
@@ -808,16 +808,20 @@ public class DocNetProtocol {
     		if(input.equals("1"))
     		{
     			//check privileges to determine if user is allowed to view this friends personal info
-    			//if allowed then do following
+    			if(true)//allowed then do following
+    			{
 	    			this.currentScreen = this.CURRENT_OUTPUT_SCREEN;
 	    			this.nextScreen = this.FRIEND_PERSONAL_INFORMATION_SCREEN;
-	    			
+	    			this.step_FRIEND_MAIN_POSTING_BOARD_SCREEN = 0;
 	        		output = this.screenOutput(nextScreen);
+    			}
 	        	//end if
-	        	//else
+	        	else
+	        	{
 	        		output = "Sorry. Your are not allowed to view this region...press any key to continue";
 	        		
 	        		this.step_FRIEND_MAIN_POSTING_BOARD_SCREEN++;
+	        	}
 	        	//end else
         	//	step_MAIN_POSTING_BOARD++;
     		}
@@ -826,17 +830,24 @@ public class DocNetProtocol {
     		{
     			//check privileges to determine if user is allowed to view this friends personal info
     			//if allowed then do following
-    			this.currentScreen = this.CURRENT_OUTPUT_SCREEN;
-    			this.nextScreen = this.FRIEND_ANNOUNCEMENTS_SCREEN;
-        		
+    			if(true)
+    			{
+    				
     			
-        		output = this.screenOutput(nextScreen);
+	    			this.currentScreen = this.CURRENT_OUTPUT_SCREEN;
+	    			this.nextScreen = this.FRIEND_ANNOUNCEMENTS_SCREEN;
+	        		
+	    			this.step_FRIEND_MAIN_POSTING_BOARD_SCREEN = 0;
+	        		output = this.screenOutput(nextScreen);
+    			}
         		
         		//end if
-	        	//else
+	        	else
+	        	{
 	        		output = "Sorry. Your are not allowed to view this region...press any key to continue";
 	        		
 	        		this.step_FRIEND_MAIN_POSTING_BOARD_SCREEN++;
+	        	}
 	        	//end else
         		
     		}
@@ -845,16 +856,22 @@ public class DocNetProtocol {
     		{
     			//check privileges to determine if user is allowed to view this friends personal info
     			//if allowed then do following
-    			this.currentScreen = this.CURRENT_OUTPUT_SCREEN;
-    			this.nextScreen = this.FRIEND_RESEARCH_PUBLICATIONS_SCREEN;
-        		
-        		output = this.screenOutput(nextScreen);
+    			if(true)
+    			{
+	    			this.currentScreen = this.CURRENT_OUTPUT_SCREEN;
+	    			this.nextScreen = this.FRIEND_RESEARCH_PUBLICATIONS_SCREEN;
+	        		
+	        		output = this.screenOutput(nextScreen);
+	        		this.step_FRIEND_MAIN_POSTING_BOARD_SCREEN = 0;
+    			}
         		
         		//end if
-	        	//else
+	        	else
+	        	{
 	        		output = "Sorry. Your are not allowed to view this region...press any key to continue";
 	        		
 	        		this.step_FRIEND_MAIN_POSTING_BOARD_SCREEN++;
+	        	}
 	        	//end else
     		}
     		//friend public discussions screen
@@ -862,33 +879,42 @@ public class DocNetProtocol {
     		{
     			//check privileges to determine if user is allowed to view this friends personal info
     			//if allowed then do following
-    			this.currentScreen = this.CURRENT_OUTPUT_SCREEN;
-    			this.nextScreen = this.FRIEND_PUBLIC_DISCUSSIONS_SCREEN;
-        		
-        		output = this.screenOutput(nextScreen);
+    			if(true)
+    			{
+	    			this.currentScreen = this.CURRENT_OUTPUT_SCREEN;
+	    			this.nextScreen = this.FRIEND_PUBLIC_DISCUSSIONS_SCREEN;
+	    			this.step_FRIEND_MAIN_POSTING_BOARD_SCREEN = 0;
+	        		output = this.screenOutput(nextScreen);
+    			}
         		
         		//end if
-	        	//else
+	        	else
+	        	{
 	        		output = "Sorry. Your are not allowed to view this region...press any key to continue";
 	        		
 	        		this.step_FRIEND_MAIN_POSTING_BOARD_SCREEN++;
-	        	//end else
+	        	}
     		}
     		//research group screen
     		else if(input.equals("5"))
     		{
     			//check privileges to determine if user is allowed to view this friends personal info
     			//if allowed then do following
-    			this.currentScreen = this.CURRENT_OUTPUT_SCREEN;
-    			this.nextScreen = this.FRIEND_RESEARCH_GROUPS_SCREEN;
-        		
-        		output = this.screenOutput(nextScreen);
+    			if(true)
+    			{
+    				this.currentScreen = this.CURRENT_OUTPUT_SCREEN;
+    				this.nextScreen = this.FRIEND_RESEARCH_GROUPS_SCREEN;
+    				this.step_FRIEND_MAIN_POSTING_BOARD_SCREEN = 0;
+    				output = this.screenOutput(nextScreen);
+    			}
         		
         		//end if
-	        	//else
+	        	else
+	        	{
 	        		output = "Sorry. Your are not allowed to view this region...press any key to continue";
 	        		
 	        		this.step_FRIEND_MAIN_POSTING_BOARD_SCREEN++;
+	        	}
 	        	//end else
     		}
     		//return to friends list screen
@@ -1225,12 +1251,11 @@ public class DocNetProtocol {
     		//View Friends profile screen
     		else if(input.equals("3"))
     		{
-    			currentScreen = this.CURRENT_OUTPUT_SCREEN;
-    			nextScreen = this.FRIEND_MAIN_POSTING_BOARD_SCREEN;
+    			this.chosen_On_Screen_Action = input;
     			
-    			output = this.screenOutput(nextScreen /*,recordset of friendslist*/);
-    			
-    			this.step_FRIENDS_LIST=0;
+        		output = "Please enter the number of the desired friend from the list(enter -1 to cancel):";
+        	
+        		this.step_FRIENDS_LIST++;
     		}
     		
     		//Friend requests screen
@@ -1284,6 +1309,28 @@ public class DocNetProtocol {
 	    			output = "Friend has been deleted...press any key to continue:";
 	  
 	    			this.step_FRIENDS_LIST++;
+    			}
+    			//jma342 - Feb 25th - 3:54pm allows user to cancel deletion operation
+    		}
+    		
+    		else if(this.chosen_On_Screen_Action.equals("3"))
+    		{
+    			//jma342 - Feb 25th - 3:54pm allows user to cancel viewing friend's profile operation
+    			if(input.equals("-1"))
+    			{
+    				output = "Viewing a Friend's profile has been cancelled...press any key to continue:";
+    				this.step_FRIENDS_LIST++;
+    			}
+    			else
+    			{
+	    			/*retrieve recordset with selected friend's necessary information*/
+	    			
+    				currentScreen = this.CURRENT_OUTPUT_SCREEN;
+        			nextScreen = this.FRIEND_MAIN_POSTING_BOARD_SCREEN;
+        			
+        			output = this.screenOutput(nextScreen /*,recordset of friendslist*/);
+        			this.step_FRIENDS_LIST=0;
+        			
     			}
     			//jma342 - Feb 25th - 3:54pm allows user to cancel deletion operation
     		}
