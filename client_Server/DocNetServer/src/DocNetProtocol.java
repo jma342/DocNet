@@ -105,7 +105,15 @@ public class DocNetProtocol {
     		output = this.friend_friendsListSreen(input);
     	}
     	//change made - jma342 - feb25th
-    	
+    	else if(variables.currentScreen == this.variables.PRIVILEGES_SCREEN)
+    	{
+    		output = this.PrivilegeScreen(input);
+    	}
+    	//add new screen for reset privilege -- rw 446 -- Feb 26th
+    	else if(variables.currentScreen == this.variables.RESET_PRIVILEGE_SCRREN)
+    	{
+    		output = this.ResetPrivilegeScreen(input);
+    	}
     	else if(variables.currentScreen == variables.CURRENT_OUTPUT_SCREEN)
     	{
     		output = screenOutput(variables.nextScreen);
@@ -620,6 +628,93 @@ public class DocNetProtocol {
     	
     	//change made - jma 342 - feb 18th
     	
+    	//change made - rw  446  -feb 26th
+    	//add in privilege screen
+    	else if(screen == this.variables.PRIVILEGES_SCREEN)
+    	{
+    		if (this.variables.step_SCREEN_OUTPUT == 0)
+    		{
+    			output = "Regions";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 1)
+    		{
+    			output = "1. Personal Information";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 2)
+    		{
+    			output = "2. Announcements";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 3)
+    		{
+    			output = "3. Research Publications";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 4)
+    		{
+    			output = "4. Public Discussions";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 5)
+    		{
+    			output = "5. Research Group";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 6)
+    		{
+    			output = "Posting Board";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 7)
+    		{
+    			output = "6. Announcements";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 8)
+    		{
+    			output = "7. Public Discussion";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 9)
+    		{
+    			output = "Please select 1-5 to edit privilege for regions and 6-7 for posting board";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else
+    		{
+    			output = "userInput";
+    			this.variables.step_SCREEN_OUTPUT = 0;
+    			variables.currentScreen = variables.nextScreen;
+    		}
+    	}
+    	//add new screen for reset privilege --rw 446 -- Feb 26th 2012
+    	else if (screen == this.variables.RESET_PRIVILEGE_SCRREN)
+    	{
+    		if (this.variables.step_SCREEN_OUTPUT == 0)
+    		{
+    			output = "1. Reset View Privilege";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if (this.variables.step_SCREEN_OUTPUT == 1)
+    		{
+    			output = "2. Reset Post Privilege";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 2)
+    		{
+    			output = "Pleae select the number to reset privilege";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else
+    		{
+    			output = "userInput";
+    			this.variables.step_SCREEN_OUTPUT = 0;
+    			variables.currentScreen = variables.nextScreen;
+    		}
+    		  			
+    	}
     	return output;
     }
     
@@ -2175,4 +2270,159 @@ public class DocNetProtocol {
     }
   //change made - jma 342 - Feb 19th
    
+  //change made - rw  446 - Feb 26th
+    public String PrivilegeScreen(String input)
+    {
+    	String output = "";
+    	if (this.variables.step_PRIVILEGES_SCREEN == 0)
+    	{
+    		if (input.equals("1")||input.equals("2")||input.equals("3")||input.equals("4")||input.equals("5"))
+    		{
+    			//variables.chosen_On_Screen_Action = input; 
+    			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+			    variables.nextScreen = this.variables.RESET_PRIVILEGE_SCRREN;
+			     this.variables.step_PRIVILEGES_SCREEN = 0;
+			     output = this.screenOutput(variables.nextScreen /*,jump to reset privilege screen*/);
+    		}
+    		else if (input.equals("6"))
+    		{
+    			output = "the Announcement from database";
+    			//this.variables.chosen_On_Screen_Action = input;
+    			this.variables.step_PRIVILEGES_SCREEN++;
+    		}
+    		else if(input.equals("7"))
+    		{
+    			output = "the Public discussions topics from database";
+    			//this.variables.chosen_On_Screen_Action = input;
+    			this.variables.step_PRIVILEGES_SCREEN++;
+    		}    		
+    	}
+    	else if (this.variables.step_PRIVILEGES_SCREEN == 1)
+    	{
+    		output = "Please select privilege of which topics you want to reset by entering the number";
+    		this.variables.step_PRIVILEGES_SCREEN++;
+    	}
+    	else if (this.variables.step_PRIVILEGES_SCREEN == 2)
+    	{
+    		output = "userInput";
+    		this.variables.step_PRIVILEGES_SCREEN++;
+    	}
+    	else if (this.variables.step_PRIVILEGES_SCREEN == 3)
+    	{
+    		variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+		    variables.nextScreen = this.variables.RESET_PRIVILEGE_SCRREN;
+		    this.variables.step_PRIVILEGES_SCREEN = 0;
+		    output = this.screenOutput(variables.nextScreen /*,jump to reset privilege screen*/);
+    	}
+    	return output;
+    }
+    
+    public String ResetPrivilegeScreen(String input)
+    {
+    	String output = "";
+    	if (this.variables.step_RESET_PRIVILEGE == 0)
+    	{     
+    		 if (input.equals("1"))
+    		 {
+    			 this.variables.chosen_On_Screen_Action = input; 
+    			 output = "Please Choose Groups to Reset View Privilege";
+    		 }
+    		 else if (input.equals("2"))
+    		 {
+    			 this.variables.chosen_On_Screen_Action = input;
+    			 output = "Please Choose Groups to Reset Post Privilege";
+    		 }
+    		 
+    		 this.variables.step_RESET_PRIVILEGE++;  		
+    	}
+    	
+    	else if (this.variables.step_RESET_PRIVILEGE == 1)
+    	{
+    		output = "1. Communittee members + Visitors";
+    		this.variables.step_RESET_PRIVILEGE++;
+    	}
+    	else if(this.variables.step_RESET_PRIVILEGE == 2)
+    	{
+    		output = "2. Communittee members";
+    		this.variables.step_RESET_PRIVILEGE++;
+    	}
+    	else if(this.variables.RESET_PRIVILEGE_SCRREN == 3)
+    	{
+    		output = "3. All Friends";
+    		this.variables.step_RESET_PRIVILEGE++;
+    	}
+    	else if (this.variables.RESET_PRIVILEGE_SCRREN == 4)
+    	{
+    		output = "4. Specific Friends";
+    		this.variables.step_RESET_PRIVILEGE++;
+    	}
+    	else if (this.variables.step_RESET_PRIVILEGE == 5)
+    	{
+    		output = "userInput";
+    		this.variables.step_RESET_PRIVILEGE++;
+    	}
+    	else if (this.variables.step_RESET_PRIVILEGE == 6)
+    	{
+    		if (this.variables.chosen_On_Screen_Action.equals("1")){
+    			if (input.equals("1"))
+    			{
+    				//update database with view privilege to communittee member + visitors
+    				output = "Reset view privilege to Communittee members +visitors";
+    			}
+    			else if (input.equals("2"))
+    			{
+    				//update database with view privilege to communittee members
+    				output = "Reset view privilege to Communittee members";
+    			}
+    			else if (input.equals("3"))
+    			{
+    				//update database with view privilege to All friends
+    				output = "Reset view privilege to All friends";
+    			}
+    			else if (input.equals("4"))
+    			{
+    				//update database with view privilege to specific friends
+    				output = "Reset view privilege to Specific friends";
+    			}
+    		}
+    		else if (this.variables.chosen_On_Screen_Action.equals("2"))
+    		{
+    			if (input.equals("1"))
+    			{
+    				//update database with view privilege to communittee member + visitors
+    				output = "Reset post privilege to Communittee members +visitors";
+    			}
+    			else if (input.equals("2"))
+    			{
+    				//update database with view privilege to communittee members
+    				output = "Reset post privilege to Communittee members";
+    			}
+    			else if (input.equals("3"))
+    			{
+    				//update database with view privilege to All friends
+    				output = "Reset post privilege to All friends";
+    			}
+    			else if (input.equals("4"))
+    			{
+    				//update database with view privilege to specific friends
+    				output = "Reset post privilege to Specific friends";
+    			}
+    		}
+    		this.variables.step_RESET_PRIVILEGE++;
+    	}
+    	else if (this.variables.step_RESET_PRIVILEGE == 7)
+    	{
+    		output = "userInput";
+    		this.variables.step_RESET_PRIVILEGE++;
+    	}
+    	else if (this.variables.step_RESET_PRIVILEGE == 8)
+    	{
+    		variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+			variables.nextScreen = this.variables.RESET_PRIVILEGE_SCRREN;
+			
+			output = this.screenOutput(variables.nextScreen /*refresh screen*/);
+			this.variables.step_RESET_PRIVILEGE = 0;
+    	}
+    	return output;
+    }
 }
