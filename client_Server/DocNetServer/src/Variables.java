@@ -21,6 +21,7 @@ public class Variables
     public static final int ADD_FRIEND_SCREEN = 11;//change made - jma342 - Feb 19th
     public static final int user_FRIEND_REQUESTS_SCREEN = 12;//change made - jma342 - Feb 19th
     public static final int PRIVILEGES_SCREEN = 13;//added -- jma 342 - February 24th 2012
+   
     
     /*screens for accessing a friend's screens*/
     public static final int FRIEND_MAIN_POSTING_BOARD_SCREEN = 14;//added -- jma 342 - February 25th 2012
@@ -33,9 +34,11 @@ public class Variables
     /*screens for accessing a friend's screens*/
     
     public static final int PUBLIC_DISCUSSION_TOPIC_SCREEN = 21;//added new screen for specific topic and comments--rw446 Feb 18th    
+
     public static final int SET_VIEW_OR_POST_PRIVILEGES_SCREEN = 22;//added -- jma 342 - February 24th 2012
     public static final int SELECT_FRIENDS_FOR_PRIVILEGE_SCREEN = 23;//change made - jma342 - Feb 26th
     public static final int RESET_PRIVILEGE_SCRREN = 24; //added new screen for edit privilege-- rw 446 -Feb 26th
+
 
 
     //MENUS---jma342---Feb 14th
@@ -72,6 +75,7 @@ public class Variables
     public int step_FRIEND_user_FRIENDS_LIST_SCREEN = 0;//added -- jma 342 - February 25th 2012
     /*current step in screens for accessing a friend's screens*/
     
+
      //current step in a given conversation relative to each menu---jma342---Feb 14th
     
     //jma342 -- feb 21st -- both database connections

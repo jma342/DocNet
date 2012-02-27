@@ -121,7 +121,15 @@ public class DocNetProtocol {
     		output = this.friend_friendsListSreen(input);
     	}
     	//change made - jma342 - feb25th
-    	
+    	else if(variables.currentScreen == this.variables.PRIVILEGES_SCREEN)
+    	{
+    		output = this.PrivilegeScreen(input);
+    	}
+    	//add new screen for reset privilege -- rw 446 -- Feb 26th
+    	else if(variables.currentScreen == this.variables.RESET_PRIVILEGE_SCRREN)
+    	{
+    		output = this.ResetPrivilegeScreen(input);
+    	}
     	else if(variables.currentScreen == variables.CURRENT_OUTPUT_SCREEN)
     	{
     		output = screenOutput(variables.nextScreen);
@@ -759,6 +767,93 @@ public class DocNetProtocol {
     	
     	//change made - jma 342 - feb 18th
     	
+    	//change made - rw  446  -feb 26th
+    	//add in privilege screen
+    	else if(screen == this.variables.PRIVILEGES_SCREEN)
+    	{
+    		if (this.variables.step_SCREEN_OUTPUT == 0)
+    		{
+    			output = "Regions";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 1)
+    		{
+    			output = "1. Personal Information";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 2)
+    		{
+    			output = "2. Announcements";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 3)
+    		{
+    			output = "3. Research Publications";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 4)
+    		{
+    			output = "4. Public Discussions";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 5)
+    		{
+    			output = "5. Research Group";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 6)
+    		{
+    			output = "Posting Board";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 7)
+    		{
+    			output = "6. Announcements";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 8)
+    		{
+    			output = "7. Public Discussion";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 9)
+    		{
+    			output = "Please select 1-5 to edit privilege for regions and 6-7 for posting board";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else
+    		{
+    			output = "userInput";
+    			this.variables.step_SCREEN_OUTPUT = 0;
+    			variables.currentScreen = variables.nextScreen;
+    		}
+    	}
+    	//add new screen for reset privilege --rw 446 -- Feb 26th 2012
+    	else if (screen == this.variables.RESET_PRIVILEGE_SCRREN)
+    	{
+    		if (this.variables.step_SCREEN_OUTPUT == 0)
+    		{
+    			output = "1. Reset View Privilege";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if (this.variables.step_SCREEN_OUTPUT == 1)
+    		{
+    			output = "2. Reset Post Privilege";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 2)
+    		{
+    			output = "Pleae select the number to reset privilege";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else
+    		{
+    			output = "userInput";
+    			this.variables.step_SCREEN_OUTPUT = 0;
+    			variables.currentScreen = variables.nextScreen;
+    		}
+    		  			
+    	}
     	return output;
     }
     
