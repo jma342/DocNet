@@ -18,6 +18,17 @@ public class DocNetProtocol {
     {
     	variables.con_1 = c1;
     	variables.con_2 = c2;
+
+    	try 
+    	{
+    		variables.st_con1 = variables.con_1.createStatement();
+			variables.st_con2 = variables.con_2.createStatement();
+		} 
+    	catch (SQLException e) 
+    	{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
     public String processRequest(String input)
@@ -217,66 +228,253 @@ public class DocNetProtocol {
     	}
     	else if(screen == this.variables.PERSONAL_INFORMATION_SCREEN || screen == this.variables.FRIEND_PERSONAL_INFORMATION_SCREEN)
     	{
+    		if(screen == this.variables.PERSONAL_INFORMATION_SCREEN)
+    		{
+    			variables.sqlString_con2 = "SELECT * FROM users WHERE user_id = " + Integer.parseInt(variables.loggedIn_User_ID);
+    			variables.sqlString_con1 = "SELECT * FROM user_info WHERE user_id = " + Integer.parseInt(variables.loggedIn_User_ID);
+    			
+    			this.selectQuery_con2();
+    			this.selectQuery_con1();
+    			/*try 
+    			{
+					variables.rs_con2 = variables.st_con2.executeQuery(variables.sqlString_con2);
+					variables.rs_con1 = variables.st_con1.executeQuery(variables.sqlString_con1);
+				} 
+    			catch (SQLException e) 
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}*/
+    		}
     		//try to figure how to clearscreen
     		if(this.variables.step_SCREEN_OUTPUT == 0)
     		{
-    			output = "1. First Name";  //+ db.firtname
+    			try 
+    			{
+    				if(variables.rs_con2.next())
+    				{
+	    				//System.out.println(variables.rs_con2.getNString("first_name")); 
+						output = "1. First Name: " + variables.rs_con2.getString("first_name") /*!= null ? 
+														variables.rs_con2.getNString("first_name") :""*/;
+    				}
+    				else
+    				{
+    					output = "First Name: ";
+    				}
+				} catch (SQLException e) 
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}  //+ db.firtname
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(variables.step_SCREEN_OUTPUT == 1)
     		{
-    			output ="2. Last Name";//db.lastname
+    			try 
+    			{
+    				if(variables.rs_con2.next())
+    				{
+    					output ="2. Last Name: " + variables.rs_con2.getString("last_name");
+    				}
+    				else
+    				{
+    					output = "2. Last Name: ";
+    				}
+				} 
+    			catch (SQLException e) 
+    			{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}//db.lastname
+    			
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(variables.step_SCREEN_OUTPUT == 2)
     		{
-    			output = "3. Age";//db.age
+    			try 
+    			{
+    				if(variables.rs_con1.next())
+    				{
+    					output = "3. Age: " + variables.rs_con1.getString("age");
+    				}
+    				else
+    				{
+    					output = "3. Age: ";
+    				}
+				} 
+    			catch (SQLException e) 
+    			{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}//db.age
+    			
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(variables.step_SCREEN_OUTPUT == 3)
     		{
     			
-    			output = "4. Gender";//db.gender
+    			try 
+    			{
+    				if(variables.rs_con1.next())
+    				{
+    					output = "4. Gender: " + variables.rs_con1.getString("gender");
+    				}
+    				else
+    				{
+    					output = "4. Gender: ";
+    				}
+    				
+				} 
+    			catch (SQLException e) 
+    			{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}//db.gender
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(variables.step_SCREEN_OUTPUT == 4)
     		{
-    			output = "5. Marital Status";//db.maritalStatus
+    			output = "5. Marital Status(enum currently missing from db)";//db.maritalStatus
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(variables.step_SCREEN_OUTPUT == 5)
     		{
-    			output = "6. Home Address";//db.HomeAddress
+    			try 
+    			{
+    				if(variables.rs_con1.next())
+    				{
+    					output = "6. Home Address: "+ variables.rs_con1.getString("home_address");
+    				}
+    				else
+    				{
+    					output = "6. Home Address: ";
+    				}
+				} 
+    			catch (SQLException e) 
+    			{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}//db.HomeAddress
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(variables.step_SCREEN_OUTPUT == 6)
     		{
-    			output = "7. Home Number";//db.Home Number
+    			try 
+    			{
+    				if(variables.rs_con1.next())
+    				{
+    					output = "7. Home Number: " + variables.rs_con1.getString("home_phone");
+    				}
+    				else
+    				{
+    					output = "7. Home Number: ";
+    				}
+				} 
+    			catch (SQLException e) 
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}//db.Home Number
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(variables.step_SCREEN_OUTPUT == 7)
     		{
-    			output = "8. Cell Number";//db.Cell Number
+    			try 
+    			{
+    				if(variables.rs_con1.next())
+    				{
+    					output = "8. Cell Number"+ variables.rs_con1.getString("cell_phone");
+    				}
+    				else
+    				{
+    					output = "8. Cell Number: ";
+    				}
+				} 
+    			catch (SQLException e) 
+    			{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}//db.Cell Number
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(variables.step_SCREEN_OUTPUT == 8)
     		{
-    			output = "9.Hospital";//db.Hospital
+    			try 
+    			{
+    				if(variables.rs_con1.next())
+    				{
+    					output = "9.Hospital" + variables.rs_con1.getString("hospital");
+    				}
+    				else
+    				{
+    					output = "9. Hosptial: ";
+    				}
+				} 
+    			catch (SQLException e) 
+    			{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}//db.Hospital
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(variables.step_SCREEN_OUTPUT == 9)
     		{
-    			output = "10. Hospital Address";//db.Hospital Address
+    			try 
+    			{
+    				if(variables.rs_con1.next())
+    				{
+    					output = "10. Hospital Address" + variables.rs_con1.getString("hospital_address");
+    				}
+    				else
+    				{
+    					output = "10. Hospital Address: ";
+    				}
+				} 
+    			catch (SQLException e) 
+    			{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}//db.Hospital Address
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(variables.step_SCREEN_OUTPUT == 10)
     		{
-    			output = "11. Work Number";//db.workNumber
+    			try 
+    			{
+    				if(variables.rs_con1.next())
+    				{
+    					output = "11. Work Number" + variables.rs_con1.getString("work_number");
+    				}
+    				else
+    				{
+    					output = "11. Work Number";
+    				}
+				} 
+    			catch (SQLException e) 
+    			{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}//db.workNumber
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(variables.step_SCREEN_OUTPUT == 11)
     		{
-    			output = "12. Specialty";//db.specialty
+    			try 
+    			{
+    				if(variables.rs_con1.next())
+    				{
+    					output = "12. Specialty" + variables.rs_con1.getString("specialty");
+    				}
+    				else
+    				{
+    					output = "12. Specialty: ";
+    				}
+				} 
+    			catch (SQLException e) 
+    			{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}//db.specialty
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(variables.step_SCREEN_OUTPUT == 12)
@@ -456,13 +654,51 @@ public class DocNetProtocol {
     	{
     		if(this.variables.step_SCREEN_OUTPUT == 0)
     		{
+    			if(screen == this.variables.user_FRIENDS_LIST_SCREEN || screen == this.variables.SELECT_FRIENDS_FOR_PRIVILEGE_SCREEN)
+    			{
+    				if(variables.step_FriendsListRetrieval == 0)
+    				{
+	    				variables.sqlString_con1 = "SELECT * FROM friends_list WHERE user_id = " + Integer.parseInt(variables.loggedIn_User_ID);
+	        			this.selectQuery_con1();
+	        			variables.step_FriendsListRetrieval++;
+    				}
+        			
+    				else if(variables.step_FriendsListRetrieval == 1)
+    				{
+    					//loops through list of friends on reentry and grabs each friend's name(first and last) from the users table in db2
+	        			try 
+	        			{
+	        				if(variables.rs_con1.next())
+	        				{
+	        					variables.sqlString_con1 = "Select * from users where user_id = " + 
+	        								Integer.parseInt(variables.rs_con1.getString("user_id"));
+	        					
+	        					variables.friendsListIDS.add(Integer.parseInt(variables.rs_con1.getString("user_id")));
+	        					
+	        					output = variables.friendsListCount + variables.rs_con1.getString("first_name") + " " + variables.rs_con1.getString("last_name");
+	        					variables.friendsListCount++;
+	        				}
+	        				else
+	        				{
+	        					output = "-----------End of Friends List----------------";
+	        					variables.step_SCREEN_OUTPUT++;
+	        					variables.step_FriendsListRetrieval = 0;
+	        					variables.friendsListCount = 1;
+	        				}
+	    				} 
+	        			catch (SQLException e) 
+	    				{
+	    					// TODO Auto-generated catch block
+	    					e.printStackTrace();
+	    				}
+    				}
+    			}
     			//retrieve records from the friends list
     			//output = rs.firstrecord
     			
     			//allow recordset to move to next record on
     			//reentry in to this function
     			//once the last record is added to the output variable
-    			variables.step_SCREEN_OUTPUT++;
     			
     		}
     		else if(this.variables.step_SCREEN_OUTPUT == 1)
@@ -471,6 +707,7 @@ public class DocNetProtocol {
     	    			screen == this.variables.FRIEND_FRIENDS_LIST_SCREEN)
     			{
     				output = "Please select one of the following actions:";
+    				variables.step_SCREEN_OUTPUT++;
     			}
     			//the select friends privilege screen consists of actions different to the other
     			//screens utilising this protocol
@@ -957,6 +1194,8 @@ public class DocNetProtocol {
 		    			if(this.variables.step_ERROR_CHECK == 0)
 		    			{
 		    				output = "Please enter correct password: ";
+		    				variables.step_LOG_IN_SCREEN = 11;/*jma342 - feb 27th - resets screen to 
+		    													stage for comparing passwords*/
 		    				this.variables.step_ERROR_CHECK++;
 		    			}
 		    			else if(this.variables.step_ERROR_CHECK == 1)
@@ -978,19 +1217,21 @@ public class DocNetProtocol {
 		    		
 		    		try 
 		    		{
-						variables.st = variables.con_2.createStatement();
 						
-						variables.sqlString = "SELECT username FROM users WHERE username = \'" + variables.userName + "\'";
-						variables.rs = variables.st.executeQuery(variables.sqlString);
+						variables.sqlString_con2 = "SELECT username FROM users WHERE username = \'" + variables.userName + "\'";
+						
+						this.selectQuery_con2();
+						
+						//variables.rs_con2 = variables.st_con2.executeQuery(variables.sqlString_con2);
 						
 						//jma342 - feb26 10:51 pm - determines if recordset has anything
-						while(variables.rs.next())
+						/*while(variables.rs_con2.next())
 						{
 							rsCount++;
 							break;
-						}
+						}*/
 						
-						if (rsCount != 0) 
+						if (variables.rs_con2.next())//(rsCount != 0) 
 						{
 							output = "Registration failed.\'" + variables.userName + "\' is already registered. " +
 									"Press any key to continue...";
@@ -999,15 +1240,31 @@ public class DocNetProtocol {
 						}
 						else 
 						{
-							variables.sqlString = "INSERT INTO users (username, password) VALUES " +
+							variables.sqlString_con2 = "INSERT INTO users (username, password) VALUES " +
 									"(\'" + variables.userName + "\', \'" + variables.password + "\')";
 							rsCount = 0;
-							rsCount = variables.st.executeUpdate(variables.sqlString);
-	
+							
+							//rsCount = variables.st_con2.executeUpdate(variables.sqlString_con2);
+							
+							rsCount = this.InsertUpdateDeleteQuery_con2();
+							
+							
 							if (rsCount != 0) 
 							{
-								output = "Registration successful.";
+								//output = "Registration successful.";
 								variables.failedLogIn = false;
+								
+								variables.sqlString_con2 = "SELECT user_id FROM users WHERE username = \'" + 
+					    				variables.userName + "\' AND password = \'" + variables.password + "\'";
+								
+								//variables.rs_con2 = variables.st_con2.executeQuery(variables.sqlString_con2);
+								
+								this.selectQuery_con2();
+								
+								if(variables.rs_con2.next())
+								{
+									variables.loggedIn_User_ID = variables.rs_con2.getString("user_id");//stores user id of logged in user
+								}
 								variables.step_LOG_IN_SCREEN++;
 							}
 							else 
@@ -1086,24 +1343,30 @@ public class DocNetProtocol {
 		    
 		    	
 		    	//verify username and password -- if failure of either simply indicate either or failed
-		    	else if(variables.LOG_IN_SCREEN == 9)
+		    	else if(variables.step_LOG_IN_SCREEN == 9)
 		    	{
 		    		//password = "";
 		    		variables.password = input;
 		    		
-		    		variables.sqlString = "SELECT * FROM users WHERE username = \'" + 
+		    		variables.sqlString_con2 = "SELECT * FROM users WHERE username = \'" + 
 		    				variables.userName + "\' AND password = \'" + variables.password + "\'";
-					try {
-						variables.rs = variables.st.executeQuery(variables.sqlString);
+					try 
+					{
+						//variables.rs_con2 = variables.st_con2.executeQuery(variables.sqlString_con2);
+						this.selectQuery_con2();
 						
-						if (variables.rs.next() == false) 
+						if (variables.rs_con2.next() == false) 
 						{
-							output = "Username and password combination is wrong";
-							variables.step_LOG_IN_SCREEN = 0;
+							output = "Either username or password is wrong...press any key to continue";
+							variables.failedLogIn = true;
+							variables.step_LOG_IN_SCREEN++;
 						}
 						else 
 						{
-							output = "Access granted.";
+							variables.failedLogIn = false;
+							variables.loggedIn_User_ID = variables.rs_con2.getString("user_id");
+							//output = "Access granted.";
+							variables.step_LOG_IN_SCREEN++;
 						}
 						
 					} 
@@ -1113,17 +1376,28 @@ public class DocNetProtocol {
 						e.printStackTrace();
 					}
 					
-	        		//if verification successful
-	        		//currently no db connection so verification isnot enforced
-	        		variables.step_LOG_IN_SCREEN = 0;
-	        		
-	        		//after a successful login user is directed to main posting board
-	        		variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
-	        		variables.nextScreen = variables.MAIN_POSTING_BOARD_SCREEN;
-	        		
-	        		output = this.screenOutput(variables.nextScreen);
-	        		
 	        	}
+		    	
+		    	//after a successful login user is directed to main posting board
+		    	else if(variables.step_LOG_IN_SCREEN == 10)
+		    	{
+		    		//jma342 - feb 26th 11:15pm - refreshes the log in screen on failed login attempts
+		    		if(variables.failedLogIn)
+		    		{
+		    			output = "userInput";
+		    			variables.failedLogIn = false;
+		    			variables.step_LOG_IN_SCREEN = 0;
+		    		}
+		    		else
+		    		{
+			    		variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+			    		variables.nextScreen = variables.MAIN_POSTING_BOARD_SCREEN;
+			    		
+			    		output = this.screenOutput(variables.nextScreen);
+			    		variables.step_LOG_IN_SCREEN = 0;
+		    		}
+		    		
+		    	}
 	    	}//steps for registered user
 	    	  
 	    	//added -- jma 342 - February 24th 2012
@@ -1226,41 +1500,45 @@ public class DocNetProtocol {
 			//Edit First Name
 			if(input.equals("1"))
 			{
-				variables.editField_On_Screen = "firstName";
+				variables.editField_On_Screen = "first_name";
 	    		output = "Edit First Name: ";
+	    		variables.usingDb_2 = true;
 	    		variables.step_PERSONAL_INFORMATION++;
 			}
 			
 			//Edit Last Name
 			else if(input.equals("2"))
 			{
-				variables.editField_On_Screen = "lastName";
+				variables.editField_On_Screen = "last_name";
 	    		output = "Edit Last Name: ";
+	    		variables.usingDb_2 = true;
 	    		variables.step_PERSONAL_INFORMATION++;
 			}
 			
 			//Edit Last Age
 			else if(input.equals("3"))
 			{
-				variables.editField_On_Screen = "Age";
+				variables.editField_On_Screen = "age";
 	    		output = "Edit Age: ";
+	    		variables.usingDb_1 = true;
 	    		variables.step_PERSONAL_INFORMATION++;
 			}
 			
 			//Edit Gender
 			else if(input.equals("4"))
 			{
-				variables.editField_On_Screen = "Gender";
-	    		
-	    		variables.nextScreen = this.variables.GENDER_SCREEN;
+				variables.editField_On_Screen = "gender";
+				variables.usingDb_1 = true;
+				variables.step_PERSONAL_INFORMATION++;
+	    		/*variables.nextScreen = this.variables.GENDER_SCREEN;
 	    		variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
 	    		
 	    		output = this.screenOutput(variables.nextScreen);
-	    		variables.step_PERSONAL_INFORMATION = 0;
+	    		variables.step_PERSONAL_INFORMATION = 0;*/
 
 			}
 			
-			//Edit Marital Status
+			//Edit Marital Status- update this when the enumeratgor is added to db table
 			else if(input.equals("5"))
 			{
 				variables.editField_On_Screen = "maritalStatus";
@@ -1275,24 +1553,27 @@ public class DocNetProtocol {
 			//Edit Home Address
 			else if(input.equals("6"))
 			{
-				variables.editField_On_Screen = "homeAddress";
+				variables.editField_On_Screen = "home_address";
 	    		output = "Edit Home Address: ";
+	    		variables.usingDb_1 = true;
 	    		variables.step_PERSONAL_INFORMATION++;
 			}
 			
 			//Edit Home Number
 			else if(input.equals("7"))
 			{
-				variables.editField_On_Screen = "homeNumber";
+				variables.editField_On_Screen = "home_phone";
 	    		output = "Edit Home Number: ";
+	    		variables.usingDb_1 = true;
 	    		variables.step_PERSONAL_INFORMATION++;
 			}
 			
 			//Edit Cell Number
 			else if(input.equals("8"))
 			{
-				variables.editField_On_Screen = "cellNumber";
+				variables.editField_On_Screen = "cell_phone";
 	    		output = "Edit Cell Number: ";
+	    		variables.usingDb_1 = true;
 	    		variables.step_PERSONAL_INFORMATION++;
 			}
 			
@@ -1301,22 +1582,25 @@ public class DocNetProtocol {
 			{
 				variables.editField_On_Screen = "hospital";
 	    		output = "Edit Hospital: ";
+	    		variables.usingDb_1 = true;
 	    		variables.step_PERSONAL_INFORMATION++;
 			}
 			
 			//Edit Hospital Address
 			else if(input.equals("10"))
 			{
-				variables.editField_On_Screen = "hospitalAddress";
+				variables.editField_On_Screen = "hospital_address";
 	    		output = "Edit Hospital Address: ";
+	    		variables.usingDb_1 = true;
 	    		variables.step_PERSONAL_INFORMATION++;
 			}
 			
 			//Edit work Number
 			else if(input.equals("11"))
 			{
-				variables.editField_On_Screen = "workNumber";
+				variables.editField_On_Screen = "work_number";
 	    		output = "Edit Work Number: ";
+	    		variables.usingDb_1 = true;
 	    		variables.step_PERSONAL_INFORMATION++;
 			}
 			
@@ -1325,6 +1609,7 @@ public class DocNetProtocol {
 			{
 				variables.editField_On_Screen = "specialty";
 	    		output = "Edit Specialty: ";
+	    		variables.usingDb_1 = true;
 	    		variables.step_PERSONAL_INFORMATION++;
 			}
 			
@@ -1339,6 +1624,8 @@ public class DocNetProtocol {
 				
 				//retrieve recordset of friends list from database
 	    		output = this.screenOutput(variables.nextScreen /*,recordset of friendslist*/); 
+	    		
+	    		variables.step_PERSONAL_INFORMATION = 0;
 	    		
 			}
 			
@@ -1368,7 +1655,65 @@ public class DocNetProtocol {
     	else if(this.variables.step_PERSONAL_INFORMATION == 2)
     	{
     		//update the database with edited field
-    		//requery database for updated record
+    		if(variables.usingDb_1)//general information database
+    		{
+    			variables.sqlString_con1 = "select * from user_info where user_id = " + Integer.parseInt(variables.loggedIn_User_ID);
+    			    			
+    			try 
+    			{
+    				this.selectQuery_con1();
+    				//variables.rs_con1 = variables.st_con1.executeQuery(variables.sqlString_con1);
+    				
+    				//if record exists in general database then update it
+    				if(variables.rs_con1.next())
+    				{
+    					variables.sqlString_con1 = "update user_info set " + variables.editField_On_Screen + 
+            					" = \'" + input + "\' where user_id = " + Integer.parseInt(variables.loggedIn_User_ID);
+    				
+    					//variables.st_con1.executeUpdate(variables.sqlString_con1);
+    					this.InsertUpdateDeleteQuery_con1();
+    				}
+    				//otherwise insert record
+    				else
+    				{
+    					/*variables.sqlString_con2 = "INSERT INTO users (username, password) VALUES " +
+								"(\'" + variables.userName + "\', \'" + variables.password + "\')";*/
+    					
+    					variables.sqlString_con1 = "insert into user_info (user_id, " + variables.editField_On_Screen + ") " +
+    							"values (\'" + variables.loggedIn_User_ID + "\' , \'" + input + "\' )";  
+            					
+    					this.InsertUpdateDeleteQuery_con1();
+    					//variables.st_con1.executeUpdate(variables.sqlString_con1);
+    				}
+    				
+				} 
+    			catch (SQLException e) 
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}	
+    			
+    			variables.usingDb_1 = false;
+    		}
+    		else if(variables.usingDb_2)//users, privileges databases	
+    		{
+    			variables.sqlString_con2 = "update users set " + variables.editField_On_Screen + 
+    					" = \'" + input + "\' where user_id = " + Integer.parseInt(variables.loggedIn_User_ID);
+    			/*try 
+    			{*/
+    				this.InsertUpdateDeleteQuery_con2();
+					//variables.st_con2.executeUpdate(variables.sqlString_con2);
+					
+				//} 
+    			/*catch (SQLException e) 
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}	*/
+    			
+    			variables.usingDb_2 = false;
+    		}
+    		
     		
     		//set the screen to have its information displayed in the
     		//output screen function
@@ -2673,7 +3018,8 @@ public class DocNetProtocol {
     	}
     	else if (this.variables.step_RESET_PRIVILEGE == 7)
     	{
-    		if (this.variables.chosen_On_Screen_Action.equals("1")){
+    		if (this.variables.chosen_On_Screen_Action.equals("1"))
+    		{
     			if (input.equals("1"))
     			{
     				//update database with view privilege to communittee member + visitors
@@ -2715,6 +3061,7 @@ public class DocNetProtocol {
     			else if (input.equals("4"))
     			{
     				//update database with view privilege to specific friends
+    				//switch screen to the specific friends screen
     				output = "Reset post privilege to Specific friends";
     			}
     		}
@@ -2734,6 +3081,66 @@ public class DocNetProtocol {
 			this.variables.step_RESET_PRIVILEGE = 0;
     	}
     	return output;
+    }
+    
+    public void selectQuery_con1()
+    {
+    	try 
+    	{
+    		variables.rs_con1 = variables.st_con1.executeQuery(variables.sqlString_con1);
+		} 
+    	catch (SQLException e) 
+    	{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+    }
+    public int InsertUpdateDeleteQuery_con1()
+    {
+    	int recCount = 0;
+    	
+    	try 
+    	{
+    		recCount = variables.st_con1.executeUpdate(variables.sqlString_con1);
+		} 
+    	catch (SQLException e) 
+    	{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+    	return recCount;
+    }
+    public void selectQuery_con2()
+    {
+    	try 
+    	{
+    		variables.rs_con2 = variables.st_con2.executeQuery(variables.sqlString_con2);
+		} 
+    	catch (SQLException e) 
+    	{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+    }
+    public int InsertUpdateDeleteQuery_con2()
+    {
+    	int recCount = 0;
+    	
+    	try 
+    	{
+    		recCount = variables.st_con2.executeUpdate(variables.sqlString_con2);
+		} 
+    	catch (SQLException e) 
+    	{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	return recCount;
+		
     }
    
 }

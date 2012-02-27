@@ -1,6 +1,7 @@
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Vector;
 
 //jma342 - Feb 25th - 10:20pm houses all of the class variables that will be used
 //within the protocol
@@ -73,16 +74,21 @@ public class Variables
     public int step_FRIEND_PUBLIC_DISCUSSIONS_SCREEN = 0;//added -- jma 342 - February 25th 2012
     public int step_FRIEND_RESEARCH_GROUPS_SCREEN = 0;//added -- jma 342 - February 25th 2012
     public int step_FRIEND_user_FRIENDS_LIST_SCREEN = 0;//added -- jma 342 - February 25th 2012
+    public int step_FriendsListRetrieval = 0;//dded -- jma342 - February 27th 2012 - keeps track of when to retrieve recordset and when to iterate through it
     /*current step in screens for accessing a friend's screens*/
     
+    public int friendsListCount = 1;
+    public Vector<Integer> friendsListIDS = new Vector<Integer>();//holds the list of IDS of friends displayed on screen
 
      //current step in a given conversation relative to each menu---jma342---Feb 14th
     
     //jma342 -- feb 21st -- both database connections
     public Connection con_1 = null;
 	public Connection con_2 = null;
-	Statement st = null;
-    ResultSet rs = null;
+	Statement st_con1 = null;
+	Statement st_con2 = null;
+    ResultSet rs_con1 = null;
+    ResultSet rs_con2 = null;
     
     //field on screen chosen to be edited
     public String editField_On_Screen = "";
@@ -91,7 +97,8 @@ public class Variables
     public String chosen_On_Screen_Action = "";
     public String userName = "";
     public String password = "";
-    public String sqlString = "";
+    public String sqlString_con1 = "";
+    public String sqlString_con2 = "";
     
     //current screen user is interfacing with
     public int currentScreen = LOG_IN_SCREEN;
@@ -115,5 +122,10 @@ public class Variables
     
     public boolean viewPrivilegesSet = false;
     public boolean postPrivilegesSet = false;
+    
+    public String loggedIn_User_ID = "";
+    public boolean usingDb_1 = false;//information for screens
+    public boolean usingDb_2 = false;//privileges,users
+    
 
 }
