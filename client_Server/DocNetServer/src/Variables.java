@@ -15,7 +15,7 @@ public class Variables
     public static final int PUBLIC_DISCUSSIONS_SCREEN = 5;
     public static final int RESEARCH_GROUPS_SCREEN = 6;
     public static final int user_FRIENDS_LIST_SCREEN = 7;
-    public static final int CURRENT_OUTPUT_SCREEN = 8;
+    public static final int CURRENT_OUTPUT_SCREEN = 8;//displays the content for the screen currently in focus
     public static final int MARITAL_STATUS_SCREEN = 9;//change made - jma342 - Feb 18th
     public static final int GENDER_SCREEN = 10;//change made - jma342 - Feb 18th
     public static final int ADD_FRIEND_SCREEN = 11;//change made - jma342 - Feb 19th
@@ -33,7 +33,11 @@ public class Variables
     /*screens for accessing a friend's screens*/
     
     public static final int PUBLIC_DISCUSSION_TOPIC_SCREEN = 21;//added new screen for specific topic and comments--rw446 Feb 18th    
-    public static final int CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN = 22;//added -- jma 342 - February 24th 2012
+    public static final int SET_VIEW_OR_POST_PRIVILEGES_SCREEN = 22;//added -- jma 342 - February 24th 2012
+    public static final int SELECT_FRIENDS_FOR_PRIVILEGE_SCREEN = 23;//change made - jma342 - Feb 26th
+    public static final int RESET_PRIVILEGE_SCRREN = 24; //added new screen for edit privilege-- rw 446 -Feb 26th
+
+
     //MENUS---jma342---Feb 14th
     
     //current step in a given conversation relative to each menu---jma342---Feb 14th
@@ -54,12 +58,10 @@ public class Variables
     public int step_ERROR_CHECK = 0;//jma342 - Feb 21st
     public int step_PRIVILEGES_SCREEN = 0;//added -- jma 342 - February 24th 2012
     public int step_PUBLIC_DISCUSSION_TOPIC=0;//added for specific topic and comments--rw446--Feb 18th
-    public int step_CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN = 0;//added -- jma 342 - February 24th 2012 - 
-    																 /*this screen is for when a pub dis or res grp
-    																  * is being created and the user is allowed to set
-    																  * the privileges during creation.
-    																  */
-    
+    public int step_SET_VIEW_OR_POST_PRIVILEGES_SCREEN = 0;//added -- jma 342 - February 24th 2012 -
+    public int step_RESET_PRIVILEGE = 0; //added -- rw  446 - Feb 26th 2012
+    																 
+    public int step_SELECT_FRIENDS_FOR_PRIVILEGE_SCREEN = 0;//added - jma342 Feb 26th
     /*current step in screens for accessing a friend's screens*/
     public int step_FRIEND_MAIN_POSTING_BOARD_SCREEN = 0;//added -- jma 342 - February 25th 2012
     public int step_FRIEND_PERSONAL_INFORMATION_SCREEN = 0;//added -- jma 342 - February 25th 2012
@@ -70,7 +72,7 @@ public class Variables
     public int step_FRIEND_user_FRIENDS_LIST_SCREEN = 0;//added -- jma 342 - February 25th 2012
     /*current step in screens for accessing a friend's screens*/
     
-  //current step in a given conversation relative to each menu---jma342---Feb 14th
+     //current step in a given conversation relative to each menu---jma342---Feb 14th
     
     //jma342 -- feb 21st -- both database connections
     public Connection con_1 = null;
@@ -98,7 +100,16 @@ public class Variables
     public int researchGroupID = -1;
     
     //jma342 - feb 26th 4:13AM - indicates whether a publiDiscussion or createdResearch group was recently created
-    public boolean createdPublicDiscussion = false;
-    public boolean createdResearchGroup = false;
+    public boolean publicDiscussionTopic = false;
+    public boolean annoucnmentTopic = false;
+    
+    public boolean publicDiscussionRegion = false;
+    public boolean personalInformationRegion = false;
+    public boolean researchPublicaionRegion = false;
+    public boolean announcementsRegion = false;
+    public boolean researchGroupsRegion = false;
+    
+    public boolean viewPrivilegesSet = false;
+    public boolean postPrivilegesSet = false;
 
 }
