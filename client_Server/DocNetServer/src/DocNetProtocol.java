@@ -779,21 +779,36 @@ public class DocNetProtocol {
     		
     	}
     	
-    	else if(screen == this.variables.ADD_FRIEND_SCREEN)
+    	/*else if(screen == this.variables.ADD_FRIEND_SCREEN)
     	{
     		//jma342 - Feb 25 - 3:22pm - informs user to return to previous screen
     		if(this.variables.step_SCREEN_OUTPUT == 0)
     		{
-    			output = "Please enter the first name and last name(eg. John Doe, enter EXIT to return to previous screen):";
+    			output = "Please enter the first name of desired friend(enter -1 to cancel):";
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(this.variables.step_SCREEN_OUTPUT == 1)
     		{
     			output = "userInput";
+    			variables.step_SCREEN_OUTPUT++;
     			this.variables.step_SCREEN_OUTPUT = 0;
     			variables.currentScreen = variables.nextScreen;
     		}
-    	}
+    		else if(this.variables.step_SCREEN_OUTPUT == 2)
+    		{
+    			variables.desiredFriendFirstName = input;
+    			
+    			output = "Please enter the last name (enter -1 to return to cancel):";
+    			variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 1)
+    		{
+    			output = "userInput";
+    			variables.step_SCREEN_OUTPUT++;
+    			this.variables.step_SCREEN_OUTPUT = 0;
+    			variables.currentScreen = variables.nextScreen;
+    		}
+    	}*/
     	
     	/*//jma342 - feb26th - 3:58 am
     	else if(screen == this.variables.CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN)
@@ -822,15 +837,59 @@ public class DocNetProtocol {
     	
     		if(this.variables.step_SCREEN_OUTPUT == 0)
     		{
-    			//display all of the friend reqests on reccuring to this
-    			//function using the recordset
-    			//addin the last record to the counter
-    			//increment the stepScreenOuput variable
-    			variables.step_SCREEN_OUTPUT++;
+    			//retrives all of the pending friend requests
+    			if(variables.step_queryingOrUpdatingDB == 0)
+    			{
+    				variables.sqlString_con1 = "Select * from friend_req where requestee_id = " + 
+    								variables.loggedIn_User_ID;
+    				
+    				this.selectQuery_con1();
+    				variables.step_queryingOrUpdatingDB++;
+    			}
+    			
+    			//displays the users who requested you
+    			else if(variables.step_queryingOrUpdatingDB == 1)
+    			{
+    				try 
+    				{
+						if(variables.rs_con1.next())
+						{
+							variables.sqlString_con2 = "Select * from users where user_id = " + 
+									Integer.parseInt(variables.rs_con1.getString("requester_id"));
+							
+							this.selectQuery_con2();
+							
+							output = variables.friendsListCount + ". " + variables.rs_con2.getString("first_name") + 
+									" " + variables.rs_con2.getString("last_name");
+							
+							//stores id for each friend request as they are displayed on screen
+							variables.friendsListIDS.add(Integer.parseInt(variables.rs_con1.getString("friend_req_id")));
+							
+							variables.friendsListCount++;
+						}
+						else
+						{
+							variables.step_queryingOrUpdatingDB = 0;
+							variables.step_SCREEN_OUTPUT++;
+							variables.friendsListCount = 1;
+						}
+					} 
+    				catch (NumberFormatException e) 
+    				{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} 
+    				catch (SQLException e) 
+    				{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+    			}
+    			
     		}
     		else if(this.variables.step_SCREEN_OUTPUT == 1)
     		{
-				output = "Please enter the number of the desired friend from the list(enter -1 to cancel)";
+				output = "Please enter the number of the desired friend request from the list(enter -1 to cancel)";
 				variables.step_SCREEN_OUTPUT++;
     		}
     		else if(this.variables.step_SCREEN_OUTPUT == 2)
@@ -2603,10 +2662,13 @@ public class DocNetProtocol {
     		//add a friend
     		if(input.equals("1"))
     		{
-    			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
-    			variables.nextScreen = this.variables.ADD_FRIEND_SCREEN;
-    			
-    			output = this.screenOutput(variables.nextScreen /*,recordset of friendslist*/);
+    			//variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+    			variables.currentScreen = this.variables.ADD_FRIEND_SCREEN;
+    			variables.friendsListIDS.clear();/*empties this vector as it was 
+    											populated with the list of friends displayed
+    											and it needs to be reused with the add friend screen*/ 
+    			output = "";
+    			//output = this.screenOutput(variables.nextScreen /*,recordset of friendslist*/);
     			
     			this.variables.step_FRIENDS_LIST=0;
     		}
@@ -2636,7 +2698,7 @@ public class DocNetProtocol {
     		{
     			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
     			variables.nextScreen = this.variables.user_FRIEND_REQUESTS_SCREEN;
-    			
+    			variables.friendsListIDS.clear();
     			output = this.screenOutput(variables.nextScreen /*,recordset of friendslist*/);
     			this.variables.step_FRIENDS_LIST=0;
     			
@@ -2646,7 +2708,7 @@ public class DocNetProtocol {
     		{
     			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
     			variables.nextScreen = this.variables.PERSONAL_INFORMATION_SCREEN;
-    			
+    			variables.friendsListIDS.clear();
     			output = this.screenOutput(variables.nextScreen /*,recordset of friendslist*/);
     			this.variables.step_FRIENDS_LIST=0;
     			
@@ -2700,7 +2762,7 @@ public class DocNetProtocol {
 	    			
     				variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
         			variables.nextScreen = this.variables.FRIEND_MAIN_POSTING_BOARD_SCREEN;
-        			
+        			variables.friendsListIDS.clear();
         			output = this.screenOutput(variables.nextScreen /*,recordset of friendslist*/);
         			this.variables.step_FRIENDS_LIST=0;
         			
@@ -2721,7 +2783,7 @@ public class DocNetProtocol {
     		{
     			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
     			variables.nextScreen = this.variables.user_FRIENDS_LIST_SCREEN;
-    			
+    			variables.friendsListIDS.clear();
     			output = this.screenOutput(variables.nextScreen /*,recordset of friendslist*/);
     			this.variables.step_FRIENDS_LIST = 0;
     		}
@@ -2765,71 +2827,130 @@ public class DocNetProtocol {
     	
     	if(this.variables.step_ADD_FRIEND == 0)
     	{
-    		if(input.toLowerCase().equals("exit"))
-    		{
-    			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
-    			variables.nextScreen = this.variables.user_FRIENDS_LIST_SCREEN;
-    			
-    			output = this.screenOutput(variables.nextScreen /*,recordset of friendslist*/);
-    			this.variables.step_ADD_FRIEND = 0;
-    		}
-    		
-    		//jma342 - Feb 25 - 3:28PM 
-    		else
-    		{
-	    		/*rs.recordset("Select First Name, Last Name, Home Address where
-				firstname = 'firstname' and lastname = 'lastname'")*/
+    		//jma342 - Feb 25 - 3:22pm - informs user to return to previous screen
+    		output = "Please enter the first name of desired friend(enter -1 to cancel):";
+    		variables.step_ADD_FRIEND++;
+    	}
+		else if(this.variables.step_ADD_FRIEND == 1)
+		{
 			
-	    		//allow recordset to move to next record on
-				//reentry in to this function
-				//once the last record is added to the output variable
-    		
-	    		//jma342 - Feb 25 - 3:28PM - added the ability for the user to cancel operation by entering -1
-	    		output = "Please select the desired friend by entering a number(enter -1 to cancel)";
-	    		variables.step_ADD_FRIEND++;
-				//increment step_AddFriend
-    		}
-    		//jma342 - Feb 25 - 3:28PM 
-    	}
+			output = "userInput";
+			variables.step_ADD_FRIEND++;
+			/*this.variables.step_SCREEN_OUTPUT = 0;
+			variables.currentScreen = variables.nextScreen;*/
+		}
+		else if(this.variables.step_ADD_FRIEND == 2)
+		{
+			variables.desiredFriendFirstName = input;
+			
+			output = "Please enter the last name (enter -1 to return to cancel):";
+			variables.step_ADD_FRIEND++;
+		}
+		else if(this.variables.step_ADD_FRIEND == 3)
+		{
+			output = "userInput";
+			variables.step_ADD_FRIEND++;
+			/*this.variables.step_SCREEN_OUTPUT = 0;
+			variables.currentScreen = variables.nextScreen;*/
+		}
     	
-    	else if(this.variables.step_ADD_FRIEND == 1)
+		else if(this.variables.step_ADD_FRIEND == 4)
+		{
+			//query the database for friends with these names
+			if(variables.step_queryingOrUpdatingDB == 0)
+			{
+				
+				variables.desiredFriendLastName = input;
+				variables.sqlString_con2 = "Select * from users where first_name = \'" + 
+						variables.desiredFriendFirstName + "\' and last_name = \'" + variables.desiredFriendLastName;
+				
+				this.selectQuery_con2();
+				
+				variables.step_queryingOrUpdatingDB++;
+				
+			}
+			//queries the database to retrieve the home address from db1 with the name specified to provide some form
+			//of uniqueness
+			else if(variables.step_queryingOrUpdatingDB == 1)
+			{
+				try 
+				{
+					if(variables.rs_con2.next())
+					{
+						variables.sqlString_con1 = "Select * from user_info where user_id = " + 
+									variables.rs_con1.getString("user_id");
+									
+						this.selectQuery_con1();
+						
+						output = variables.friendsListCount + ". " + variables.rs_con2.getString("first_name") + 
+										" " + variables.rs_con2.getString("last_name") + " - HomeAddress: " + 
+								variables.rs_con1.getString("home_address");
+						
+						variables.friendsListCount++;
+						//stores list of potential friends user_ids as they are displayed
+						variables.friendsListIDS.add(Integer.parseInt(variables.rs_con2.getString("user_id")));
+					}
+					else
+					{
+						variables.step_queryingOrUpdatingDB = 0;
+						variables.friendsListCount = 1;
+						variables.step_ADD_FRIEND++;
+					}
+				} 
+				catch (NumberFormatException e) 
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SQLException e) 
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}	
+		}
+    	
+		else if(this.variables.step_ADD_FRIEND == 5)
+		{
+			output = "Please select the friend that you would like to add(enter -1 to cancel): ";
+			variables.step_ADD_FRIEND++;
+		}
+		
+		else if(this.variables.step_ADD_FRIEND == 6)
+		{
+			output = "userInput";
+			variables.step_ADD_FRIEND++;
+		}
+		
+		else if(this.variables.step_ADD_FRIEND == 7)
+		{
+			if(input.equals("-1"))
+			{
+				output = "Add friend operation has been cancelled...press any key to continue";
+				variables.step_ADD_FRIEND++;
+			}
+			else
+			{
+				variables.sqlString_con1 = "Insert into friend_req (requester_id,requestee_id) values " + 
+							"(" + variables.loggedIn_User_ID + ", " + 
+						variables.friendsListIDS.elementAt(Integer.parseInt(input)) + ")";
+				
+				this.InsertUpdateDeleteQuery_con1();
+				
+				output = "Friend Request has been sent awaiting response...press any key to continue";
+				variables.friendsListIDS.clear();
+				variables.step_ADD_FRIEND++;
+				
+			}
+		}
+		
+	
+    	else if(this.variables.step_ADD_FRIEND == 8)
     	{
     		output = "userInput";
     		variables.step_ADD_FRIEND++;
     	}
-    	
-    	else if(this.variables.step_ADD_FRIEND == 2)
-    	{
-    		//jma342 - Feb 25 - 3:30PM - allows user to return to parent screen after cancelling current operation 
-    		if(input.equals("-1"))
-    		{
-    			
-    			this.variables.step_ADD_FRIEND++;
-    			
-    			output = "Friend request has been cancelled...press any key to continue";
-    			
-    		}
-    		//jma342 - Feb 25 - 3:30PM - returns to parent screen after cancelling current operation 
-    		
-    		else
-    		{
-    			/*rs.recordset("Insert userID, input into
-    			 * friendRequest table)
-    			 */
-    			output = "Friend request has been sent...press any key to continue";
-    			
-    			variables.step_ADD_FRIEND++;
-    		}
-    		
-    	}
-    	
-    	else if(this.variables.step_ADD_FRIEND == 3)
-    	{
-    		output = "userInput";
-    		variables.step_ADD_FRIEND++;
-    	}
-    	
-    	else if(this.variables.step_ADD_FRIEND == 4)
+	
+    	else if(this.variables.step_ADD_FRIEND == 9)
     	{
     		variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
 			variables.nextScreen = this.variables.user_FRIENDS_LIST_SCREEN;
@@ -2837,7 +2958,7 @@ public class DocNetProtocol {
 			output = this.screenOutput(variables.nextScreen /*,recordset of friendslist*/);
 			this.variables.step_ADD_FRIEND = 0;
     	}
-	
+		
     	return output;
     }
     
@@ -2853,41 +2974,128 @@ public class DocNetProtocol {
     			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
     			variables.nextScreen = this.variables.user_FRIENDS_LIST_SCREEN;
     			
+    			variables.friendsListIDS.clear();
+    			
     			output = this.screenOutput(variables.nextScreen /*,recordset of friendslist*/);
     			this.variables.step_user_FRIEND_REQUEST = 0;
     		}
     		else
     		{
-    			//display the friend request chosen
-        		//output =
+    			//stores the friend request chosen
+    			variables.friendRequestChosen = Integer.parseInt(input);
+    			
+    			output = "Please enter A or D to Accept or Deny the following friend request from(enter -1 to cancel): ";
     			variables.step_user_FRIEND_REQUEST++;
     		}
     		
     		//jma342 - Feb 25th - 3:49pm - allows user to cancel the operation of accepting a friend request
     	}
+    	
+    	//retrieve the user first and last name of the selected friend request
     	else if(this.variables.step_user_FRIEND_REQUEST == 1)
     	{
-    		output = "Please enter A - accept or D - Deny:";
+    		//retrive the friend request to get the id for the friend requester.
+    		variables.sqlString_con1 = "Select * from friend_req where friend_req_id = " + 
+					variables.friendsListIDS.elementAt(variables.friendRequestChosen);
+    		
+    		this.selectQuery_con1();
+    		
+    		try 
+    		{
+    			//store the id of the friend requester 
+				variables.requesterForFriendShip = Integer.parseInt(variables.rs_con1.getString("requester_id"));
+			} 
+    		catch (NumberFormatException e2) 
+    		{
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			} 
+    		catch (SQLException e2) 
+    		{
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+    		
+    		this.selectQuery_con1();
+    		
+    		try 
+    		{
+    			//retrieve the names of the requester_id
+				variables.sqlString_con2 = "Select * from users where user_id = " + 
+						variables.requesterForFriendShip;
+				
+				this.selectQuery_con2();
+			}
+    		
+    		catch (NumberFormatException e1) 
+			{
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+    		
+    		try 
+    		{
+    			//display the requester name
+				output = variables.rs_con2.getString("first_name") + " " + variables.rs_con2.getString("last_name");
+			} 
+    		catch (SQLException e) 
+    		{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    		
     		variables.step_user_FRIEND_REQUEST++;
     	}
+    	
     	else if(this.variables.step_user_FRIEND_REQUEST == 2)
     	{
     		output = "userInput";
     		variables.step_user_FRIEND_REQUEST++;
     	}
+    	
     	else if(this.variables.step_user_FRIEND_REQUEST == 3)
     	{
     	
-    		if(input.equals("A") || input.equals("D"))
+    		if(input.equals("A"))
     		{
-	    		//if user chooses A then update the friends listing for both
-	    		//requester and requestee and remove the request from the friends request table
-	    		
-	    		//else just remove the request from the friends list table
+    			//adds the requester and requestee to each others friends lists
+    			variables.sqlString_con1 = "Insert into friends_list (user_id,friend_id) values " + 
+    						"(" + variables.loggedIn_User_ID + ", " + variables.requesterForFriendShip + ")";
+    			
+    			this.InsertUpdateDeleteQuery_con1();
+    			
+    			variables.sqlString_con1 = "Insert into friends_list (user_id,friend_id) values " + 
+						"(" + variables.requesterForFriendShip + ", " + variables.loggedIn_User_ID + ")";
+    			
+    			this.InsertUpdateDeleteQuery_con1();
+    			//adds the requester and requestee to each others friends lists'
+    			
+    			//removes the friend request from the table as it has been addressed
+    			variables.sqlString_con1 = "Delete from friend_req where friend_req_id = " + 
+    					variables.friendRequestChosen;
+    			
+    			this.InsertUpdateDeleteQuery_con1();
+    			//removes the friend request from the table as it has been addressed
+    			
+    			output = "Friend request has been accepted...press any key to continue";
+    			
+    			variables.step_user_FRIEND_REQUEST++;
+
     		}
     		
-    		output = "Request accepted/denied...press any key to continue";
-    		variables.step_user_FRIEND_REQUEST++;
+    		else if(input.equals("D"))
+    		{
+    			//removes the friend request from the table as it has been addressed
+    			variables.sqlString_con1 = "Delete from friend_req where friend_req_id = " + 
+    					variables.friendRequestChosen;
+    			
+    			this.InsertUpdateDeleteQuery_con1();
+    			//removes the friend request from the table as it has been addressed
+    			
+    			output = "Friend Request has been denied...press any key to continue";
+    			variables.step_user_FRIEND_REQUEST++;
+    		}
+    		
     	}
     	else if(variables.step_user_FRIEND_REQUEST == 4)
     	{

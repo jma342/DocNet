@@ -79,7 +79,12 @@ public class Variables
     
     public int friendsListCount = 1;
     public Vector<Integer> friendsListIDS = new Vector<Integer>();//holds the list of IDS of friends displayed on screen
+    public String desiredFriendFirstName = "";//holds the first name of the friend that you desire to add
+    public String desiredFriendLastName = "";//hodlds the lastname of the friend that you desire to add
+    public int requesterForFriendShip = 0;//used to hold user_id of the friend request that was chosen
+    public int friendRequestChosen = 0;//used to hold the friend request that was chosen
 
+    
      //current step in a given conversation relative to each menu---jma342---Feb 14th
     
     //jma342 -- feb 21st -- both database connections
@@ -120,12 +125,16 @@ public class Variables
     public boolean announcementsRegion = false;
     public boolean researchGroupsRegion = false;
     
+    
     public boolean viewPrivilegesSet = false;
     public boolean postPrivilegesSet = false;
     
     public String loggedIn_User_ID = "";
     public boolean usingDb_1 = false;//information for screens
     public boolean usingDb_2 = false;//privileges,users
+    
+    
+    public int step_queryingOrUpdatingDB = 0;
     
 
 }
