@@ -2316,26 +2316,29 @@ public class DocNetProtocol {
     	}
     	return output;
     }
-    
+    //changed -- rw 446 -- Feb 26th 2012 7:pm
     public String ResetPrivilegeScreen(String input)
     {
     	String output = "";
     	if (this.variables.step_RESET_PRIVILEGE == 0)
     	{     
-    		 if (input.equals("1"))
-    		 {
-    			 this.variables.chosen_On_Screen_Action = input; 
-    			 output = "Please Choose Groups to Reset View Privilege";
-    		 }
-    		 else if (input.equals("2"))
-    		 {
-    			 this.variables.chosen_On_Screen_Action = input;
-    			 output = "Please Choose Groups to Reset Post Privilege";
-    		 }
-    		 
-    		 this.variables.step_RESET_PRIVILEGE++;  		
-    	}
-    	
+    	    // added -1 to make sure user can canel reset operation -- rw 446 -- Feb 26th 7pm	
+    		if(input.equals("-1")) 
+    		{
+    			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+    			variables.nextScreen = this.variables.PRIVILEGES_SCREEN;
+    			
+    			output = this.screenOutput(variables.nextScreen /*,recordset of friendslist*/);
+    			this.variables.step_RESET_PRIVILEGE = 0;
+    		}
+    		else
+    		{
+    			this.variables.chosen_On_Screen_Action = input; 
+       		 
+       		     this.variables.step_RESET_PRIVILEGE++;  
+    		}
+    		 		
+    	}  	
     	else if (this.variables.step_RESET_PRIVILEGE == 1)
     	{
     		output = "1. Communittee members + Visitors";
@@ -2346,22 +2349,27 @@ public class DocNetProtocol {
     		output = "2. Communittee members";
     		this.variables.step_RESET_PRIVILEGE++;
     	}
-    	else if(this.variables.RESET_PRIVILEGE_SCRREN == 3)
+    	else if(this.variables.step_RESET_PRIVILEGE == 3) //bug due to wrong variable name previously, changed by --rw446 --Feb 26th 7pm
     	{
     		output = "3. All Friends";
     		this.variables.step_RESET_PRIVILEGE++;
     	}
-    	else if (this.variables.RESET_PRIVILEGE_SCRREN == 4)
+    	else if (this.variables.step_RESET_PRIVILEGE == 4)//bug due to wrong variable name previously, changed by --rw446 --Feb 26th 7pm
     	{
     		output = "4. Specific Friends";
     		this.variables.step_RESET_PRIVILEGE++;
     	}
     	else if (this.variables.step_RESET_PRIVILEGE == 5)
     	{
-    		output = "userInput";
+    		output = "Pleae select specific group to reset privilege";
     		this.variables.step_RESET_PRIVILEGE++;
     	}
     	else if (this.variables.step_RESET_PRIVILEGE == 6)
+    	{
+    		output = "userInput";
+    		this.variables.step_RESET_PRIVILEGE++;
+    	}
+    	else if (this.variables.step_RESET_PRIVILEGE == 7)
     	{
     		if (this.variables.chosen_On_Screen_Action.equals("1")){
     			if (input.equals("1"))
@@ -2410,12 +2418,12 @@ public class DocNetProtocol {
     		}
     		this.variables.step_RESET_PRIVILEGE++;
     	}
-    	else if (this.variables.step_RESET_PRIVILEGE == 7)
+    	else if (this.variables.step_RESET_PRIVILEGE == 8)
     	{
     		output = "userInput";
     		this.variables.step_RESET_PRIVILEGE++;
     	}
-    	else if (this.variables.step_RESET_PRIVILEGE == 8)
+    	else if (this.variables.step_RESET_PRIVILEGE == 9)
     	{
     		variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
 			variables.nextScreen = this.variables.RESET_PRIVILEGE_SCRREN;
