@@ -18,6 +18,17 @@ public class DocNetProtocol {
     {
     	variables.con_1 = c1;
     	variables.con_2 = c2;
+
+    	try 
+    	{
+    		variables.st_con1 = variables.con_1.createStatement();
+			variables.st_con2 = variables.con_2.createStatement();
+		} 
+    	catch (SQLException e) 
+    	{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
     public String processRequest(String input)
@@ -58,9 +69,25 @@ public class DocNetProtocol {
     	}
     	//jma342 - feb 25 1:52AM - Merging cindy's code
     	
-    	else if(variables.currentScreen == variables.CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN)
+    	/*else if(variables.currentScreen == variables.CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN)
     	{
     		output = created_PubDisc_ResGrp_Priviliges_Screen(input);
+    	}*/
+    	
+    	//add new screen for reset privilege and screen for privileges-- rw 446 -- Feb 26th
+    	else if(variables.currentScreen == this.variables.PRIVILEGES_SCREEN)
+    	{
+    		output = this.PrivilegeScreen(input);
+    	}
+    	
+    	else if(variables.currentScreen == this.variables.RESET_PRIVILEGE_SCRREN)
+    	{
+    		output = this.ResetPrivilegeScreen(input);
+    	}
+    	//jma342 - feb 26 2:48pm
+    	else if(variables.currentScreen == this.variables.SELECT_FRIENDS_FOR_PRIVILEGE_SCREEN)
+    	{
+    		output = selectFriendsPrivilegeScreen(input);
     	}
     	
     	//change made - jma 342 - feb 18th
@@ -201,66 +228,253 @@ public class DocNetProtocol {
     	}
     	else if(screen == this.variables.PERSONAL_INFORMATION_SCREEN || screen == this.variables.FRIEND_PERSONAL_INFORMATION_SCREEN)
     	{
+    		if(screen == this.variables.PERSONAL_INFORMATION_SCREEN)
+    		{
+    			variables.sqlString_con2 = "SELECT * FROM users WHERE user_id = " + Integer.parseInt(variables.loggedIn_User_ID);
+    			variables.sqlString_con1 = "SELECT * FROM user_info WHERE user_id = " + Integer.parseInt(variables.loggedIn_User_ID);
+    			
+    			this.selectQuery_con2();
+    			this.selectQuery_con1();
+    			/*try 
+    			{
+					variables.rs_con2 = variables.st_con2.executeQuery(variables.sqlString_con2);
+					variables.rs_con1 = variables.st_con1.executeQuery(variables.sqlString_con1);
+				} 
+    			catch (SQLException e) 
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}*/
+    		}
     		//try to figure how to clearscreen
     		if(this.variables.step_SCREEN_OUTPUT == 0)
     		{
-    			output = "1. First Name";  //+ db.firtname
+    			try 
+    			{
+    				if(variables.rs_con2.next())
+    				{
+	    				//System.out.println(variables.rs_con2.getNString("first_name")); 
+						output = "1. First Name: " + variables.rs_con2.getString("first_name") /*!= null ? 
+														variables.rs_con2.getNString("first_name") :""*/;
+    				}
+    				else
+    				{
+    					output = "First Name: ";
+    				}
+				} catch (SQLException e) 
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}  //+ db.firtname
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(variables.step_SCREEN_OUTPUT == 1)
     		{
-    			output ="2. Last Name";//db.lastname
+    			try 
+    			{
+    				if(variables.rs_con2.next())
+    				{
+    					output ="2. Last Name: " + variables.rs_con2.getString("last_name");
+    				}
+    				else
+    				{
+    					output = "2. Last Name: ";
+    				}
+				} 
+    			catch (SQLException e) 
+    			{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}//db.lastname
+    			
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(variables.step_SCREEN_OUTPUT == 2)
     		{
-    			output = "3. Age";//db.age
+    			try 
+    			{
+    				if(variables.rs_con1.next())
+    				{
+    					output = "3. Age: " + variables.rs_con1.getString("age");
+    				}
+    				else
+    				{
+    					output = "3. Age: ";
+    				}
+				} 
+    			catch (SQLException e) 
+    			{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}//db.age
+    			
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(variables.step_SCREEN_OUTPUT == 3)
     		{
     			
-    			output = "4. Gender";//db.gender
+    			try 
+    			{
+    				if(variables.rs_con1.next())
+    				{
+    					output = "4. Gender: " + variables.rs_con1.getString("gender");
+    				}
+    				else
+    				{
+    					output = "4. Gender: ";
+    				}
+    				
+				} 
+    			catch (SQLException e) 
+    			{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}//db.gender
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(variables.step_SCREEN_OUTPUT == 4)
     		{
-    			output = "5. Marital Status";//db.maritalStatus
+    			output = "5. Marital Status(enum currently missing from db)";//db.maritalStatus
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(variables.step_SCREEN_OUTPUT == 5)
     		{
-    			output = "6. Home Address";//db.HomeAddress
+    			try 
+    			{
+    				if(variables.rs_con1.next())
+    				{
+    					output = "6. Home Address: "+ variables.rs_con1.getString("home_address");
+    				}
+    				else
+    				{
+    					output = "6. Home Address: ";
+    				}
+				} 
+    			catch (SQLException e) 
+    			{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}//db.HomeAddress
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(variables.step_SCREEN_OUTPUT == 6)
     		{
-    			output = "7. Home Number";//db.Home Number
+    			try 
+    			{
+    				if(variables.rs_con1.next())
+    				{
+    					output = "7. Home Number: " + variables.rs_con1.getString("home_phone");
+    				}
+    				else
+    				{
+    					output = "7. Home Number: ";
+    				}
+				} 
+    			catch (SQLException e) 
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}//db.Home Number
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(variables.step_SCREEN_OUTPUT == 7)
     		{
-    			output = "8. Cell Number";//db.Cell Number
+    			try 
+    			{
+    				if(variables.rs_con1.next())
+    				{
+    					output = "8. Cell Number"+ variables.rs_con1.getString("cell_phone");
+    				}
+    				else
+    				{
+    					output = "8. Cell Number: ";
+    				}
+				} 
+    			catch (SQLException e) 
+    			{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}//db.Cell Number
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(variables.step_SCREEN_OUTPUT == 8)
     		{
-    			output = "9.Hospital";//db.Hospital
+    			try 
+    			{
+    				if(variables.rs_con1.next())
+    				{
+    					output = "9.Hospital" + variables.rs_con1.getString("hospital");
+    				}
+    				else
+    				{
+    					output = "9. Hosptial: ";
+    				}
+				} 
+    			catch (SQLException e) 
+    			{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}//db.Hospital
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(variables.step_SCREEN_OUTPUT == 9)
     		{
-    			output = "10. Hospital Address";//db.Hospital Address
+    			try 
+    			{
+    				if(variables.rs_con1.next())
+    				{
+    					output = "10. Hospital Address" + variables.rs_con1.getString("hospital_address");
+    				}
+    				else
+    				{
+    					output = "10. Hospital Address: ";
+    				}
+				} 
+    			catch (SQLException e) 
+    			{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}//db.Hospital Address
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(variables.step_SCREEN_OUTPUT == 10)
     		{
-    			output = "11. Work Number";//db.workNumber
+    			try 
+    			{
+    				if(variables.rs_con1.next())
+    				{
+    					output = "11. Work Number" + variables.rs_con1.getString("work_number");
+    				}
+    				else
+    				{
+    					output = "11. Work Number";
+    				}
+				} 
+    			catch (SQLException e) 
+    			{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}//db.workNumber
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(variables.step_SCREEN_OUTPUT == 11)
     		{
-    			output = "12. Specialty";//db.specialty
+    			try 
+    			{
+    				if(variables.rs_con1.next())
+    				{
+    					output = "12. Specialty" + variables.rs_con1.getString("specialty");
+    				}
+    				else
+    				{
+    					output = "12. Specialty: ";
+    				}
+				} 
+    			catch (SQLException e) 
+    			{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}//db.specialty
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(variables.step_SCREEN_OUTPUT == 12)
@@ -319,7 +533,13 @@ public class DocNetProtocol {
     			output = "2. Delete a publication";
     			variables.step_SCREEN_OUTPUT++;
     		}
-    		else if(variables.step_SCREEN_OUTPUT ==3)
+    		//jma342 - feb 26th - allowed the user to return to the parent screen
+    		else if (variables.step_SCREEN_OUTPUT==3)
+    		{
+    			output = "3. Return to Main Posting board";
+    			variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(variables.step_SCREEN_OUTPUT ==4)
     		{
     			output = "Please select number to perform desired action: ";
     			variables.step_SCREEN_OUTPUT++;
@@ -338,7 +558,7 @@ public class DocNetProtocol {
     	{
     		if(variables.step_SCREEN_OUTPUT == 0)
     		{
-    		  output = "display the announcement retrived from database\n";
+    		  output = "display the announcement retrived from database";
     		  variables.step_SCREEN_OUTPUT++;
     		  
     		}
@@ -352,6 +572,14 @@ public class DocNetProtocol {
     			output = "2. Delete an announcement";
     			variables.step_SCREEN_OUTPUT++;
     		}
+    		
+    		//jma342 - Feb 26 - 4:14pm
+       		else if(variables.step_SCREEN_OUTPUT ==3)
+    		{
+    			output = "3. Return to your main posting board.";
+    			variables.step_SCREEN_OUTPUT++;
+    		}
+
     		else
     		{
     			variables.step_SCREEN_OUTPUT = 0;
@@ -377,6 +605,11 @@ public class DocNetProtocol {
     		else if(variables.step_SCREEN_OUTPUT == 2)
     		{
     			output = "2. Delete a discussion";
+    			variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(variables.step_SCREEN_OUTPUT == 3)
+    		{
+    			output = "3. Return to Main Posting Board";
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else
@@ -416,23 +649,74 @@ public class DocNetProtocol {
     	//jma342 - Feb26th 1:54AM - merging in Cindy's code
     	
     	//change made - jma 342 - feb 19th
-    	else if(screen == this.variables.user_FRIENDS_LIST_SCREEN || screen == this.variables.FRIEND_FRIENDS_LIST_SCREEN)
+    	else if(screen == this.variables.user_FRIENDS_LIST_SCREEN || 
+    			screen == this.variables.FRIEND_FRIENDS_LIST_SCREEN || screen == this.variables.SELECT_FRIENDS_FOR_PRIVILEGE_SCREEN)
     	{
     		if(this.variables.step_SCREEN_OUTPUT == 0)
     		{
+    			if(screen == this.variables.user_FRIENDS_LIST_SCREEN || screen == this.variables.SELECT_FRIENDS_FOR_PRIVILEGE_SCREEN)
+    			{
+    				if(variables.step_FriendsListRetrieval == 0)
+    				{
+	    				variables.sqlString_con1 = "SELECT * FROM friends_list WHERE user_id = " + Integer.parseInt(variables.loggedIn_User_ID);
+	        			this.selectQuery_con1();
+	        			variables.step_FriendsListRetrieval++;
+    				}
+        			
+    				else if(variables.step_FriendsListRetrieval == 1)
+    				{
+    					//loops through list of friends on reentry and grabs each friend's name(first and last) from the users table in db2
+	        			try 
+	        			{
+	        				if(variables.rs_con1.next())
+	        				{
+	        					variables.sqlString_con1 = "Select * from users where user_id = " + 
+	        								Integer.parseInt(variables.rs_con1.getString("user_id"));
+	        					
+	        					variables.friendsListIDS.add(Integer.parseInt(variables.rs_con1.getString("user_id")));
+	        					
+	        					output = variables.friendsListCount + variables.rs_con1.getString("first_name") + " " + variables.rs_con1.getString("last_name");
+	        					variables.friendsListCount++;
+	        				}
+	        				else
+	        				{
+	        					output = "-----------End of Friends List----------------";
+	        					variables.step_SCREEN_OUTPUT++;
+	        					variables.step_FriendsListRetrieval = 0;
+	        					variables.friendsListCount = 1;
+	        				}
+	    				} 
+	        			catch (SQLException e) 
+	    				{
+	    					// TODO Auto-generated catch block
+	    					e.printStackTrace();
+	    				}
+    				}
+    			}
     			//retrieve records from the friends list
     			//output = rs.firstrecord
     			
     			//allow recordset to move to next record on
     			//reentry in to this function
     			//once the last record is added to the output variable
-    			variables.step_SCREEN_OUTPUT++;
     			
     		}
     		else if(this.variables.step_SCREEN_OUTPUT == 1)
     		{
-    			output = "Please select one of the following actions:";
-    			variables.step_SCREEN_OUTPUT++;
+    			if(screen == this.variables.user_FRIENDS_LIST_SCREEN || 
+    	    			screen == this.variables.FRIEND_FRIENDS_LIST_SCREEN)
+    			{
+    				output = "Please select one of the following actions:";
+    				variables.step_SCREEN_OUTPUT++;
+    			}
+    			//the select friends privilege screen consists of actions different to the other
+    			//screens utilising this protocol
+    			else if(screen == this.variables.SELECT_FRIENDS_FOR_PRIVILEGE_SCREEN)
+    			{
+    				this.variables.currentScreen = this.variables.nextScreen;
+    				variables.step_SCREEN_OUTPUT = 0;
+    			}
+    			
     		}
     		
     		else if(this.variables.step_SCREEN_OUTPUT == 2)
@@ -495,23 +779,38 @@ public class DocNetProtocol {
     		
     	}
     	
-    	else if(screen == this.variables.ADD_FRIEND_SCREEN)
+    	/*else if(screen == this.variables.ADD_FRIEND_SCREEN)
     	{
     		//jma342 - Feb 25 - 3:22pm - informs user to return to previous screen
     		if(this.variables.step_SCREEN_OUTPUT == 0)
     		{
-    			output = "Please enter the first name and last name(eg. John Doe, enter EXIT to return to previous screen):";
+    			output = "Please enter the first name of desired friend(enter -1 to cancel):";
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(this.variables.step_SCREEN_OUTPUT == 1)
     		{
     			output = "userInput";
+    			variables.step_SCREEN_OUTPUT++;
     			this.variables.step_SCREEN_OUTPUT = 0;
     			variables.currentScreen = variables.nextScreen;
     		}
-    	}
+    		else if(this.variables.step_SCREEN_OUTPUT == 2)
+    		{
+    			variables.desiredFriendFirstName = input;
+    			
+    			output = "Please enter the last name (enter -1 to return to cancel):";
+    			variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 1)
+    		{
+    			output = "userInput";
+    			variables.step_SCREEN_OUTPUT++;
+    			this.variables.step_SCREEN_OUTPUT = 0;
+    			variables.currentScreen = variables.nextScreen;
+    		}
+    	}*/
     	
-    	//jma342 - feb26th - 3:58 am
+    	/*//jma342 - feb26th - 3:58 am
     	else if(screen == this.variables.CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN)
     	{
     	
@@ -531,22 +830,66 @@ public class DocNetProtocol {
     			this.variables.step_SCREEN_OUTPUT = 0;
     			variables.currentScreen = variables.nextScreen;
     		}
-    	}
+    	}*/
     	
     	else if(screen == this.variables.user_FRIEND_REQUESTS_SCREEN)
     	{
     	
     		if(this.variables.step_SCREEN_OUTPUT == 0)
     		{
-    			//display all of the friend reqests on reccuring to this
-    			//function using the recordset
-    			//addin the last record to the counter
-    			//increment the stepScreenOuput variable
-    			variables.step_SCREEN_OUTPUT++;
+    			//retrives all of the pending friend requests
+    			if(variables.step_queryingOrUpdatingDB == 0)
+    			{
+    				variables.sqlString_con1 = "Select * from friend_req where requestee_id = " + 
+    								variables.loggedIn_User_ID;
+    				
+    				this.selectQuery_con1();
+    				variables.step_queryingOrUpdatingDB++;
+    			}
+    			
+    			//displays the users who requested you
+    			else if(variables.step_queryingOrUpdatingDB == 1)
+    			{
+    				try 
+    				{
+						if(variables.rs_con1.next())
+						{
+							variables.sqlString_con2 = "Select * from users where user_id = " + 
+									Integer.parseInt(variables.rs_con1.getString("requester_id"));
+							
+							this.selectQuery_con2();
+							
+							output = variables.friendsListCount + ". " + variables.rs_con2.getString("first_name") + 
+									" " + variables.rs_con2.getString("last_name");
+							
+							//stores id for each friend request as they are displayed on screen
+							variables.friendsListIDS.add(Integer.parseInt(variables.rs_con1.getString("friend_req_id")));
+							
+							variables.friendsListCount++;
+						}
+						else
+						{
+							variables.step_queryingOrUpdatingDB = 0;
+							variables.step_SCREEN_OUTPUT++;
+							variables.friendsListCount = 1;
+						}
+					} 
+    				catch (NumberFormatException e) 
+    				{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} 
+    				catch (SQLException e) 
+    				{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+    			}
+    			
     		}
     		else if(this.variables.step_SCREEN_OUTPUT == 1)
     		{
-				output = "Please enter the number of the desired friend from the list(enter -1 to cancel)";
+				output = "Please enter the number of the desired friend request from the list(enter -1 to cancel)";
 				variables.step_SCREEN_OUTPUT++;
     		}
     		else if(this.variables.step_SCREEN_OUTPUT == 2)
@@ -559,6 +902,98 @@ public class DocNetProtocol {
 		
     	//change made - jma 342 - feb 19th
     	
+    	//change made - rw  446  -feb 26th
+    	//add in privilege screen
+    	else if(screen == this.variables.PRIVILEGES_SCREEN)
+    	{
+    		if (this.variables.step_SCREEN_OUTPUT == 0)
+    		{
+    			output = "1. Personal Information Region";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 2)
+    		{
+    			output = "2. Announcements Region";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 3)
+    		{
+    			output = "3. Research Publications Region";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 4)
+    		{
+    			output = "4. Public Discussions Region";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 5)
+    		{
+    			output = "5. Research Group Region";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 6)
+    		{
+    			output = "6. Announcements Region";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 7)
+    		{
+    			output = "7. Public Discussion Posting Boards";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 8)
+    		{
+    			output = "8. Return to your Main Posting Board";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 9)
+    		{
+    			output = "Please select 1-5 to edit privilege for regions and 6-7 for posting board";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else
+    		{
+    			output = "userInput";
+    			this.variables.step_SCREEN_OUTPUT = 0;
+    			variables.currentScreen = variables.nextScreen;
+    		}
+    	}
+    	//add new screen for reset privilege --rw 446 -- Feb 26th 2012
+    	else if (screen == this.variables.RESET_PRIVILEGE_SCRREN)
+    	{
+    		if (this.variables.step_SCREEN_OUTPUT == 0)
+    		{
+    			output = "1. Reset View Privilege";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if (this.variables.step_SCREEN_OUTPUT == 1)
+    		{
+    			output = "2. Reset Post Privilege";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		
+    		//jma342 - Feb 26th - added the option to return to parent screen. 
+    		else if(this.variables.step_SCREEN_OUTPUT == 2)
+    		{
+    			output = "3. Return to Privileges Screen";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		
+    		else if(this.variables.step_SCREEN_OUTPUT == 3)
+    		{
+    			output = "Please select the number to reset privilege";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		
+    		else
+    		{
+    			output = "userInput";
+    			this.variables.step_SCREEN_OUTPUT = 0;
+    			variables.currentScreen = variables.nextScreen;
+    		}
+    		  			
+    	}
+
     	//change made - jma 342 - feb 18th
     	else if(screen == this.variables.MARITAL_STATUS_SCREEN)
     	{
@@ -818,6 +1253,8 @@ public class DocNetProtocol {
 		    			if(this.variables.step_ERROR_CHECK == 0)
 		    			{
 		    				output = "Please enter correct password: ";
+		    				variables.step_LOG_IN_SCREEN = 11;/*jma342 - feb 27th - resets screen to 
+		    													stage for comparing passwords*/
 		    				this.variables.step_ERROR_CHECK++;
 		    			}
 		    			else if(this.variables.step_ERROR_CHECK == 1)
@@ -839,19 +1276,21 @@ public class DocNetProtocol {
 		    		
 		    		try 
 		    		{
-						variables.st = variables.con_2.createStatement();
 						
-						variables.sqlString = "SELECT username FROM users WHERE username = \'" + variables.userName + "\'";
-						variables.rs = variables.st.executeQuery(variables.sqlString);
+						variables.sqlString_con2 = "SELECT username FROM users WHERE username = \'" + variables.userName + "\'";
+						
+						this.selectQuery_con2();
+						
+						//variables.rs_con2 = variables.st_con2.executeQuery(variables.sqlString_con2);
 						
 						//jma342 - feb26 10:51 pm - determines if recordset has anything
-						while(variables.rs.next())
+						/*while(variables.rs_con2.next())
 						{
 							rsCount++;
 							break;
-						}
+						}*/
 						
-						if (rsCount != 0) 
+						if (variables.rs_con2.next())//(rsCount != 0) 
 						{
 							output = "Registration failed.\'" + variables.userName + "\' is already registered. " +
 									"Press any key to continue...";
@@ -860,15 +1299,31 @@ public class DocNetProtocol {
 						}
 						else 
 						{
-							variables.sqlString = "INSERT INTO users (username, password) VALUES " +
+							variables.sqlString_con2 = "INSERT INTO users (username, password) VALUES " +
 									"(\'" + variables.userName + "\', \'" + variables.password + "\')";
 							rsCount = 0;
-							rsCount = variables.st.executeUpdate(variables.sqlString);
-	
+							
+							//rsCount = variables.st_con2.executeUpdate(variables.sqlString_con2);
+							
+							rsCount = this.InsertUpdateDeleteQuery_con2();
+							
+							
 							if (rsCount != 0) 
 							{
-								output = "Registration successful.";
+								//output = "Registration successful.";
 								variables.failedLogIn = false;
+								
+								variables.sqlString_con2 = "SELECT user_id FROM users WHERE username = \'" + 
+					    				variables.userName + "\' AND password = \'" + variables.password + "\'";
+								
+								//variables.rs_con2 = variables.st_con2.executeQuery(variables.sqlString_con2);
+								
+								this.selectQuery_con2();
+								
+								if(variables.rs_con2.next())
+								{
+									variables.loggedIn_User_ID = variables.rs_con2.getString("user_id");//stores user id of logged in user
+								}
 								variables.step_LOG_IN_SCREEN++;
 							}
 							else 
@@ -947,24 +1402,30 @@ public class DocNetProtocol {
 		    
 		    	
 		    	//verify username and password -- if failure of either simply indicate either or failed
-		    	else if(variables.LOG_IN_SCREEN == 9)
+		    	else if(variables.step_LOG_IN_SCREEN == 9)
 		    	{
 		    		//password = "";
 		    		variables.password = input;
 		    		
-		    		variables.sqlString = "SELECT * FROM users WHERE username = \'" + 
+		    		variables.sqlString_con2 = "SELECT * FROM users WHERE username = \'" + 
 		    				variables.userName + "\' AND password = \'" + variables.password + "\'";
-					try {
-						variables.rs = variables.st.executeQuery(variables.sqlString);
+					try 
+					{
+						//variables.rs_con2 = variables.st_con2.executeQuery(variables.sqlString_con2);
+						this.selectQuery_con2();
 						
-						if (variables.rs.next() == false) 
+						if (variables.rs_con2.next() == false) 
 						{
-							output = "Username and password combination is wrong";
-							variables.step_LOG_IN_SCREEN = 0;
+							output = "Either username or password is wrong...press any key to continue";
+							variables.failedLogIn = true;
+							variables.step_LOG_IN_SCREEN++;
 						}
 						else 
 						{
-							output = "Access granted.";
+							variables.failedLogIn = false;
+							variables.loggedIn_User_ID = variables.rs_con2.getString("user_id");
+							//output = "Access granted.";
+							variables.step_LOG_IN_SCREEN++;
 						}
 						
 					} 
@@ -974,17 +1435,28 @@ public class DocNetProtocol {
 						e.printStackTrace();
 					}
 					
-	        		//if verification successful
-	        		//currently no db connection so verification isnot enforced
-	        		variables.step_LOG_IN_SCREEN = 0;
-	        		
-	        		//after a successful login user is directed to main posting board
-	        		variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
-	        		variables.nextScreen = variables.MAIN_POSTING_BOARD_SCREEN;
-	        		
-	        		output = this.screenOutput(variables.nextScreen);
-	        		
 	        	}
+		    	
+		    	//after a successful login user is directed to main posting board
+		    	else if(variables.step_LOG_IN_SCREEN == 10)
+		    	{
+		    		//jma342 - feb 26th 11:15pm - refreshes the log in screen on failed login attempts
+		    		if(variables.failedLogIn)
+		    		{
+		    			output = "userInput";
+		    			variables.failedLogIn = false;
+		    			variables.step_LOG_IN_SCREEN = 0;
+		    		}
+		    		else
+		    		{
+			    		variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+			    		variables.nextScreen = variables.MAIN_POSTING_BOARD_SCREEN;
+			    		
+			    		output = this.screenOutput(variables.nextScreen);
+			    		variables.step_LOG_IN_SCREEN = 0;
+		    		}
+		    		
+		    	}
 	    	}//steps for registered user
 	    	  
 	    	//added -- jma 342 - February 24th 2012
@@ -1087,41 +1559,45 @@ public class DocNetProtocol {
 			//Edit First Name
 			if(input.equals("1"))
 			{
-				variables.editField_On_Screen = "firstName";
+				variables.editField_On_Screen = "first_name";
 	    		output = "Edit First Name: ";
+	    		variables.usingDb_2 = true;
 	    		variables.step_PERSONAL_INFORMATION++;
 			}
 			
 			//Edit Last Name
 			else if(input.equals("2"))
 			{
-				variables.editField_On_Screen = "lastName";
+				variables.editField_On_Screen = "last_name";
 	    		output = "Edit Last Name: ";
+	    		variables.usingDb_2 = true;
 	    		variables.step_PERSONAL_INFORMATION++;
 			}
 			
 			//Edit Last Age
 			else if(input.equals("3"))
 			{
-				variables.editField_On_Screen = "Age";
+				variables.editField_On_Screen = "age";
 	    		output = "Edit Age: ";
+	    		variables.usingDb_1 = true;
 	    		variables.step_PERSONAL_INFORMATION++;
 			}
 			
 			//Edit Gender
 			else if(input.equals("4"))
 			{
-				variables.editField_On_Screen = "Gender";
-	    		
-	    		variables.nextScreen = this.variables.GENDER_SCREEN;
+				variables.editField_On_Screen = "gender";
+				variables.usingDb_1 = true;
+				variables.step_PERSONAL_INFORMATION++;
+	    		/*variables.nextScreen = this.variables.GENDER_SCREEN;
 	    		variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
 	    		
 	    		output = this.screenOutput(variables.nextScreen);
-	    		variables.step_PERSONAL_INFORMATION = 0;
+	    		variables.step_PERSONAL_INFORMATION = 0;*/
 
 			}
 			
-			//Edit Marital Status
+			//Edit Marital Status- update this when the enumeratgor is added to db table
 			else if(input.equals("5"))
 			{
 				variables.editField_On_Screen = "maritalStatus";
@@ -1136,24 +1612,27 @@ public class DocNetProtocol {
 			//Edit Home Address
 			else if(input.equals("6"))
 			{
-				variables.editField_On_Screen = "homeAddress";
+				variables.editField_On_Screen = "home_address";
 	    		output = "Edit Home Address: ";
+	    		variables.usingDb_1 = true;
 	    		variables.step_PERSONAL_INFORMATION++;
 			}
 			
 			//Edit Home Number
 			else if(input.equals("7"))
 			{
-				variables.editField_On_Screen = "homeNumber";
+				variables.editField_On_Screen = "home_phone";
 	    		output = "Edit Home Number: ";
+	    		variables.usingDb_1 = true;
 	    		variables.step_PERSONAL_INFORMATION++;
 			}
 			
 			//Edit Cell Number
 			else if(input.equals("8"))
 			{
-				variables.editField_On_Screen = "cellNumber";
+				variables.editField_On_Screen = "cell_phone";
 	    		output = "Edit Cell Number: ";
+	    		variables.usingDb_1 = true;
 	    		variables.step_PERSONAL_INFORMATION++;
 			}
 			
@@ -1162,22 +1641,25 @@ public class DocNetProtocol {
 			{
 				variables.editField_On_Screen = "hospital";
 	    		output = "Edit Hospital: ";
+	    		variables.usingDb_1 = true;
 	    		variables.step_PERSONAL_INFORMATION++;
 			}
 			
 			//Edit Hospital Address
 			else if(input.equals("10"))
 			{
-				variables.editField_On_Screen = "hospitalAddress";
+				variables.editField_On_Screen = "hospital_address";
 	    		output = "Edit Hospital Address: ";
+	    		variables.usingDb_1 = true;
 	    		variables.step_PERSONAL_INFORMATION++;
 			}
 			
 			//Edit work Number
 			else if(input.equals("11"))
 			{
-				variables.editField_On_Screen = "workNumber";
+				variables.editField_On_Screen = "work_number";
 	    		output = "Edit Work Number: ";
+	    		variables.usingDb_1 = true;
 	    		variables.step_PERSONAL_INFORMATION++;
 			}
 			
@@ -1186,6 +1668,7 @@ public class DocNetProtocol {
 			{
 				variables.editField_On_Screen = "specialty";
 	    		output = "Edit Specialty: ";
+	    		variables.usingDb_1 = true;
 	    		variables.step_PERSONAL_INFORMATION++;
 			}
 			
@@ -1200,6 +1683,8 @@ public class DocNetProtocol {
 				
 				//retrieve recordset of friends list from database
 	    		output = this.screenOutput(variables.nextScreen /*,recordset of friendslist*/); 
+	    		
+	    		variables.step_PERSONAL_INFORMATION = 0;
 	    		
 			}
 			
@@ -1229,7 +1714,65 @@ public class DocNetProtocol {
     	else if(this.variables.step_PERSONAL_INFORMATION == 2)
     	{
     		//update the database with edited field
-    		//requery database for updated record
+    		if(variables.usingDb_1)//general information database
+    		{
+    			variables.sqlString_con1 = "select * from user_info where user_id = " + Integer.parseInt(variables.loggedIn_User_ID);
+    			    			
+    			try 
+    			{
+    				this.selectQuery_con1();
+    				//variables.rs_con1 = variables.st_con1.executeQuery(variables.sqlString_con1);
+    				
+    				//if record exists in general database then update it
+    				if(variables.rs_con1.next())
+    				{
+    					variables.sqlString_con1 = "update user_info set " + variables.editField_On_Screen + 
+            					" = \'" + input + "\' where user_id = " + Integer.parseInt(variables.loggedIn_User_ID);
+    				
+    					//variables.st_con1.executeUpdate(variables.sqlString_con1);
+    					this.InsertUpdateDeleteQuery_con1();
+    				}
+    				//otherwise insert record
+    				else
+    				{
+    					/*variables.sqlString_con2 = "INSERT INTO users (username, password) VALUES " +
+								"(\'" + variables.userName + "\', \'" + variables.password + "\')";*/
+    					
+    					variables.sqlString_con1 = "insert into user_info (user_id, " + variables.editField_On_Screen + ") " +
+    							"values (\'" + variables.loggedIn_User_ID + "\' , \'" + input + "\' )";  
+            					
+    					this.InsertUpdateDeleteQuery_con1();
+    					//variables.st_con1.executeUpdate(variables.sqlString_con1);
+    				}
+    				
+				} 
+    			catch (SQLException e) 
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}	
+    			
+    			variables.usingDb_1 = false;
+    		}
+    		else if(variables.usingDb_2)//users, privileges databases	
+    		{
+    			variables.sqlString_con2 = "update users set " + variables.editField_On_Screen + 
+    					" = \'" + input + "\' where user_id = " + Integer.parseInt(variables.loggedIn_User_ID);
+    			/*try 
+    			{*/
+    				this.InsertUpdateDeleteQuery_con2();
+					//variables.st_con2.executeUpdate(variables.sqlString_con2);
+					
+				//} 
+    			/*catch (SQLException e) 
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}	*/
+    			
+    			variables.usingDb_2 = false;
+    		}
+    		
     		
     		//set the screen to have its information displayed in the
     		//output screen function
@@ -1248,7 +1791,8 @@ public class DocNetProtocol {
     }
     
     // for research publication screen--rw446 Feb 18th
-    public String researchPublicationsScreen(String input){
+    public String researchPublicationsScreen(String input)
+    {
     	String output = "";
     	
     	if(this.variables.step_RESEARCH_PUBLICATIONS==0)
@@ -1259,7 +1803,7 @@ public class DocNetProtocol {
     			this.variables.chosen_On_Screen_Action = input;
     			
     			output = "Please enter the author and name of the " +
-    					"publications(eg. John Smith 'Cancer Research'):";
+    					"publications(eg. John Smith 'Cancer Research')(enter -1 to cancel):";
     			
     			this.variables.step_RESEARCH_PUBLICATIONS++;
     			
@@ -1270,11 +1814,23 @@ public class DocNetProtocol {
     		{
     			this.variables.chosen_On_Screen_Action = input;
     			
-    			output = "Please select the publications that you want to delete";
+    			output = "Please select the publications that you want to delete(enter -1 to cancel)";
     			
     			this.variables.step_RESEARCH_PUBLICATIONS++;
     			
     		}
+    		
+       		//return to main posting board
+    		else if (input.equals("3"))
+    		{	
+    			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+        		variables.nextScreen = this.variables.MAIN_POSTING_BOARD_SCREEN;
+        		
+        		output = this.screenOutput(variables.nextScreen);
+        		this.variables.step_RESEARCH_PUBLICATIONS=0;
+
+    		}
+
     	}
     	
     	else if(this.variables.step_RESEARCH_PUBLICATIONS == 1)
@@ -1285,25 +1841,41 @@ public class DocNetProtocol {
     	}
     	else if (this.variables.step_RESEARCH_PUBLICATIONS == 2)
     	{
-    		
+    		//add publications
     		if(this.variables.chosen_On_Screen_Action.equals("1")) 
     		{
-    			/*add the publicaitons to db*/
-    			
-    			output = "Research Publications has been added...Press anykey to continue";
+    			if(input.equals("-1"))
+    			{
+    				output = "Addition operation has been cancelled...Press any key to continue";
+    			}
+    			else
+    			{
+	    			/*add the publicaitons to db*/
+	    			
+	    			output = "Research Publications has been added...Press any key to continue";
+    			}
     			
     			this.variables.step_RESEARCH_PUBLICATIONS++;
     			
     		}
+    		
     		//delete publications
     		else if (this.variables.chosen_On_Screen_Action.equals("2"))
     		{
-    		   /*verify with the db to delete the publications*/
-    			
-    			output = "Research Publication has been deleted...press any key to continue";
+    			if(input.equals("-1"))
+    			{
+    				output = "Deletion operation has been cancelled...Press any key to continue";
+    			}
+    			else
+    			{
+	    		   /*verify with the db to delete the publications*/
+	    			
+	    			output = "Research Publication has been deleted...press any key to continue";
+    			}
     			
     			this.variables.step_RESEARCH_PUBLICATIONS++;
     		}
+    		
     	}
     	
     	else if (this.variables.step_RESEARCH_PUBLICATIONS ==3)
@@ -1336,7 +1908,7 @@ public class DocNetProtocol {
     		{
     			this.variables.chosen_On_Screen_Action = input;
     			
-    			output = "Please enter announcement:";
+    			output = "Please enter announcement(enter -1 to cancel):";
     			
     			this.variables.step_ANNOUNCEMENTS++;
     			
@@ -1347,11 +1919,23 @@ public class DocNetProtocol {
     		{
     			this.variables.chosen_On_Screen_Action = input;
     			
-    			output = "Please select the announcement that you want to delete";
+    			output = "Please select the announcement that you want to delete(enter -1 to cancel)";
     			
     			this.variables.step_ANNOUNCEMENTS++;
     			
     		}
+    		
+    		//jma342 - Feb 26th - 4:16PM return to main posting board
+    		else if (input.equals("3"))
+    		{
+    			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+        		variables.nextScreen = this.variables.MAIN_POSTING_BOARD_SCREEN;
+        		
+        		output = this.screenOutput(variables.nextScreen);//update screen
+        		variables.step_ANNOUNCEMENTS=0;
+    			
+    		}
+
     	
     	}
     	
@@ -1366,9 +1950,17 @@ public class DocNetProtocol {
     		
     		if(this.variables.chosen_On_Screen_Action.equals("1")) 
     		{
-    			/*add the announcement to db + Along with the date and time appeneded to the front of the message*/
+    			//jma342 - feb 26th - updated to allow user to cancel addition operation
+    			if(input.equals("-1"))
+    			{
+    				output = "Addition operation has been cancelled...press any key to continue";
+    			}
+    			else
+    			{
+    				/*add the announcement to db + Along with the date and time appeneded to the front of the message*/
     			
-    			output = "Annoucement has been added...Press anykey to continue";
+    				output = "Annoucement has been added...Press anykey to continue";
+    			}
     			
     			this.variables.step_ANNOUNCEMENTS++;
     			
@@ -1376,9 +1968,18 @@ public class DocNetProtocol {
     		//delete publications
     		else if (this.variables.chosen_On_Screen_Action.equals("2"))
     		{
-    		   /*delete selected announcement*/
+    		   //jma342 - feb 26th - updated to allow user to cancel deletion operation
+    			if(input.equals("-1"))
+    			{
+    				output = "Deletion operation has been cancelled...press any key to continue";
+    			}
     			
-    			output = "Announcement has been deleted...press any key to continue";
+    			/*delete selected announcement*/
+    			else
+    			{
+    				output = "Announcement has been deleted...press any key to continue";
+    			}
+    			
     			
     			this.variables.step_ANNOUNCEMENTS++;
     		}
@@ -1415,7 +2016,7 @@ public class DocNetProtocol {
     		{
                 this.variables.chosen_On_Screen_Action = input;
     			
-    			output = "Please enter the title of the new discussion";
+    			output = "Please enter the title of the new discussion(enter -1 to cancel): ";
     			
     			this.variables.step_PUBLIC_DISCUSSIONS++;
     		}
@@ -1424,9 +2025,21 @@ public class DocNetProtocol {
     		else if(input.equals("2"))
     		{
     			this.variables.chosen_On_Screen_Action = input;
-    			output = "Please enter the number of the discussion you want to delete";
+    			output = "Please enter the number of the discussion you want to delete(enter -1 to cancel): ";
     			this.variables.step_PUBLIC_DISCUSSIONS++;
     		}
+    		
+    		//return to main posting board
+    		else if(input.equals("3"))
+    		{
+       			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+        		variables.nextScreen = this.variables.MAIN_POSTING_BOARD_SCREEN;
+        		
+        		output = this.screenOutput(variables.nextScreen);//update screen
+        		this.variables.step_PUBLIC_DISCUSSIONS=0;
+    			
+    		}
+
     	}
     	
     	else if (this.variables.step_PUBLIC_DISCUSSIONS ==1)
@@ -1440,19 +2053,38 @@ public class DocNetProtocol {
     		
     		if(this.variables.chosen_On_Screen_Action.equals("1"))
     		{
-    			//insert discussion into discussions table in db
-    			//retrieve id of discussion last inserted and store in variables.publicDiscussionID;
-    			output = "Discussion has been created...press any key to continue";
-    			variables.createdPublicDiscussion = true;
-    			this.variables.step_PUBLIC_DISCUSSIONS++;
+    			if(input.equals("-1"))
+    			{
+    				output = "Addidition of discussion has been cancelled...press any key to continue";
+    				this.variables.step_PUBLIC_DISCUSSIONS = 5;//skip to step 5
+    			}
+    			else
+    			{
+	    			//insert discussion into discussions table in db
+	    			//retrieve id of discussion last inserted and store in variables.publicDiscussionID;
+	    			output = "Discussion has been created...press any key to continue";
+	    			this.variables.step_PUBLIC_DISCUSSIONS++;
+	    			//variables.createdPublicDiscussion = true;
+    			}
+    			
+    			
     		}
     		
     		//confirm the desire to delete selected chosen discussion.
     		else if(this.variables.chosen_On_Screen_Action.equals("2"))
     		{
-    			output = "Are you sure(Yes,No): ";
+    			if(input.equals("-1"))
+    			{
+    				output = "Deletion of discussion has been cancelled...press any key to continue";
+    				this.variables.step_PUBLIC_DISCUSSIONS = 5;//skip to step 5
+    			}
+    			else
+    			{
+	    			output = "Are you sure(Yes,No): ";
+	    			this.variables.step_PUBLIC_DISCUSSIONS++;
+    			}
     			
-    			this.variables.step_PUBLIC_DISCUSSIONS++;
+    			
     		}
     	}
     	
@@ -1463,16 +2095,17 @@ public class DocNetProtocol {
     		this.variables.step_PUBLIC_DISCUSSIONS++;	
     		
     	}
-    	
+    	//transitioning to privileges screen or verifying whether deletion is deisred
     	else if (this.variables.step_PUBLIC_DISCUSSIONS ==4)
     	{
     		if(this.variables.chosen_On_Screen_Action.equals("1"))
     		{
-    			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+    			/*variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
 	    		variables.nextScreen = this.variables.CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN;
 	    		
 	    		output = this.screenOutput(variables.currentScreen);
-	    		variables.step_PUBLIC_DISCUSSIONS=0;
+	    		variables.step_PUBLIC_DISCUSSIONS=0;*/
+    			variables.step_PUBLIC_DISCUSSIONS++;
     		}
     		
     		//after the user confirms the choice either carry out delete operation or cancel the delete operation
@@ -1482,39 +2115,40 @@ public class DocNetProtocol {
     			{
     				/*delete the topic from db*/
     				output = "Discussion has been deleted...press any key to continue";
-    				
     				this.variables.step_PUBLIC_DISCUSSIONS++;
+    				
     			}
     			else if(input.toLowerCase().equals("no"))
     			{
     				output = "Deletion operation cancelled...press any key to continue";
-    				
     				this.variables.step_PUBLIC_DISCUSSIONS++;
     			}
+    			
+    			
     		}
     		
     	}
     	else if (this.variables.step_PUBLIC_DISCUSSIONS == 5)
     	{
     		
-    		if(this.variables.chosen_On_Screen_Action.equals("2"))
-    		{
+    		//if(this.variables.chosen_On_Screen_Action.equals("2"))
+    		//{
     			output = "userInput";
         		this.variables.step_PUBLIC_DISCUSSIONS++;
-    		}
+    		//}
     	}
     	
     	else if (this.variables.step_PUBLIC_DISCUSSIONS == 6)
     	{
     		//delete operation protocol is complete...so refresh disucssions screen
-    		if(this.variables.chosen_On_Screen_Action.equals("2"))
-    		{    			
+    		//if(this.variables.chosen_On_Screen_Action.equals("2"))
+    		//{    			
     			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
 	    		variables.nextScreen = this.variables.PUBLIC_DISCUSSIONS_SCREEN;
 	    		
 	    		output = this.screenOutput(variables.currentScreen);//update screen
 	    		variables.step_PUBLIC_DISCUSSIONS=0;
-    		}
+    		//}
     	}
     	
     	return output;
@@ -1576,13 +2210,13 @@ public class DocNetProtocol {
     	return output;
     }
 
-   public String created_PubDisc_ResGrp_Priviliges_Screen(String input)
+   /*public String setVieworPostPrivlieges(String input)
    {
 	   String output = "";
 	   
 		if(this.variables.step_CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN == 0)
 	   	{
-	   		//set view privileges
+	   		//set view/post privileges
 	   		if(input.equals("1") || input.equals("2"))
 	   		{
 	   			output = "display the group options from db";
@@ -1593,7 +2227,6 @@ public class DocNetProtocol {
 	   		
 	   	}
 		
-		//set post privileges
 		else if(this.variables.step_CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN == 1)
 		{
 			output = "Please select the number for desired group";
@@ -1614,26 +2247,41 @@ public class DocNetProtocol {
 			//view privileges
 			if(variables.chosen_On_Screen_Action.equals("1"))
 			{
-				if(variables.createdPublicDiscussion)
-				{
-					/*added choosen group number along with discussion id and user id to the view privileges table
+				//set the database statements based on whether a region or posting board or announcement topic
+				//is having its privileges set.
+				
+				//if(variables.createdPublicDiscussion)
+				//{
+					//create variable to store the table
+					//if the screen being updated is the public discussions topci screen or an individual
+				//annoucnemtn the id of the public disuccions as well as the id of the anncouncement are needed.
+				
+					added choosen group number along with discussion id and user id to the view privileges table
 					 * for discussions
-					 */
+					 
 					
 					if(!input.equals("4"))
 					{
 						output = "View Privileges have been set for discussion..press any key to continue";
 						this.variables.step_CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN++;
 					}
+					else
+					{
+						this.variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+		    			this.variables.nextScreen = this.variables.SELECT_FRIENDS_FOR_PRIVILEGE_SCREEN;
+		    			
+		    			this.variables.step_CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN = 0;
+		    			
+		        		output = this.screenOutput(variables.nextScreen);
+					}
 					
-					//add else which would take you to a screen to select specific friends
 				}
 				
-				else if(variables.createdResearchGroup)
+				else if(variables.)
 				{
-					/*added choosen group number along with res grp id and user id to the view privileges table
+					added choosen group number along with res grp id and user id to the view privileges table
 					 * for res grps
-					 */
+					 
 					
 					if(!input.equals("4"))
 					{
@@ -1642,16 +2290,16 @@ public class DocNetProtocol {
 					}
 					
 					//add else which would take you to a screen to select specific friends
-				}
+				//}
 			}
 			//post privileges
 			else if(variables.chosen_On_Screen_Action.equals("2"))
 			{
 				if(variables.createdPublicDiscussion)
 				{
-					/*added choosen group number along with discussion id and user id to the post privileges table
+					added choosen group number along with discussion id and user id to the post privileges table
 					 * for discussions
-					 */
+					 
 					
 					if(!input.equals("4"))
 					{
@@ -1664,9 +2312,9 @@ public class DocNetProtocol {
 				
 				else if(variables.createdResearchGroup)
 				{
-					/*added choosen group number along with res grp id and user id to the post privileges table
+					added choosen group number along with res grp id and user id to the post privileges table
 					 * for res grps
-					 */
+					 
 					
 					if(!input.equals("4"))
 					{
@@ -1688,11 +2336,34 @@ public class DocNetProtocol {
 			
 			else if(this.variables.step_CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN == 5)
 			{
-				//at this stage..check to see if both sets of privileges have been set...this would indicate
-				//if to refresh the current screen or return to the parent screen...use boolean variables
-				//do indicate when both privileges have been set.
-				
-				//requisite created discussion/res grp bools back to false on completion
+				//once the view and post privileges have been set return to parent screen
+				//else refresh current screen
+				if(variables.viewPrivilegesSet && variables.postPrivilegesSet)
+				{
+					variables.viewPrivilegesSet = variables.postPrivilegesSet = false;
+					
+					//sets the requisite variable to false after public discussion and research group has been set
+					if(variables.createdPublicDiscussion)
+					{
+						variables.createdPublicDiscussion = false;
+					}
+					else if(variables.createdResearchGroup)
+					{
+						variables.createdResearchGroup = false;
+					}
+					
+					this.variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+	    			this.variables.nextScreen = this.variables.PUBLIC_DISCUSSIONS_SCREEN;
+	    			
+	    			this.variables.step_CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN = 0;
+	    			
+	        		output = this.screenOutput(variables.nextScreen);
+	    
+				}
+				else
+				{
+					this.variables.step_CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN = 0;
+				}
 	   			
 			}
 				
@@ -1701,7 +2372,7 @@ public class DocNetProtocol {
 		
 	   return output;
    }
-    //changes made - jma 342 - Feb 25th - function that allows a user to access various functions of
+*/    //changes made - jma 342 - Feb 25th - function that allows a user to access various functions of
     //a friends posting board
     public String friendMainPostingBoardSreen(String input)
     {
@@ -1954,7 +2625,33 @@ public class DocNetProtocol {
 
   //change made - jma 342 - Feb 18th	
 
+    //allows users to select the friends that will be specifically allocated a privilege 
+    public String selectFriendsPrivilegeScreen(String input)
+    {
+    	String output = "";
+    	
+    	if(variables.step_SELECT_FRIENDS_FOR_PRIVILEGE_SCREEN == 0)
+    	{
+    		output = "Please select the friends to have this post privilege(eg.1,2,3 or 1-3 or 1,10-40):";
+    		variables.step_SELECT_FRIENDS_FOR_PRIVILEGE_SCREEN++;
+    		
+    	}
+    	else if(variables.step_SELECT_FRIENDS_FOR_PRIVILEGE_SCREEN == 1)
+    	{
+    		output = "userInput";
+    		variables.step_SELECT_FRIENDS_FOR_PRIVILEGE_SCREEN++;
+    	}
+    	
+       	else if(variables.step_SELECT_FRIENDS_FOR_PRIVILEGE_SCREEN == 2)
+    	{
+       		//extract numbers from string using the , and - as delimiters and add to database
+    		output = "Privliges have been set...press any key to continue";
+    		variables.step_SELECT_FRIENDS_FOR_PRIVILEGE_SCREEN++;
+    	}
 
+    	return output;
+    }
+    
   //change made - jma 342 - Feb 19th	
     public String user_friendsListSreen(String input)
     {
@@ -1965,10 +2662,13 @@ public class DocNetProtocol {
     		//add a friend
     		if(input.equals("1"))
     		{
-    			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
-    			variables.nextScreen = this.variables.ADD_FRIEND_SCREEN;
-    			
-    			output = this.screenOutput(variables.nextScreen /*,recordset of friendslist*/);
+    			//variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+    			variables.currentScreen = this.variables.ADD_FRIEND_SCREEN;
+    			variables.friendsListIDS.clear();/*empties this vector as it was 
+    											populated with the list of friends displayed
+    											and it needs to be reused with the add friend screen*/ 
+    			output = "";
+    			//output = this.screenOutput(variables.nextScreen /*,recordset of friendslist*/);
     			
     			this.variables.step_FRIENDS_LIST=0;
     		}
@@ -1998,7 +2698,7 @@ public class DocNetProtocol {
     		{
     			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
     			variables.nextScreen = this.variables.user_FRIEND_REQUESTS_SCREEN;
-    			
+    			variables.friendsListIDS.clear();
     			output = this.screenOutput(variables.nextScreen /*,recordset of friendslist*/);
     			this.variables.step_FRIENDS_LIST=0;
     			
@@ -2008,7 +2708,7 @@ public class DocNetProtocol {
     		{
     			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
     			variables.nextScreen = this.variables.PERSONAL_INFORMATION_SCREEN;
-    			
+    			variables.friendsListIDS.clear();
     			output = this.screenOutput(variables.nextScreen /*,recordset of friendslist*/);
     			this.variables.step_FRIENDS_LIST=0;
     			
@@ -2062,7 +2762,7 @@ public class DocNetProtocol {
 	    			
     				variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
         			variables.nextScreen = this.variables.FRIEND_MAIN_POSTING_BOARD_SCREEN;
-        			
+        			variables.friendsListIDS.clear();
         			output = this.screenOutput(variables.nextScreen /*,recordset of friendslist*/);
         			this.variables.step_FRIENDS_LIST=0;
         			
@@ -2083,7 +2783,7 @@ public class DocNetProtocol {
     		{
     			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
     			variables.nextScreen = this.variables.user_FRIENDS_LIST_SCREEN;
-    			
+    			variables.friendsListIDS.clear();
     			output = this.screenOutput(variables.nextScreen /*,recordset of friendslist*/);
     			this.variables.step_FRIENDS_LIST = 0;
     		}
@@ -2127,71 +2827,130 @@ public class DocNetProtocol {
     	
     	if(this.variables.step_ADD_FRIEND == 0)
     	{
-    		if(input.toLowerCase().equals("exit"))
-    		{
-    			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
-    			variables.nextScreen = this.variables.user_FRIENDS_LIST_SCREEN;
-    			
-    			output = this.screenOutput(variables.nextScreen /*,recordset of friendslist*/);
-    			this.variables.step_ADD_FRIEND = 0;
-    		}
-    		
-    		//jma342 - Feb 25 - 3:28PM 
-    		else
-    		{
-	    		/*rs.recordset("Select First Name, Last Name, Home Address where
-				firstname = 'firstname' and lastname = 'lastname'")*/
+    		//jma342 - Feb 25 - 3:22pm - informs user to return to previous screen
+    		output = "Please enter the first name of desired friend(enter -1 to cancel):";
+    		variables.step_ADD_FRIEND++;
+    	}
+		else if(this.variables.step_ADD_FRIEND == 1)
+		{
 			
-	    		//allow recordset to move to next record on
-				//reentry in to this function
-				//once the last record is added to the output variable
-    		
-	    		//jma342 - Feb 25 - 3:28PM - added the ability for the user to cancel operation by entering -1
-	    		output = "Please select the desired friend by entering a number(enter -1 to cancel)";
-	    		variables.step_ADD_FRIEND++;
-				//increment step_AddFriend
-    		}
-    		//jma342 - Feb 25 - 3:28PM 
-    	}
+			output = "userInput";
+			variables.step_ADD_FRIEND++;
+			/*this.variables.step_SCREEN_OUTPUT = 0;
+			variables.currentScreen = variables.nextScreen;*/
+		}
+		else if(this.variables.step_ADD_FRIEND == 2)
+		{
+			variables.desiredFriendFirstName = input;
+			
+			output = "Please enter the last name (enter -1 to return to cancel):";
+			variables.step_ADD_FRIEND++;
+		}
+		else if(this.variables.step_ADD_FRIEND == 3)
+		{
+			output = "userInput";
+			variables.step_ADD_FRIEND++;
+			/*this.variables.step_SCREEN_OUTPUT = 0;
+			variables.currentScreen = variables.nextScreen;*/
+		}
     	
-    	else if(this.variables.step_ADD_FRIEND == 1)
+		else if(this.variables.step_ADD_FRIEND == 4)
+		{
+			//query the database for friends with these names
+			if(variables.step_queryingOrUpdatingDB == 0)
+			{
+				
+				variables.desiredFriendLastName = input;
+				variables.sqlString_con2 = "Select * from users where first_name = \'" + 
+						variables.desiredFriendFirstName + "\' and last_name = \'" + variables.desiredFriendLastName;
+				
+				this.selectQuery_con2();
+				
+				variables.step_queryingOrUpdatingDB++;
+				
+			}
+			//queries the database to retrieve the home address from db1 with the name specified to provide some form
+			//of uniqueness
+			else if(variables.step_queryingOrUpdatingDB == 1)
+			{
+				try 
+				{
+					if(variables.rs_con2.next())
+					{
+						variables.sqlString_con1 = "Select * from user_info where user_id = " + 
+									variables.rs_con1.getString("user_id");
+									
+						this.selectQuery_con1();
+						
+						output = variables.friendsListCount + ". " + variables.rs_con2.getString("first_name") + 
+										" " + variables.rs_con2.getString("last_name") + " - HomeAddress: " + 
+								variables.rs_con1.getString("home_address");
+						
+						variables.friendsListCount++;
+						//stores list of potential friends user_ids as they are displayed
+						variables.friendsListIDS.add(Integer.parseInt(variables.rs_con2.getString("user_id")));
+					}
+					else
+					{
+						variables.step_queryingOrUpdatingDB = 0;
+						variables.friendsListCount = 1;
+						variables.step_ADD_FRIEND++;
+					}
+				} 
+				catch (NumberFormatException e) 
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SQLException e) 
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}	
+		}
+    	
+		else if(this.variables.step_ADD_FRIEND == 5)
+		{
+			output = "Please select the friend that you would like to add(enter -1 to cancel): ";
+			variables.step_ADD_FRIEND++;
+		}
+		
+		else if(this.variables.step_ADD_FRIEND == 6)
+		{
+			output = "userInput";
+			variables.step_ADD_FRIEND++;
+		}
+		
+		else if(this.variables.step_ADD_FRIEND == 7)
+		{
+			if(input.equals("-1"))
+			{
+				output = "Add friend operation has been cancelled...press any key to continue";
+				variables.step_ADD_FRIEND++;
+			}
+			else
+			{
+				variables.sqlString_con1 = "Insert into friend_req (requester_id,requestee_id) values " + 
+							"(" + variables.loggedIn_User_ID + ", " + 
+						variables.friendsListIDS.elementAt(Integer.parseInt(input)) + ")";
+				
+				this.InsertUpdateDeleteQuery_con1();
+				
+				output = "Friend Request has been sent awaiting response...press any key to continue";
+				variables.friendsListIDS.clear();
+				variables.step_ADD_FRIEND++;
+				
+			}
+		}
+		
+	
+    	else if(this.variables.step_ADD_FRIEND == 8)
     	{
     		output = "userInput";
     		variables.step_ADD_FRIEND++;
     	}
-    	
-    	else if(this.variables.step_ADD_FRIEND == 2)
-    	{
-    		//jma342 - Feb 25 - 3:30PM - allows user to return to parent screen after cancelling current operation 
-    		if(input.equals("-1"))
-    		{
-    			
-    			this.variables.step_ADD_FRIEND++;
-    			
-    			output = "Friend request has been cancelled...press any key to continue";
-    			
-    		}
-    		//jma342 - Feb 25 - 3:30PM - returns to parent screen after cancelling current operation 
-    		
-    		else
-    		{
-    			/*rs.recordset("Insert userID, input into
-    			 * friendRequest table)
-    			 */
-    			output = "Friend request has been sent...press any key to continue";
-    			
-    			variables.step_ADD_FRIEND++;
-    		}
-    		
-    	}
-    	
-    	else if(this.variables.step_ADD_FRIEND == 3)
-    	{
-    		output = "userInput";
-    		variables.step_ADD_FRIEND++;
-    	}
-    	
-    	else if(this.variables.step_ADD_FRIEND == 4)
+	
+    	else if(this.variables.step_ADD_FRIEND == 9)
     	{
     		variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
 			variables.nextScreen = this.variables.user_FRIENDS_LIST_SCREEN;
@@ -2199,7 +2958,7 @@ public class DocNetProtocol {
 			output = this.screenOutput(variables.nextScreen /*,recordset of friendslist*/);
 			this.variables.step_ADD_FRIEND = 0;
     	}
-	
+		
     	return output;
     }
     
@@ -2215,41 +2974,128 @@ public class DocNetProtocol {
     			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
     			variables.nextScreen = this.variables.user_FRIENDS_LIST_SCREEN;
     			
+    			variables.friendsListIDS.clear();
+    			
     			output = this.screenOutput(variables.nextScreen /*,recordset of friendslist*/);
     			this.variables.step_user_FRIEND_REQUEST = 0;
     		}
     		else
     		{
-    			//display the friend request chosen
-        		//output =
+    			//stores the friend request chosen
+    			variables.friendRequestChosen = Integer.parseInt(input);
+    			
+    			output = "Please enter A or D to Accept or Deny the following friend request from(enter -1 to cancel): ";
     			variables.step_user_FRIEND_REQUEST++;
     		}
     		
     		//jma342 - Feb 25th - 3:49pm - allows user to cancel the operation of accepting a friend request
     	}
+    	
+    	//retrieve the user first and last name of the selected friend request
     	else if(this.variables.step_user_FRIEND_REQUEST == 1)
     	{
-    		output = "Please enter A - accept or D - Deny:";
+    		//retrive the friend request to get the id for the friend requester.
+    		variables.sqlString_con1 = "Select * from friend_req where friend_req_id = " + 
+					variables.friendsListIDS.elementAt(variables.friendRequestChosen);
+    		
+    		this.selectQuery_con1();
+    		
+    		try 
+    		{
+    			//store the id of the friend requester 
+				variables.requesterForFriendShip = Integer.parseInt(variables.rs_con1.getString("requester_id"));
+			} 
+    		catch (NumberFormatException e2) 
+    		{
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			} 
+    		catch (SQLException e2) 
+    		{
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+    		
+    		this.selectQuery_con1();
+    		
+    		try 
+    		{
+    			//retrieve the names of the requester_id
+				variables.sqlString_con2 = "Select * from users where user_id = " + 
+						variables.requesterForFriendShip;
+				
+				this.selectQuery_con2();
+			}
+    		
+    		catch (NumberFormatException e1) 
+			{
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+    		
+    		try 
+    		{
+    			//display the requester name
+				output = variables.rs_con2.getString("first_name") + " " + variables.rs_con2.getString("last_name");
+			} 
+    		catch (SQLException e) 
+    		{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    		
     		variables.step_user_FRIEND_REQUEST++;
     	}
+    	
     	else if(this.variables.step_user_FRIEND_REQUEST == 2)
     	{
     		output = "userInput";
     		variables.step_user_FRIEND_REQUEST++;
     	}
+    	
     	else if(this.variables.step_user_FRIEND_REQUEST == 3)
     	{
     	
-    		if(input.equals("A") || input.equals("D"))
+    		if(input.equals("A"))
     		{
-	    		//if user chooses A then update the friends listing for both
-	    		//requester and requestee and remove the request from the friends request table
-	    		
-	    		//else just remove the request from the friends list table
+    			//adds the requester and requestee to each others friends lists
+    			variables.sqlString_con1 = "Insert into friends_list (user_id,friend_id) values " + 
+    						"(" + variables.loggedIn_User_ID + ", " + variables.requesterForFriendShip + ")";
+    			
+    			this.InsertUpdateDeleteQuery_con1();
+    			
+    			variables.sqlString_con1 = "Insert into friends_list (user_id,friend_id) values " + 
+						"(" + variables.requesterForFriendShip + ", " + variables.loggedIn_User_ID + ")";
+    			
+    			this.InsertUpdateDeleteQuery_con1();
+    			//adds the requester and requestee to each others friends lists'
+    			
+    			//removes the friend request from the table as it has been addressed
+    			variables.sqlString_con1 = "Delete from friend_req where friend_req_id = " + 
+    					variables.friendRequestChosen;
+    			
+    			this.InsertUpdateDeleteQuery_con1();
+    			//removes the friend request from the table as it has been addressed
+    			
+    			output = "Friend request has been accepted...press any key to continue";
+    			
+    			variables.step_user_FRIEND_REQUEST++;
+
     		}
     		
-    		output = "Request accepted/denied...press any key to continue";
-    		variables.step_user_FRIEND_REQUEST++;
+    		else if(input.equals("D"))
+    		{
+    			//removes the friend request from the table as it has been addressed
+    			variables.sqlString_con1 = "Delete from friend_req where friend_req_id = " + 
+    					variables.friendRequestChosen;
+    			
+    			this.InsertUpdateDeleteQuery_con1();
+    			//removes the friend request from the table as it has been addressed
+    			
+    			output = "Friend Request has been denied...press any key to continue";
+    			variables.step_user_FRIEND_REQUEST++;
+    		}
+    		
     	}
     	else if(variables.step_user_FRIEND_REQUEST == 4)
     	{
@@ -2269,8 +3115,8 @@ public class DocNetProtocol {
     	return output;
     }
   //change made - jma 342 - Feb 19th
-   
-  //change made - rw  446 - Feb 26th
+    
+    //change made - rw  446 - Feb 26th
     public String PrivilegeScreen(String input)
     {
     	String output = "";
@@ -2295,7 +3141,16 @@ public class DocNetProtocol {
     			output = "the Public discussions topics from database";
     			//this.variables.chosen_On_Screen_Action = input;
     			this.variables.step_PRIVILEGES_SCREEN++;
-    		}    		
+    		}   
+    		
+    		//jma342 - feb 26 - added the ability to return to Main postiong board
+    		else if(input.equals("8"))
+    		{
+    			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+    		    variables.nextScreen = this.variables.MAIN_POSTING_BOARD_SCREEN;
+    		    this.variables.step_PRIVILEGES_SCREEN = 0;
+    		    output = this.screenOutput(variables.nextScreen /*,jump to reset privilege screen*/);
+    		}   
     	}
     	else if (this.variables.step_PRIVILEGES_SCREEN == 1)
     	{
@@ -2323,7 +3178,7 @@ public class DocNetProtocol {
     	if (this.variables.step_RESET_PRIVILEGE == 0)
     	{     
     	    // added -1 to make sure user can canel reset operation -- rw 446 -- Feb 26th 7pm	
-    		if(input.equals("-1")) 
+    		if(input.equals("3")) 
     		{
     			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
     			variables.nextScreen = this.variables.PRIVILEGES_SCREEN;
@@ -2371,7 +3226,13 @@ public class DocNetProtocol {
     	}
     	else if (this.variables.step_RESET_PRIVILEGE == 7)
     	{
-    		if (this.variables.chosen_On_Screen_Action.equals("1")){
+    		output = "userInput";
+    		this.variables.step_RESET_PRIVILEGE++;
+    	}
+    	else if (this.variables.step_RESET_PRIVILEGE == 7)
+    	{
+    		if (this.variables.chosen_On_Screen_Action.equals("1"))
+    		{
     			if (input.equals("1"))
     			{
     				//update database with view privilege to communittee member + visitors
@@ -2413,6 +3274,7 @@ public class DocNetProtocol {
     			else if (input.equals("4"))
     			{
     				//update database with view privilege to specific friends
+    				//switch screen to the specific friends screen
     				output = "Reset post privilege to Specific friends";
     			}
     		}
@@ -2433,4 +3295,65 @@ public class DocNetProtocol {
     	}
     	return output;
     }
+    
+    public void selectQuery_con1()
+    {
+    	try 
+    	{
+    		variables.rs_con1 = variables.st_con1.executeQuery(variables.sqlString_con1);
+		} 
+    	catch (SQLException e) 
+    	{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+    }
+    public int InsertUpdateDeleteQuery_con1()
+    {
+    	int recCount = 0;
+    	
+    	try 
+    	{
+    		recCount = variables.st_con1.executeUpdate(variables.sqlString_con1);
+		} 
+    	catch (SQLException e) 
+    	{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+    	return recCount;
+    }
+    public void selectQuery_con2()
+    {
+    	try 
+    	{
+    		variables.rs_con2 = variables.st_con2.executeQuery(variables.sqlString_con2);
+		} 
+    	catch (SQLException e) 
+    	{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+    }
+    public int InsertUpdateDeleteQuery_con2()
+    {
+    	int recCount = 0;
+    	
+    	try 
+    	{
+    		recCount = variables.st_con2.executeUpdate(variables.sqlString_con2);
+		} 
+    	catch (SQLException e) 
+    	{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	return recCount;
+		
+    }
+   
 }
