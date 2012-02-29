@@ -5,7 +5,7 @@ import java.sql.*;
 
 public class DocNetServer 
 {
-	private static final int PORT_NUMBER = 427;
+	private static final int PORT_NUMBER = 5029;
 	
     public static void main(String[] args) throws IOException 
     {
