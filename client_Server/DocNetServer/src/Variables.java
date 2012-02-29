@@ -84,8 +84,18 @@ public class Variables
     public int requesterForFriendShip = 0;//used to hold user_id of the friend request that was chosen
     public int friendRequestChosen = 0;//used to hold the friend request that was chosen
 
-    
+    public int discussionCount = 1;
+    public Vector<Integer>  discussionListIDS= new Vector<Integer>();//holds the list of IDS of friends displayed on screen
+    public int chosenDiscussion = -1;//holds the chosen discussion id.
+    public int discussionCommentCount = 1;
+    public Vector<Integer>  discussionCommentsIDS= new Vector<Integer>();
      //current step in a given conversation relative to each menu---jma342---Feb 14th
+    
+    public int researchGrpCount = 1;
+    public Vector<Integer>  researchGrpIDS= new Vector<Integer>();//holds the list of IDS of friends displayed on screen
+    public int chosenResearchGrp = -1;//holds the chosen discussion id.
+    public int researchGrpCommentCount = 1;
+    public Vector<Integer>  researchGrpCommentsIDS= new Vector<Integer>();
     
     //jma342 -- feb 21st -- both database connections
     public Connection con_1 = null;

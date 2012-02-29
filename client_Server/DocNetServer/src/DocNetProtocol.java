@@ -67,6 +67,10 @@ public class DocNetProtocol {
     	{
     		output = discussionTopicScreen(input);
     	}
+    	else if(variables.currentScreen == variables.RESEARCH_GROUPS_SCREEN)
+    	{
+    		output = this.researchGroupScreen(input);
+    	}
     	//jma342 - feb 25 1:52AM - Merging cindy's code
     	
     	/*else if(variables.currentScreen == variables.CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN)
@@ -165,6 +169,7 @@ public class DocNetProtocol {
     		}
     		else if(this.variables.step_SCREEN_OUTPUT == 1)
     		{
+    			
     			output = "2.Announcements";
     			variables.step_SCREEN_OUTPUT++;
     		}
@@ -593,8 +598,43 @@ public class DocNetProtocol {
     	{
     		if(variables.step_SCREEN_OUTPUT ==0)
     		{
-    			output = "retrieve public discussion topics from database";
-    			variables.step_SCREEN_OUTPUT++;
+    			//retrives all of the discussions from the database
+    			if(variables.step_queryingOrUpdatingDB == 0)
+    			{
+	    			variables.sqlString_con1 = "Select * from disc";
+	    			this.selectQuery_con1();
+	    			variables.step_queryingOrUpdatingDB++;
+    			}
+    			
+    			//displays each of the discussions
+    			else if(variables.step_queryingOrUpdatingDB == 1)
+    			{
+    				try 
+    				{
+    					//displays the titles of each of the discussions
+						if(variables.rs_con1.next())
+						{
+							output = variables.discussionCount + ". " + variables.rs_con1.getString("title");
+							
+							//stores the ids of the discussions
+							variables.discussionListIDS.add(Integer.parseInt(variables.rs_con1.getString("disc_id")));
+							
+							variables.discussionCount++;
+						}
+						//when the recordset is exhausted move to next step.
+						else
+						{
+							variables.step_SCREEN_OUTPUT++;
+							variables.step_queryingOrUpdatingDB = 0;
+							variables.discussionCount = 1;
+						}
+					} 
+    				catch (SQLException e) 
+    				{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+    			}
     		}
     	
     		else if(variables.step_SCREEN_OUTPUT == 1)
@@ -609,7 +649,12 @@ public class DocNetProtocol {
     		}
     		else if(variables.step_SCREEN_OUTPUT == 3)
     		{
-    			output = "3. Return to Main Posting Board";
+    			output = "3. Comment on a discussion";
+    			variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(variables.step_SCREEN_OUTPUT == 4)
+    		{
+    			output = "4. Return to Main Posting Board";
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else
@@ -625,8 +670,54 @@ public class DocNetProtocol {
     	{
     		if(variables.step_SCREEN_OUTPUT ==0)
     		{
-    			output = "retrieve discussion comments from database";
-    			variables.step_SCREEN_OUTPUT++;
+    			//retrieve discussion comments for chosen discussion
+    			if(variables.step_queryingOrUpdatingDB == 0)
+    			{
+    				
+    				variables.sqlString_con1 = "Select * from pub_disc_com where dis_id = " + 
+    						variables.discussionListIDS.elementAt(variables.chosenDiscussion);
+    				
+    				this.selectQuery_con1();
+    				variables.step_queryingOrUpdatingDB++;
+    				
+    			}
+    			
+    			//display all of the comments made to a discussion consisting of the author and the corresponding
+    			//comment
+    			else if(variables.step_queryingOrUpdatingDB == 1)
+    			{
+    				try 
+    				{
+						if(variables.rs_con1.next())
+						{
+							//retrieves each authors name via user_id
+							variables.sqlString_con2 = "Select * from users where user_id  = " + 
+										variables.rs_con1.getString("user_id");
+							
+							//displays each authors name and corresponding comment
+							output = variables.discussionCommentCount + ". " + variables.rs_con2.getString("first_name") + " " + 
+										variables.rs_con2.getString("last_name") + ": " + 
+									variables.rs_con1.getString("comment");
+							
+							variables.discussionCommentCount++;
+							//store the comments ids
+							variables.discussionCommentsIDS.add(Integer.parseInt(variables.rs_con1.getString("disc_cmt_id")));
+							
+						}
+						else
+						{
+							variables.discussionCommentCount = 1;
+							variables.step_queryingOrUpdatingDB = 0;
+							variables.step_SCREEN_OUTPUT++;
+						}
+					} 
+    				catch (SQLException e) 
+    				{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+    			}
+    			
     		}
 
     		else if(variables.step_SCREEN_OUTPUT == 1)
@@ -634,7 +725,7 @@ public class DocNetProtocol {
     			output = "1. Add a new comment";
     			variables.step_SCREEN_OUTPUT++;
     		}
-    		else if(variables.step_SCREEN_OUTPUT == 6)
+    		else if(variables.step_SCREEN_OUTPUT == 2)
     		{
     			output = "2. Delete a comment";
     			variables.step_SCREEN_OUTPUT++;
@@ -643,11 +734,64 @@ public class DocNetProtocol {
     		{
     			variables.step_SCREEN_OUTPUT = 0;
     			output = "userInput";
+    			variables.discussionListIDS.clear();
     			variables.currentScreen = variables.nextScreen;
     		}
     	}
     	//jma342 - Feb26th 1:54AM - merging in Cindy's code
     	
+    	else if(screen == this.variables.RESEARCH_GROUPS_SCREEN)
+    	{
+    		if(this.variables.step_SCREEN_OUTPUT == 0)
+    		{
+    			if(variables.step_queryingOrUpdatingDB == 0)
+    			{
+    				//gather all of the research groups user is currently a member of
+    				variables.sqlString_con2 = "Select * from res_gro_mem where user_id = " + 
+    							variables.loggedIn_User_ID;
+    				
+    				this.selectQuery_con2();
+    				
+    				variables.step_queryingOrUpdatingDB++;
+    				
+    			}
+    			else if(variables.step_queryingOrUpdatingDB == 1)
+    			{
+    				try 
+    				{
+						if(variables.rs_con2.next())
+						{
+							variables.sqlString_con1 = "Select * from res_gro where res_gro_id = " +
+										Integer.parseInt(variables.rs_con2.getString("res_gro_id"));
+							
+							this.selectQuery_con1();
+							
+							output = variables.researchGrpCount + ". " + variables.rs_con1.getString("title");
+							variables.researchGrpCount++;
+							
+							//storing the ids for all displayed researched groups
+							variables.researchGrpIDS.add(Integer.parseInt(variables.rs_con2.getString("res_gro_id")));
+						}
+						else
+						{
+							output = "-----End of Research Groups-----";
+							variables.step_queryingOrUpdatingDB = 0;
+							variables.researchGrpCount++;
+						}
+					} 
+    				catch (NumberFormatException e) 
+    				{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} 
+    				catch (SQLException e) 
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+    			}
+    		}
+    	}
     	//change made - jma 342 - feb 19th
     	else if(screen == this.variables.user_FRIENDS_LIST_SCREEN || 
     			screen == this.variables.FRIEND_FRIENDS_LIST_SCREEN || screen == this.variables.SELECT_FRIENDS_FOR_PRIVILEGE_SCREEN)
@@ -670,10 +814,11 @@ public class DocNetProtocol {
 	        			{
 	        				if(variables.rs_con1.next())
 	        				{
+	        					//retrieves the names of all of the user's current friends
 	        					variables.sqlString_con1 = "Select * from users where user_id = " + 
-	        								Integer.parseInt(variables.rs_con1.getString("user_id"));
+	        								Integer.parseInt(variables.rs_con1.getString("friend_id"));
 	        					
-	        					variables.friendsListIDS.add(Integer.parseInt(variables.rs_con1.getString("user_id")));
+	        					variables.friendsListIDS.add(Integer.parseInt(variables.rs_con1.getString("friend_id")));
 	        					
 	        					output = variables.friendsListCount + variables.rs_con1.getString("first_name") + " " + variables.rs_con1.getString("last_name");
 	        					variables.friendsListCount++;
@@ -1790,6 +1935,13 @@ public class DocNetProtocol {
     	return output;
     }
     
+    public String researchGroupScreen(String input)
+    {
+    	String output = "";
+    	
+    	return output;
+    	
+    }
     // for research publication screen--rw446 Feb 18th
     public String researchPublicationsScreen(String input)
     {
@@ -2029,12 +2181,22 @@ public class DocNetProtocol {
     			this.variables.step_PUBLIC_DISCUSSIONS++;
     		}
     		
-    		//return to main posting board
+    		//comment on existing discussion
     		else if(input.equals("3"))
     		{
        			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
-        		variables.nextScreen = this.variables.MAIN_POSTING_BOARD_SCREEN;
+        		variables.nextScreen = this.variables.PUBLIC_DISCUSSION_TOPIC_SCREEN;
         		
+        		output = this.screenOutput(variables.nextScreen);//update screen
+        		this.variables.step_PUBLIC_DISCUSSIONS=0;
+    			
+    		}
+    		//return to main posting board
+    		else if(input.equals("4"))
+    		{
+       			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+        		variables.nextScreen = this.variables.MAIN_POSTING_BOARD_SCREEN;
+        		variables.discussionListIDS.clear();
         		output = this.screenOutput(variables.nextScreen);//update screen
         		this.variables.step_PUBLIC_DISCUSSIONS=0;
     			
@@ -2050,7 +2212,6 @@ public class DocNetProtocol {
     	
     	else if(this.variables.step_PUBLIC_DISCUSSIONS==2)
     	{
-    		
     		if(this.variables.chosen_On_Screen_Action.equals("1"))
     		{
     			if(input.equals("-1"))
@@ -2060,8 +2221,15 @@ public class DocNetProtocol {
     			}
     			else
     			{
-	    			//insert discussion into discussions table in db
-	    			//retrieve id of discussion last inserted and store in variables.publicDiscussionID;
+    				//add the discussion to the database
+    				variables.sqlString_con1 = "Insert into disc (user_id,title) values (" 
+    							+ variables.loggedIn_User_ID + ", \'" + input + "\')";
+    				
+    				this.selectQuery_con1();
+    				
+	    			
+	    			//TO DO: retrieve id of discussion last inserted and store in variables.publicDiscussionID;
+    				
 	    			output = "Discussion has been created...press any key to continue";
 	    			this.variables.step_PUBLIC_DISCUSSIONS++;
 	    			//variables.createdPublicDiscussion = true;
@@ -2080,11 +2248,13 @@ public class DocNetProtocol {
     			}
     			else
     			{
+    				//store the chosen discussion
+    				variables.chosenDiscussion = Integer.parseInt(input);
+    				
 	    			output = "Are you sure(Yes,No): ";
+	    			
 	    			this.variables.step_PUBLIC_DISCUSSIONS++;
     			}
-    			
-    			
     		}
     	}
     	
@@ -2113,7 +2283,13 @@ public class DocNetProtocol {
     		{
     			if(input.toLowerCase().equals("yes"))
     			{
-    				/*delete the topic from db*/
+    				
+    				variables.sqlString_con1 = "Delete from disc where disc_id = " + variables.chosenDiscussion;
+    				
+    				this.InsertUpdateDeleteQuery_con1();
+    				
+    				variables.discussionListIDS.clear();
+    				
     				output = "Discussion has been deleted...press any key to continue";
     				this.variables.step_PUBLIC_DISCUSSIONS++;
     				
@@ -2158,39 +2334,110 @@ public class DocNetProtocol {
     public String discussionTopicScreen(String input)
     {
     	String output = "";
+    	
     	if(this.variables.step_PUBLIC_DISCUSSION_TOPIC==0)
     	{
-    		if(input.equals("a"))
+    		//add a new comment
+    		if(input.equals("1"))
     		{
     			this.variables.chosen_On_Screen_Action = input;
-    			output = "Please enter the comments\n";
+    			
+    			output = "Please enter the comment: ";
+    			
     			this.variables.step_PUBLIC_DISCUSSION_TOPIC++;
     		}
-    		else if(input.equals("b"))
+    		
+    		//delete a comment
+    		else if(input.equals("2"))
     		{
     			this.variables.chosen_On_Screen_Action = input;
-    			output = "Please seletc the comment you want to delete\n";
+    			
+    			output = "Please select the comment you want to delete";
+    			
     			this.variables.step_PUBLIC_DISCUSSION_TOPIC++;
     		}
     	}
+    	
     	else if(this.variables.step_PUBLIC_DISCUSSION_TOPIC==1)
     	{
     		output="userInput";
     		this.variables.step_PUBLIC_DISCUSSION_TOPIC++;
     	}
+    	
     	else if(this.variables.step_PUBLIC_DISCUSSION_TOPIC==2)
     	{
-    		if(this.variables.chosen_On_Screen_Action.equals("a"))
+    		if(this.variables.chosen_On_Screen_Action.equals("1"))
     		{
-    			/*add comments to database*/
+    			variables.sqlString_con1 = "Insert into pub_dis_com (dis_id,user_id,comment) values (\'" + 
+    						variables.chosenDiscussion + "\' , " + variables.loggedIn_User_ID + 
+    						", \'" + input + "\')";
+    			
+    			this.selectQuery_con1();
+    			
     			output = "Comments has been added to db...press anykey to continue\n";
     			this.variables.step_PUBLIC_DISCUSSION_TOPIC++;
     			
     		}
-    		else if(this.variables.chosen_On_Screen_Action.equals("b"))
+    		else if(this.variables.chosen_On_Screen_Action.equals("2"))
     		{
-    			/*delete comments from database*/
-    			output = "Comments has been deleted successfully..press anykey to continue\n";
+    			
+    			//determines if current user is the owner of the discussion
+    			variables.sqlString_con1 = "Select * from disc where disc_id = " + 
+    						variables.chosenDiscussion + " and user_id = " + variables.loggedIn_User_ID;
+    			
+    			this.selectQuery_con1();
+    			
+    			
+    			try 
+    			{
+    				//current user is the owner of the discussion that user can remove any comment from the discussion
+					if(variables.rs_con1.next())
+					{
+						variables.sqlString_con1 = "Delete from pub_dis_com where dis_cmt_id = " + 
+									variables.discussionCommentsIDS.elementAt(Integer.parseInt(input));
+
+						this.InsertUpdateDeleteQuery_con1();
+						variables.discussionCommentsIDS.clear();
+						output = "The comment has been deleted...press any key to continue";
+					}
+					
+					else
+					{
+						//since user is not owner of the discussion determining whether user is author of comment
+						variables.sqlString_con1 = "Select * from pub_dis_com where dis_cmt_id = " + 
+								variables.discussionCommentsIDS.elementAt(Integer.parseInt(input)) + " and " +
+								"user_id = " + variables.loggedIn_User_ID;
+						this.selectQuery_con1();
+						
+						//user owns selected comment and is permitted to deleted
+						if(variables.rs_con1.next())
+						{
+							variables.sqlString_con1 = "Delete from pub_dis_com where dis_cmt_id = " + 
+									variables.discussionCommentsIDS.elementAt(Integer.parseInt(input));
+
+							this.InsertUpdateDeleteQuery_con1();
+							variables.discussionCommentsIDS.clear();
+							output = "The comment has been deleted...press any key to continue";
+						}
+						else
+						{
+							output = "Deletion operation aborted. You are not allowed to delete this" +
+									"comment...press any key to continue";
+						}
+						
+					}
+				} 
+    			catch (NumberFormatException e) 
+    			{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} 
+    			catch (SQLException e) 
+    			{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			
     			this.variables.step_PUBLIC_DISCUSSION_TOPIC++;
     		}
     	}
@@ -2735,11 +2982,11 @@ public class DocNetProtocol {
     			}
     			else
     			{
-	    			/*rs.recordset("delete from friends where
-	    			userid = userid and friend id = 'id of the friend chosen' or 
-	    			userid = 'id of the friend chosen' and friend id = 'user id')*/
+    				//this call is subsequent to the necessary input value that the user passes in
+	    			variables.sqlString_con1 = "Delete from friends_list where user_id = " + 
+	    						variables.friendsListIDS.elementAt(Integer.parseInt(input));
 	    			
-	    			//output = build a string with records from above recordset
+	    			this.InsertUpdateDeleteQuery_con1();
 	    			
 	    			output = "Friend has been deleted...press any key to continue:";
 	  
