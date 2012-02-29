@@ -1125,14 +1125,15 @@ public class DocNetProtocol {
     			output ="2. Delete a friend";
     			variables.step_SCREEN_OUTPUT++;
     		}
+    		
     		else if(this.variables.step_SCREEN_OUTPUT == 4)
     		{
-    			output = "3. View a friend's profile";
+    			output ="3. See friend requests";
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(this.variables.step_SCREEN_OUTPUT == 5)
     		{
-    			output ="4. See friend requests";
+    			output = "4. View a friend's profile";
     			variables.step_SCREEN_OUTPUT++;
     		}
     		//jma342 - Feb 25th - 2:57pm
@@ -3597,21 +3598,22 @@ public class DocNetProtocol {
     		//View Friends profile screen
     		else if(input.equals("3"))
     		{
-    			this.variables.chosen_On_Screen_Action = input;
-    			
-        		output = "Please enter the number of the desired friend from the list(enter -1 to cancel):";
-        	
-        		this.variables.step_FRIENDS_LIST++;
-    		}
-    		
-    		//Friend requests screen
-    		else if(input.equals("4"))
-    		{
     			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
     			variables.nextScreen = this.variables.user_FRIEND_REQUESTS_SCREEN;
     			variables.friendsListIDS.clear();
     			output = this.screenOutput(variables.nextScreen /*,recordset of friendslist*/);
     			this.variables.step_FRIENDS_LIST=0;
+    		}
+    		
+    		//Friend requests screen
+    		else if(input.equals("4"))
+    		{
+				this.variables.chosen_On_Screen_Action = input;
+    			
+        		output = "Please enter the number of the desired friend from the list(enter -1 to cancel):";
+        	
+        		this.variables.step_FRIENDS_LIST++;
+    			
     			
     		}
     		
