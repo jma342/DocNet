@@ -11,7 +11,7 @@ public class DocNetClient {
 
         try 
         {
-            dnSocket = new Socket("localhost", 427);
+            dnSocket = new Socket("localhost", 5029);
             
             out = new PrintWriter(dnSocket.getOutputStream(), true);
             

@@ -578,18 +578,18 @@ public class DocNetProtocol {
     		}
     		else if (variables.step_SCREEN_OUTPUT==1)
     		{
-    			output = "a. Add a publication";
+    			output = "1. Add a publication";
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if (variables.step_SCREEN_OUTPUT==2)
     		{
-    			output = "b. Delete a publication";
+    			output = "2. Delete a publication";
     			variables.step_SCREEN_OUTPUT++;
     		}
     		//jma342 - feb 26th - allowed the user to return to the parent screen
     		else if (variables.step_SCREEN_OUTPUT==3)
     		{
-    			output = "c. Return to Main Posting board";
+    			output = "3. Return to Main Posting board";
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(variables.step_SCREEN_OUTPUT ==4)
@@ -613,8 +613,7 @@ public class DocNetProtocol {
     		{
     			if(variables.step_queryingOrUpdatingDB == 0)
     			{
-    				variables.sqlString_con1 = "Select * from ancmt where user_id = " + 
-    								variables.loggedIn_User_ID;
+    				variables.sqlString_con1 = "Select * from ancmt";
     				
     				this.selectQuery_con1();
     				variables.step_queryingOrUpdatingDB++;
@@ -632,14 +631,17 @@ public class DocNetProtocol {
 							
 							this.selectQuery_con2();
 							
-							output = variables.announcementCount + ". " + variables.rs_con1.getString("date")+" " + variables.rs_con1.getString("time")+ 
-									" " + variables.rs_con1.getString("anmct") + variables.rs_con2.getString("first_name") + 
-									" " + variables.rs_con2.getString("last_name");
-							
-							//stores id for each friend request as they are displayed on screen
-							variables.accouncementListIDS.add(Integer.parseInt(variables.rs_con1.getString("ancmt_id")));
-							
-							variables.announcementCount++;
+							if(variables.rs_con2.next())
+							{
+								output = variables.announcementCount + ". Author: " + variables.rs_con2.getString("first_name") + 
+										" " + variables.rs_con2.getString("last_name") + 
+										" - " + variables.rs_con1.getString("comment") ;
+								
+								//stores id for each friend request as they are displayed on screen
+								variables.accouncementListIDS.add(Integer.parseInt(variables.rs_con1.getString("ancmt_id")));
+								
+								variables.announcementCount++;
+							}
 							
 						}
 						else
@@ -665,19 +667,19 @@ public class DocNetProtocol {
     		}
     		else if(variables.step_SCREEN_OUTPUT== 1)
     		{
-    			output = "a. Add an announcement";
+    			output = "1. Add an announcement";
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(variables.step_SCREEN_OUTPUT ==2)
     		{
-    			output = "b. Delete an announcement";
+    			output = "2. Delete an announcement";
     			variables.step_SCREEN_OUTPUT++;
     		}
     		
     		//jma342 - Feb 26 - 4:14pm
        		else if(variables.step_SCREEN_OUTPUT ==3)
     		{
-    			output = "c. Return to your main posting board.";
+    			output = "3. Return to your main posting board.";
     			variables.step_SCREEN_OUTPUT++;
     		}
 
@@ -774,9 +776,9 @@ public class DocNetProtocol {
     			//retrieve discussion comments for chosen discussion
     			if(variables.step_queryingOrUpdatingDB == 0)
     			{
-    				
-    				variables.sqlString_con1 = "Select * from pub_disc_com where dis_id = " + 
-    						variables.discussionListIDS.elementAt(variables.chosenDiscussion);
+    				int location = variables.chosenDiscussion - 1;
+    				variables.sqlString_con1 = "Select * from pub_dis_com where dis_id = " + 
+    						variables.discussionListIDS.elementAt(location);
     				
     				this.selectQuery_con1();
     				variables.step_queryingOrUpdatingDB++;
@@ -795,14 +797,19 @@ public class DocNetProtocol {
 							variables.sqlString_con2 = "Select * from users where user_id  = " + 
 										variables.rs_con1.getString("user_id");
 							
-							//displays each authors name and corresponding comment
-							output = variables.discussionCommentCount + ". " + variables.rs_con2.getString("first_name") + " " + 
-										variables.rs_con2.getString("last_name") + ": " + 
-									variables.rs_con1.getString("comment");
+							this.selectQuery_con2();
 							
-							variables.discussionCommentCount++;
-							//store the comments ids
-							variables.discussionCommentsIDS.add(Integer.parseInt(variables.rs_con1.getString("disc_cmt_id")));
+							//displays each authors name and corresponding comment
+							if(variables.rs_con2.next())
+							{
+								output = variables.discussionCommentCount + ". " + variables.rs_con2.getString("first_name") + " " + 
+											variables.rs_con2.getString("last_name") + ": " + 
+										variables.rs_con1.getString("comment");
+								
+								variables.discussionCommentCount++;
+								//store the comments ids
+								variables.discussionCommentsIDS.add(Integer.parseInt(variables.rs_con1.getString("dis_cmt_id")));
+							}
 							
 						}
 						else
@@ -829,6 +836,11 @@ public class DocNetProtocol {
     		else if(variables.step_SCREEN_OUTPUT == 2)
     		{
     			output = "2. Delete a comment";
+    			variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(variables.step_SCREEN_OUTPUT == 3)
+    		{
+    			output = "3. Return to Public discussion screen";
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else
@@ -867,11 +879,14 @@ public class DocNetProtocol {
 							
 							this.selectQuery_con1();
 							
-							output = variables.researchGrpCount + ". " + variables.rs_con1.getString("title");
-							variables.researchGrpCount++;
-							
-							//storing the ids for all displayed researched groups
-							variables.researchGrpIDS.add(Integer.parseInt(variables.rs_con2.getString("res_gro_id")));
+							if(variables.rs_con1.next())
+							{
+								output = variables.researchGrpCount + ". " + variables.rs_con1.getString("title");
+								variables.researchGrpCount++;
+								
+								//storing the ids for all displayed researched groups
+								variables.researchGrpIDS.add(Integer.parseInt(variables.rs_con2.getString("res_gro_id")));
+							}
 						}
 						else
 						{
@@ -937,9 +952,9 @@ public class DocNetProtocol {
     			//retrieve discussion comments for chosen research group
     			if(variables.step_queryingOrUpdatingDB == 0)
     			{
-    				
+    				int location = variables.chosenResearchGrp - 1;
     				variables.sqlString_con1 = "Select * from res_gro_com where res_gro_id = " + 
-    						variables.researchGrpIDS.elementAt(variables.chosenResearchGrp);
+    						variables.researchGrpIDS.elementAt(location);
     				
     				this.selectQuery_con1();
     				variables.step_queryingOrUpdatingDB++;
@@ -959,13 +974,18 @@ public class DocNetProtocol {
 										variables.rs_con1.getString("user_id");
 							
 							//displays each authors name and corresponding comment
-							output = variables.researchGrpCommentCount + ". " + variables.rs_con2.getString("first_name") + " " + 
-										variables.rs_con2.getString("last_name") + ": " + 
-									variables.rs_con1.getString("comments");
+							this.selectQuery_con2();
 							
-							variables.researchGrpCommentCount++;
-							//store the comments ids
-							variables.researchGrpCommentsIDS.add(Integer.parseInt(variables.rs_con1.getString("res_gro_cmt_id")));
+							if(variables.rs_con2.next())
+							{
+								output = variables.researchGrpCommentCount + ". " + variables.rs_con2.getString("first_name") + " " + 
+											variables.rs_con2.getString("last_name") + ": " + 
+										variables.rs_con1.getString("comments");
+								
+								variables.researchGrpCommentCount++;
+								//store the comments ids
+								variables.researchGrpCommentsIDS.add(Integer.parseInt(variables.rs_con1.getString("res_gro_cmt_id")));
+							}
 							
 						}
 						else
@@ -1026,13 +1046,18 @@ public class DocNetProtocol {
 	        				if(variables.rs_con1.next())
 	        				{
 	        					//retrieves the names of all of the user's current friends
-	        					variables.sqlString_con1 = "Select * from users where user_id = " + 
+	        					variables.sqlString_con2 = "Select * from users where user_id = " + 
 	        								Integer.parseInt(variables.rs_con1.getString("friend_id"));
 	        					
-	        					variables.friendsListIDS.add(Integer.parseInt(variables.rs_con1.getString("friend_id")));
+	        					this.selectQuery_con2();
 	        					
-	        					output = variables.friendsListCount + variables.rs_con1.getString("first_name") + " " + variables.rs_con1.getString("last_name");
-	        					variables.friendsListCount++;
+	        					if(variables.rs_con2.next())
+	        					{
+		        					variables.friendsListIDS.add(Integer.parseInt(variables.rs_con2.getString("user_id")));
+		        					
+		        					output = variables.friendsListCount + variables.rs_con2.getString("first_name") + " " + variables.rs_con2.getString("last_name");
+		        					variables.friendsListCount++;
+	        					}
 	        				}
 	        				else
 	        				{
@@ -1215,13 +1240,16 @@ public class DocNetProtocol {
 							
 							this.selectQuery_con2();
 							
-							output = variables.friendsListCount + ". " + variables.rs_con2.getString("first_name") + 
-									" " + variables.rs_con2.getString("last_name");
-							
-							//stores id for each friend request as they are displayed on screen
-							variables.friendsListIDS.add(Integer.parseInt(variables.rs_con1.getString("friend_req_id")));
-							
-							variables.friendsListCount++;
+							if(variables.rs_con2.next())
+							{
+								output = variables.friendsListCount + ". " + variables.rs_con2.getString("first_name") + 
+										" " + variables.rs_con2.getString("last_name");
+								
+								//stores id for each friend request as they are displayed on screen
+								variables.friendsListIDS.add(Integer.parseInt(variables.rs_con1.getString("friend_req_id")));
+								
+								variables.friendsListCount++;
+							}
 						}
 						else
 						{
@@ -2214,7 +2242,7 @@ public class DocNetProtocol {
     				variables.sqlString_con1 = "Insert into res_gro (user_id,title) values (" 
     							+ variables.loggedIn_User_ID + ", \'" + input + "\')";
     				
-    				this.selectQuery_con1();
+    				this.InsertUpdateDeleteQuery_con1();
     				
 	    			
 	    			//TO DO: retrieve id of discussion last inserted and store in variables.publicDiscussionID;
@@ -2262,11 +2290,11 @@ public class DocNetProtocol {
     		{
     			if(input.toLowerCase().equals("yes"))
     			{
-    				
-    				variables.sqlString_con1 = "Delete from res_gro where res_gro_id = " + variables.chosenResearchGrp;
+    				int location = variables.chosenResearchGrp -1;
+    				variables.sqlString_con1 = "Delete from res_gro where res_gro_id = " + variables.researchGrpIDS.elementAt(location);
     				this.InsertUpdateDeleteQuery_con1();
     				
-    				variables.sqlString_con2 = "Delete from res_gro_mem where res_gro_id = " + variables.chosenResearchGrp;
+    				variables.sqlString_con2 = "Delete from res_gro_mem where res_gro_id = " + variables.researchGrpIDS.elementAt(location);
     				this.InsertUpdateDeleteQuery_con1();
     				
     				output = "Research group has been deleted...press any key to continue";
@@ -2308,7 +2336,7 @@ public class DocNetProtocol {
     	if(this.variables.step_RESEARCH_PUBLICATIONS==0)
     	{
     		//add a new publications
-    		if (input.equals("a"))
+    		if (input.equals("1"))
     		{
     			this.variables.chosen_On_Screen_Action = input;
     			
@@ -2320,7 +2348,7 @@ public class DocNetProtocol {
     		}
     		
     		//delete a publications
-    		else if (input.equals("b"))
+    		else if (input.equals("2"))
     		{
     			this.variables.chosen_On_Screen_Action = input;
     			
@@ -2331,7 +2359,7 @@ public class DocNetProtocol {
     		}
     		
        		//return to main posting board
-    		else if (input.equals("c"))
+    		else if (input.equals("3"))
     		{	
     			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
         		variables.nextScreen = this.variables.MAIN_POSTING_BOARD_SCREEN;
@@ -2352,7 +2380,7 @@ public class DocNetProtocol {
     	else if (this.variables.step_RESEARCH_PUBLICATIONS == 2)
     	{
     		//add publications
-    		if(this.variables.chosen_On_Screen_Action.equals("a")) 
+    		if(this.variables.chosen_On_Screen_Action.equals("1")) 
     		{   
     			if(input.equals("-1"))
     			{
@@ -2361,50 +2389,15 @@ public class DocNetProtocol {
     			else
     			{  //add in database connections for adding publication -- rw 446 -- Feb 28th
     			  
-    				if(variables.step_queryingOrUpdatingDB == 0)
-    				{
-    					variables.researchAuthorAdd = input;
-    					output = "Please enter the publication title";
-    					variables.step_queryingOrUpdatingDB++;
-    					
-    				}
-    				else if (variables.step_queryingOrUpdatingDB == 1)
-    				{
-    					output = "userInput";
-    					this.variables.step_queryingOrUpdatingDB++;
-    					
-    				}
-    				else if(variables.step_queryingOrUpdatingDB == 2)
-    				{
-    					
-    				     variables.researchTitleAdd = input;
+    				variables.researchAuthorAdd = input;
     				
-    				     variables.sqlString_con1 = "INSERT INTO res_pub (user_id, authors, title) VALUES " +
-									"(\'" + variables.loggedIn_User_ID + "\', \'" + variables.researchAuthorAdd + "\', \'" + variables.researchTitleAdd + "\')";
-    					
-    				     int rsCount = this.InsertUpdateDeleteQuery_con1();
-    					
-    					variables.step_queryingOrUpdatingDB++;
-    					if (rsCount != 0) 
-						{
-							
-    						output = " Research Publications update successful....press any key to continue";
-							
-						    variables.step_RESEARCH_PUBLICATIONS++;
-						}
-						else 
-						{
-							output = "Research Publication failed....press any key to continue";
-							
-							variables.step_RESEARCH_PUBLICATIONS++;
-						}
-    					
-    				}
-    			  }
+    				output = "Please enter the publiction title: ";
+    				this.variables.step_RESEARCH_PUBLICATIONS++;
+    			}
     		}
     		
     		//delete publications
-    		else if (this.variables.chosen_On_Screen_Action.equals("b"))
+    		else if (this.variables.chosen_On_Screen_Action.equals("2"))
     		{
     			if(input.equals("-1"))
     			{
@@ -2412,24 +2405,26 @@ public class DocNetProtocol {
     			}
     			else
     			{  //add database connection for deleting publication record -- rw 446 --Feb 28th
-    				try {
-    					int index = Integer.parseInt(input);
+    				try 
+    				{
+    					int index = Integer.parseInt(input) - 1;
   	    		        /*verify with the db to delete the publications*/
       				    int publicationId = variables.researchPublicationList.get(index);
       				
       				    variables.sqlString_con1 = "DELETE FROM res_pub WHERE res_pub_id=" + publicationId;
       				    
-      				    int rsCount = this.InsertUpdateDeleteQuery_con1();
+      				    /*int rsCount =*/ this.InsertUpdateDeleteQuery_con1();
       				    
-      				    if (rsCount !=0 )
-      				    {
+      				    /*if (rsCount !=0 )
+      				    {*/
       				    	output = "Research Publication has been deleted...press any key to continue";
       				    	this.variables.step_RESEARCH_PUBLICATIONS++;
-      				    }
-      				    else {
+      				   /* }
+      				    else 
+      				    {
       				    	output = "failed to delete research publication ...press any key to continue";
       				    	this.variables.step_RESEARCH_PUBLICATIONS++;
-      				    }
+      				    }*/
     				}
     				catch (NumberFormatException e) 
     				{
@@ -2455,10 +2450,43 @@ public class DocNetProtocol {
     	
     	else if (this.variables.step_RESEARCH_PUBLICATIONS == 4)
     	{
+    		if(this.variables.chosen_On_Screen_Action.equals("1"))
+    		{
+    			variables.researchTitleAdd = input;
+        		
+        		variables.sqlString_con1 = "Insert into res_pub (user_id,authors,title) values (" + 
+        					variables.loggedIn_User_ID + ", \'" + variables.researchAuthorAdd + "\' , \'" + variables.researchTitleAdd + "\')";
+        		
+        		this.InsertUpdateDeleteQuery_con1();
+        		
+        		output = "Publication has been added...press any key to continue";
+        		
+        		this.variables.step_RESEARCH_PUBLICATIONS++;
+
+    		}
+    		else if(this.variables.chosen_On_Screen_Action.equals("2"))
+    		{	
+	    		variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+	    		variables.nextScreen = this.variables.RESEARCH_PUBLICATIONS_SCREEN;
+	    		
+	    		output = this.screenOutput(variables.nextScreen);//update screen
+	    		variables.step_RESEARCH_PUBLICATIONS=0;
+	    		variables.researchPublicationList.clear(); //rw446 -- Feb 28th -- Add to clear the research Publication List
+    		}
+    	}
+    	
+    	else if (this.variables.step_RESEARCH_PUBLICATIONS ==5)
+    	{
+    		output = "userInput";
+    		this.variables.step_RESEARCH_PUBLICATIONS++;
+    	}
+    	
+    	else if (this.variables.step_RESEARCH_PUBLICATIONS ==6)
+    	{
     		variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
     		variables.nextScreen = this.variables.RESEARCH_PUBLICATIONS_SCREEN;
     		
-    		output = this.screenOutput(variables.currentScreen);//update screen
+    		output = this.screenOutput(variables.nextScreen);//update screen
     		variables.step_RESEARCH_PUBLICATIONS=0;
     		variables.researchPublicationList.clear(); //rw446 -- Feb 28th -- Add to clear the research Publication List
     	}
@@ -2474,7 +2502,7 @@ public class DocNetProtocol {
     	{
     		
     		//add a new announcement
-    		if (input.equals("a"))
+    		if (input.equals("1"))
     		{
     			this.variables.chosen_On_Screen_Action = input;
     			
@@ -2485,7 +2513,7 @@ public class DocNetProtocol {
     		}
     		
     		//delete an announcement
-    		else if (input.equals("b"))
+    		else if (input.equals("2"))
     		{
     			this.variables.chosen_On_Screen_Action = input;
     			
@@ -2496,7 +2524,7 @@ public class DocNetProtocol {
     		}
     		
     		//jma342 - Feb 26th - 4:16PM return to main posting board
-    		else if (input.equals("c"))
+    		else if (input.equals("3"))
     		{
     			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
         		variables.nextScreen = this.variables.MAIN_POSTING_BOARD_SCREEN;
@@ -2518,7 +2546,7 @@ public class DocNetProtocol {
     	else if (this.variables.step_ANNOUNCEMENTS == 2)
     	{
     		
-    		if(this.variables.chosen_On_Screen_Action.equals("a")) 
+    		if(this.variables.chosen_On_Screen_Action.equals("1")) 
     		{
     			//jma342 - feb 26th - updated to allow user to cancel addition operation
     			if(input.equals("-1"))
@@ -2526,38 +2554,34 @@ public class DocNetProtocol {
     				output = "Addition operation has been cancelled...press any key to continue";
     			}
     			else
-    			{  //add in the announcement to database -- rw 446 --Feb 28th
-    				if(variables.step_queryingOrUpdatingDB == 0)
-    				{
+    			{  
     					variables.announcementAdd = input;
     				
-    				     variables.sqlString_con1 = "INSERT INTO ancmt (user_id, ancmt) VALUES " +
-									"(\'" + variables.loggedIn_User_ID + "\', \'" + variables.announcementAdd + "\')";
+    				     variables.sqlString_con1 = "INSERT INTO ancmt (user_id, comment) VALUES " +
+									"(" + variables.loggedIn_User_ID + " , \'" + variables.announcementAdd + "\')";
     					
-    				     int rsCount = this.InsertUpdateDeleteQuery_con1();
+    				     /*int rsCount =*/ this.InsertUpdateDeleteQuery_con1();
     					
-    					 variables.step_queryingOrUpdatingDB++;
-    					if (rsCount != 0) 
-						{
+    					
+    					/*if (rsCount != 0) 
+						{*/
 							
     						output = " Announcement update successful....press any key to continue";
 							
 						    variables.step_ANNOUNCEMENTS++;
-						}
+						/*}
 						else 
 						{
 							output = "Announcement update failed....press any key to continue";
 							
 							variables.step_ANNOUNCEMENTS++;
-						}
+						}*/
     				/*add the announcement to db + Along with the date and time appeneded to the front of the message*/
-    		
-    			}
     		
     			}	
     		}
-    		//delete publications
-    		else if (this.variables.chosen_On_Screen_Action.equals("b"))
+    		//delete announcements
+    		else if (this.variables.chosen_On_Screen_Action.equals("2"))
     		{
     		   //jma342 - feb 26th - updated to allow user to cancel deletion operation
     			if(input.equals("-1"))
@@ -2568,23 +2592,45 @@ public class DocNetProtocol {
     			/*delete selected announcement*/
     			else
     			{   //rw446 -- Feb 28th - add in delete announcement records from DB
-    				int index = Integer.parseInt(input);
+    				int index = Integer.parseInt(input) - 1;
 	    		        
-  				    int announcementId = variables.accouncementListIDS.get(index);
+  				    int announcementId = variables.accouncementListIDS.elementAt(index);
   				
-  				    variables.sqlString_con1 = "DELETE FROM res_pub WHERE res_pub_id=" + announcementId;
+  				    variables.sqlString_con1 = "Select * from ancmt where user_id = " + variables.loggedIn_User_ID + 
+  				    		" and ancmt_id = " + announcementId;
   				    
-  				    int rsCount = this.InsertUpdateDeleteQuery_con1();
+  				    this.selectQuery_con1();
   				    
-  				    if (rsCount !=0 )
+  				    try
   				    {
-  				    	output = "Announcement has been deleted...press any key to continue";
-  				    	this.variables.step_ANNOUNCEMENTS++;
-  				    }
-  				    else {
-  				    	output = "failed to delete announcement ...press any key to continue";
-  				    	this.variables.step_ANNOUNCEMENTS++;
-  				    }
+						if(variables.rs_con1.next())
+						{
+						
+						    variables.sqlString_con1 = "DELETE FROM ancmt WHERE ancmt_id=" + announcementId;
+						    
+						    /*int rsCount =*/ this.InsertUpdateDeleteQuery_con1();
+						    
+						    /*if (rsCount !=0 )
+						    {*/
+						    	output = "Announcement has been deleted...press any key to continue";
+						    	this.variables.step_ANNOUNCEMENTS++;
+						   /* }
+						    else {
+						    	output = "failed to delete announcement ...press any key to continue";
+						    	this.variables.step_ANNOUNCEMENTS++;
+						    }*/
+						}
+						else
+						{
+							output = "Deletion operation aborted. You are not allowed to delete this announcement...press any key to continue";
+							this.variables.step_ANNOUNCEMENTS++;
+						}
+					} 
+  				    catch (SQLException e) 
+  				    {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
     				
     			}
    
@@ -2602,7 +2648,7 @@ public class DocNetProtocol {
     		variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
     		variables.nextScreen = this.variables.ANNOUNCEMENTS_SCREEN;
     		
-    		output = this.screenOutput(variables.currentScreen);//update screen
+    		output = this.screenOutput(variables.nextScreen);//update screen
     		variables.step_ANNOUNCEMENTS=0;
     		variables.accouncementListIDS.clear();// rw446 -- Feb 28th -- clear the accouncementListIDS
     	}
@@ -2639,11 +2685,9 @@ public class DocNetProtocol {
     		//comment on existing discussion
     		else if(input.equals("3"))
     		{
-       			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
-        		variables.nextScreen = this.variables.PUBLIC_DISCUSSION_TOPIC_SCREEN;
-        		
-        		output = this.screenOutput(variables.nextScreen);//update screen
-        		this.variables.step_PUBLIC_DISCUSSIONS=0;
+    			this.variables.chosen_On_Screen_Action = input;
+    			output = "Please enter the number of the discussion you want to comment on: ";
+    			this.variables.step_PUBLIC_DISCUSSIONS++;
     			
     		}
     		//return to main posting board
@@ -2680,7 +2724,7 @@ public class DocNetProtocol {
     				variables.sqlString_con1 = "Insert into disc (user_id,title) values (" 
     							+ variables.loggedIn_User_ID + ", \'" + input + "\')";
     				
-    				this.selectQuery_con1();
+    				this.InsertUpdateDeleteQuery_con1();
     				
 	    			
 	    			//TO DO: retrieve id of discussion last inserted and store in variables.publicDiscussionID;
@@ -2711,6 +2755,25 @@ public class DocNetProtocol {
 	    			this.variables.step_PUBLIC_DISCUSSIONS++;
     			}
     		}
+    		
+    		else if(this.variables.chosen_On_Screen_Action.equals("3"))
+    		{
+    			if(input.equals("-1"))
+    			{
+    				output = "Commenting on discussion has been cancelled...press any key to continue";
+    				this.variables.step_PUBLIC_DISCUSSIONS = 5;
+    			}
+    			else
+    			{
+    				variables.chosenDiscussion = Integer.parseInt(input);
+    				
+	    			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+	        		variables.nextScreen = this.variables.PUBLIC_DISCUSSION_TOPIC_SCREEN;
+	        		
+	        		output = this.screenOutput(variables.nextScreen);//update screen
+	        		this.variables.step_PUBLIC_DISCUSSIONS=0;
+    			}
+    		}
     	}
     	
     	else if (this.variables.step_PUBLIC_DISCUSSIONS ==3)
@@ -2738,8 +2801,9 @@ public class DocNetProtocol {
     		{
     			if(input.toLowerCase().equals("yes"))
     			{
-    				
-    				variables.sqlString_con1 = "Delete from disc where disc_id = " + variables.chosenDiscussion;
+    				int location = variables.chosenDiscussion - 1;
+    				variables.sqlString_con1 = "Delete from disc where disc_id = " + 
+    				variables.discussionListIDS.elementAt(location);
     				
     				this.InsertUpdateDeleteQuery_con1();
     				
@@ -2847,8 +2911,9 @@ public class DocNetProtocol {
     				//current user is the owner of the researg group that user can remove any comment from the research group
 					if(variables.rs_con1.next())
 					{
+						int location = Integer.parseInt(input) - 1;
 						variables.sqlString_con1 = "Delete from res_gro_cmt where res_gro_cmt_id = " + 
-									variables.researchGrpCommentsIDS.elementAt(Integer.parseInt(input));
+									variables.researchGrpCommentsIDS.elementAt(location);
 
 						this.InsertUpdateDeleteQuery_con1();
 						variables.researchGrpCommentsIDS.clear();
@@ -2858,8 +2923,9 @@ public class DocNetProtocol {
 					else
 					{
 						//since user is not owner of the research group determining whether user is author of comment
+						int location = Integer.parseInt(input) -1;
 						variables.sqlString_con1 = "Select * from res_gro_cmt where res_gro_cmt_id = " + 
-								variables.researchGrpCommentsIDS.elementAt(Integer.parseInt(input)) + " and " +
+								variables.researchGrpCommentsIDS.elementAt(location) + " and " +
 								"user_id = " + variables.loggedIn_User_ID;
 						
 						this.selectQuery_con1();
@@ -2867,6 +2933,7 @@ public class DocNetProtocol {
 						//user owns selected comment and is permitted to deleted
 						if(variables.rs_con1.next())
 						{
+							location = Integer.parseInt(input) - 1;
 							variables.sqlString_con1 = "Delete from res_gro_cmt where res_gro_cmt_id = " + 
 									variables.researchGrpCommentsIDS.elementAt(Integer.parseInt(input));
 
@@ -2939,6 +3006,15 @@ public class DocNetProtocol {
     			
     			this.variables.step_PUBLIC_DISCUSSION_TOPIC++;
     		}
+    		
+    		else if(input.equals("3"))
+    		{
+    			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+        		variables.nextScreen = this.variables.PUBLIC_DISCUSSIONS_SCREEN;
+        		variables.discussionCommentsIDS.clear();
+        		output = this.screenOutput(variables.currentScreen);//update screen
+        		variables.step_PUBLIC_DISCUSSION_TOPIC=0;
+    		}
     	}
     	
     	else if(this.variables.step_PUBLIC_DISCUSSION_TOPIC==1)
@@ -2951,13 +3027,15 @@ public class DocNetProtocol {
     	{
     		if(this.variables.chosen_On_Screen_Action.equals("1"))
     		{
-    			variables.sqlString_con1 = "Insert into pub_dis_com (dis_id,user_id,comment) values (\'" + 
-    						variables.chosenDiscussion + "\' , " + variables.loggedIn_User_ID + 
+    			int location = variables.chosenDiscussion - 1;
+    			
+    			variables.sqlString_con1 = "Insert into pub_dis_com (dis_id,user_id,comment) values (" + 
+    					variables.discussionListIDS.elementAt(location) + " , " + variables.loggedIn_User_ID + 
     						", \'" + input + "\')";
     			
-    			this.selectQuery_con1();
+    			this.InsertUpdateDeleteQuery_con1();
     			
-    			output = "Comments has been added to db...press anykey to continue\n";
+    			output = "Comments has been added to the discussion...press anykey to continue";
     			this.variables.step_PUBLIC_DISCUSSION_TOPIC++;
     			
     		}
@@ -2976,8 +3054,9 @@ public class DocNetProtocol {
     				//current user is the owner of the discussion that user can remove any comment from the discussion
 					if(variables.rs_con1.next())
 					{
+						int location = Integer.parseInt(input) - 1;
 						variables.sqlString_con1 = "Delete from pub_dis_com where dis_cmt_id = " + 
-									variables.discussionCommentsIDS.elementAt(Integer.parseInt(input));
+									variables.discussionCommentsIDS.elementAt(location);
 
 						this.InsertUpdateDeleteQuery_con1();
 						variables.discussionCommentsIDS.clear();
@@ -2986,17 +3065,19 @@ public class DocNetProtocol {
 					
 					else
 					{
+						int location = Integer.parseInt(input) - 1;
 						//since user is not owner of the discussion determining whether user is author of comment
 						variables.sqlString_con1 = "Select * from pub_dis_com where dis_cmt_id = " + 
-								variables.discussionCommentsIDS.elementAt(Integer.parseInt(input)) + " and " +
+								variables.discussionCommentsIDS.elementAt(location) + " and " +
 								"user_id = " + variables.loggedIn_User_ID;
 						this.selectQuery_con1();
 						
 						//user owns selected comment and is permitted to deleted
 						if(variables.rs_con1.next())
 						{
+							location = Integer.parseInt(input) - 1;
 							variables.sqlString_con1 = "Delete from pub_dis_com where dis_cmt_id = " + 
-									variables.discussionCommentsIDS.elementAt(Integer.parseInt(input));
+									variables.discussionCommentsIDS.elementAt(location);
 
 							this.InsertUpdateDeleteQuery_con1();
 							variables.discussionCommentsIDS.clear();
@@ -3033,7 +3114,7 @@ public class DocNetProtocol {
     	{
     		variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
     		variables.nextScreen = this.variables.PUBLIC_DISCUSSION_TOPIC_SCREEN;
-    		
+
     		output = this.screenOutput(variables.currentScreen);//update screen
     		variables.step_PUBLIC_DISCUSSION_TOPIC=0;
     	}
@@ -3565,9 +3646,11 @@ public class DocNetProtocol {
     			}
     			else
     			{
+    				int location = Integer.parseInt(input) -1;
     				//this call is subsequent to the necessary input value that the user passes in
 	    			variables.sqlString_con1 = "Delete from friends_list where user_id = " + 
-	    						variables.friendsListIDS.elementAt(Integer.parseInt(input));
+	    						variables.friendsListIDS.elementAt(location) + " or friend_id = " + 
+	    						variables.friendsListIDS.elementAt(location) ;
 	    			
 	    			this.InsertUpdateDeleteQuery_con1();
 	    			
@@ -3692,7 +3775,7 @@ public class DocNetProtocol {
 				
 				variables.desiredFriendLastName = input;
 				variables.sqlString_con2 = "Select * from users where first_name = \'" + 
-						variables.desiredFriendFirstName + "\' and last_name = \'" + variables.desiredFriendLastName;
+						variables.desiredFriendFirstName + "\' and last_name = \'" + variables.desiredFriendLastName + "\'";
 				
 				this.selectQuery_con2();
 				
@@ -3708,13 +3791,23 @@ public class DocNetProtocol {
 					if(variables.rs_con2.next())
 					{
 						variables.sqlString_con1 = "Select * from user_info where user_id = " + 
-									variables.rs_con1.getString("user_id");
+									variables.rs_con2.getString("user_id");
 									
 						this.selectQuery_con1();
 						
-						output = variables.friendsListCount + ". " + variables.rs_con2.getString("first_name") + 
-										" " + variables.rs_con2.getString("last_name") + " - HomeAddress: " + 
-								variables.rs_con1.getString("home_address");
+						//if user_info record exists
+						if(variables.rs_con1.next())
+						{
+							output = variables.friendsListCount + ". " + variables.rs_con2.getString("first_name") + 
+									" " + variables.rs_con2.getString("last_name") + " - HomeAddress: " + 
+							variables.rs_con1.getString("home_address");
+						}
+						else
+						{
+							output = variables.friendsListCount + ". " + variables.rs_con2.getString("first_name") + 
+									" " + variables.rs_con2.getString("last_name");
+						}
+						
 						
 						variables.friendsListCount++;
 						//stores list of potential friends user_ids as they are displayed
@@ -3760,9 +3853,11 @@ public class DocNetProtocol {
 			}
 			else
 			{
+				variables.friendsListIDS.size();
+				int location = Integer.parseInt(input) - 1;
 				variables.sqlString_con1 = "Insert into friend_req (requester_id,requestee_id) values " + 
 							"(" + variables.loggedIn_User_ID + ", " + 
-						variables.friendsListIDS.elementAt(Integer.parseInt(input)) + ")";
+						variables.friendsListIDS.elementAt(location) + ")";
 				
 				this.InsertUpdateDeleteQuery_con1();
 				
@@ -3825,15 +3920,19 @@ public class DocNetProtocol {
     	else if(this.variables.step_user_FRIEND_REQUEST == 1)
     	{
     		//retrive the friend request to get the id for the friend requester.
+    		int location = variables.friendRequestChosen - 1;
     		variables.sqlString_con1 = "Select * from friend_req where friend_req_id = " + 
-					variables.friendsListIDS.elementAt(variables.friendRequestChosen);
+					variables.friendsListIDS.elementAt(location);
     		
     		this.selectQuery_con1();
     		
     		try 
     		{
     			//store the id of the friend requester 
-				variables.requesterForFriendShip = Integer.parseInt(variables.rs_con1.getString("requester_id"));
+    			if(variables.rs_con1.next())
+    			{
+    				variables.requesterForFriendShip = Integer.parseInt(variables.rs_con1.getString("requester_id"));
+    			}
 			} 
     		catch (NumberFormatException e2) 
     		{
@@ -3866,7 +3965,10 @@ public class DocNetProtocol {
     		try 
     		{
     			//display the requester name
-				output = variables.rs_con2.getString("first_name") + " " + variables.rs_con2.getString("last_name");
+    			if( variables.rs_con2.next())
+    			{
+    				output = variables.rs_con2.getString("first_name") + " " + variables.rs_con2.getString("last_name");
+    			}
 			} 
     		catch (SQLException e) 
     		{
@@ -3900,9 +4002,10 @@ public class DocNetProtocol {
     			this.InsertUpdateDeleteQuery_con1();
     			//adds the requester and requestee to each others friends lists'
     			
+    			int location = variables.friendRequestChosen - 1;
     			//removes the friend request from the table as it has been addressed
     			variables.sqlString_con1 = "Delete from friend_req where friend_req_id = " + 
-    					variables.friendRequestChosen;
+    					variables.friendsListIDS.elementAt(location);
     			
     			this.InsertUpdateDeleteQuery_con1();
     			//removes the friend request from the table as it has been addressed
