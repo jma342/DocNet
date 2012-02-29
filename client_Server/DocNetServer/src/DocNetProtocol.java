@@ -1,6 +1,7 @@
 import java.net.*;
 import java.io.*;
 import java.sql.*;
+import java.util.Calendar;
 
 /*TIP TO YERZHAN LOOK TO PLACE YOUR DATABASE INSERTION, DELETION AND RETRIEVAL IN A 
  * FUNCTION FOR EASE OF USE....SO YOU WOULD PASS THE NECESSARY PARAMETERS TO EACH OF THE FUNCTIONS
@@ -519,24 +520,67 @@ public class DocNetProtocol {
     	{
     		if (this.variables.step_SCREEN_OUTPUT==0)
     		{
-    			//get research publications from db to display
-        		output = "get publications from db";
-        		variables.step_SCREEN_OUTPUT++;
+    			//retrives all research publications post by user
+    			if(variables.step_queryingOrUpdatingDB == 0)
+    			{
+    				variables.sqlString_con1 = "Select * from res_pub where user_id = " + 
+    								variables.loggedIn_User_ID;
+    				
+    				this.selectQuery_con1();
+    				variables.step_queryingOrUpdatingDB++;
+    			}
+    			
+    			//displays the users who requested you
+    			else if(variables.step_queryingOrUpdatingDB == 1)
+    			{  //add database connection for viewing publications on posting board -- rw 446 -- Feb 28th
+    				try 
+    				{
+						if(variables.rs_con1.next())
+						{
+							
+							output = variables.researchPublicationCount + ". " + variables.rs_con1.getString("authors") + 
+									" " + variables.rs_con1.getString("title");
+							
+							//stores id for research publications
+							variables.researchPublicationList.add(Integer.parseInt(variables.rs_con1.getString("res_pub_id")));
+							
+							variables.researchPublicationCount++;
+						}
+						else
+						{
+							variables.step_queryingOrUpdatingDB = 0;
+							variables.step_SCREEN_OUTPUT++;
+							variables.researchPublicationCount = 1;
+						}
+					} 
+    				catch (NumberFormatException e) 
+    				{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} 
+    				catch (SQLException e) 
+    				{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+    			}
+        		//output = "get publications from db";
+        		
     		}
     		else if (variables.step_SCREEN_OUTPUT==1)
     		{
-    			output = "1. Add a publication";
+    			output = "a. Add a publication";
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if (variables.step_SCREEN_OUTPUT==2)
     		{
-    			output = "2. Delete a publication";
+    			output = "b. Delete a publication";
     			variables.step_SCREEN_OUTPUT++;
     		}
     		//jma342 - feb 26th - allowed the user to return to the parent screen
     		else if (variables.step_SCREEN_OUTPUT==3)
     		{
-    			output = "3. Return to Main Posting board";
+    			output = "c. Return to Main Posting board";
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(variables.step_SCREEN_OUTPUT ==4)
@@ -558,25 +602,73 @@ public class DocNetProtocol {
     	{
     		if(variables.step_SCREEN_OUTPUT == 0)
     		{
-    		  output = "display the announcement retrived from database";
-    		  variables.step_SCREEN_OUTPUT++;
+    			if(variables.step_queryingOrUpdatingDB == 0)
+    			{
+    				variables.sqlString_con1 = "Select * from ancmt where user_id = " + 
+    								variables.loggedIn_User_ID;
+    				
+    				this.selectQuery_con1();
+    				variables.step_queryingOrUpdatingDB++;
+    			}
+    			
+    			//displays the users who requested you
+    			else if(variables.step_queryingOrUpdatingDB == 1)
+    			{  //add database connection for viewing publications on posting board -- rw 446 -- Feb 28th
+    				try 
+    				{
+						if(variables.rs_con1.next())
+						{
+							variables.sqlString_con2 = "Select * from users where user_id = " + 
+									Integer.parseInt(variables.rs_con1.getString("user_id"));
+							
+							this.selectQuery_con2();
+							
+							output = variables.announcementCount + ". " + variables.rs_con1.getString("date")+" " + variables.rs_con1.getString("time")+ 
+									" " + variables.rs_con1.getString("anmct") + variables.rs_con2.getString("first_name") + 
+									" " + variables.rs_con2.getString("last_name");
+							
+							//stores id for each friend request as they are displayed on screen
+							variables.accouncementListIDS.add(Integer.parseInt(variables.rs_con1.getString("ancmt_id")));
+							
+							variables.announcementCount++;
+							
+						}
+						else
+						{
+							variables.step_queryingOrUpdatingDB = 0;
+							variables.step_SCREEN_OUTPUT++;
+							variables.announcementCount = 1;
+						}
+					} 
+    				catch (NumberFormatException e) 
+    				{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} 
+    				catch (SQLException e) 
+    				{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+    			}
+    			
     		  
     		}
     		else if(variables.step_SCREEN_OUTPUT== 1)
     		{
-    			output = "1. Add an announcement";
+    			output = "a. Add an announcement";
     			variables.step_SCREEN_OUTPUT++;
     		}
     		else if(variables.step_SCREEN_OUTPUT ==2)
     		{
-    			output = "2. Delete an announcement";
+    			output = "b. Delete an announcement";
     			variables.step_SCREEN_OUTPUT++;
     		}
     		
     		//jma342 - Feb 26 - 4:14pm
        		else if(variables.step_SCREEN_OUTPUT ==3)
     		{
-    			output = "3. Return to your main posting board.";
+    			output = "c. Return to your main posting board.";
     			variables.step_SCREEN_OUTPUT++;
     		}
 
@@ -1798,19 +1890,19 @@ public class DocNetProtocol {
     	if(this.variables.step_RESEARCH_PUBLICATIONS==0)
     	{
     		//add a new publications
-    		if (input.equals("1"))
+    		if (input.equals("a"))
     		{
     			this.variables.chosen_On_Screen_Action = input;
     			
-    			output = "Please enter the author and name of the " +
-    					"publications(eg. John Smith 'Cancer Research')(enter -1 to cancel):";
+    			output = "Please enter the author" +
+    					"publications(eg. John Smith)(enter -1 to cancel):";
     			
     			this.variables.step_RESEARCH_PUBLICATIONS++;
     			
     		}
     		
     		//delete a publications
-    		else if (input.equals("2"))
+    		else if (input.equals("b"))
     		{
     			this.variables.chosen_On_Screen_Action = input;
     			
@@ -1821,7 +1913,7 @@ public class DocNetProtocol {
     		}
     		
        		//return to main posting board
-    		else if (input.equals("3"))
+    		else if (input.equals("c"))
     		{	
     			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
         		variables.nextScreen = this.variables.MAIN_POSTING_BOARD_SCREEN;
@@ -1842,38 +1934,97 @@ public class DocNetProtocol {
     	else if (this.variables.step_RESEARCH_PUBLICATIONS == 2)
     	{
     		//add publications
-    		if(this.variables.chosen_On_Screen_Action.equals("1")) 
-    		{
+    		if(this.variables.chosen_On_Screen_Action.equals("a")) 
+    		{   
     			if(input.equals("-1"))
     			{
     				output = "Addition operation has been cancelled...Press any key to continue";
     			}
     			else
-    			{
-	    			/*add the publicaitons to db*/
-	    			
-	    			output = "Research Publications has been added...Press any key to continue";
-    			}
-    			
-    			this.variables.step_RESEARCH_PUBLICATIONS++;
-    			
+    			{  //add in database connections for adding publication -- rw 446 -- Feb 28th
+    			  
+    				if(variables.step_queryingOrUpdatingDB == 0)
+    				{
+    					variables.researchAuthorAdd = input;
+    					output = "Please enter the publication title";
+    					variables.step_queryingOrUpdatingDB++;
+    					
+    				}
+    				else if (variables.step_queryingOrUpdatingDB == 1)
+    				{
+    					output = "userInput";
+    					this.variables.step_queryingOrUpdatingDB++;
+    					
+    				}
+    				else if(variables.step_queryingOrUpdatingDB == 2)
+    				{
+    					
+    				     variables.researchTitleAdd = input;
+    				
+    				     variables.sqlString_con1 = "INSERT INTO res_pub (user_id, authors, title) VALUES " +
+									"(\'" + variables.loggedIn_User_ID + "\', \'" + variables.researchAuthorAdd + "\', \'" + variables.researchTitleAdd + "\')";
+    					
+    				     int rsCount = this.InsertUpdateDeleteQuery_con1();
+    					
+    					variables.step_queryingOrUpdatingDB++;
+    					if (rsCount != 0) 
+						{
+							
+    						output = " Research Publications update successful....press any key to continue";
+							
+						    variables.step_RESEARCH_PUBLICATIONS++;
+						}
+						else 
+						{
+							output = "Research Publication failed....press any key to continue";
+							
+							variables.step_RESEARCH_PUBLICATIONS++;
+						}
+    					
+    				}
+    			  }
     		}
     		
     		//delete publications
-    		else if (this.variables.chosen_On_Screen_Action.equals("2"))
+    		else if (this.variables.chosen_On_Screen_Action.equals("b"))
     		{
     			if(input.equals("-1"))
     			{
     				output = "Deletion operation has been cancelled...Press any key to continue";
     			}
     			else
-    			{
-	    		   /*verify with the db to delete the publications*/
-	    			
-	    			output = "Research Publication has been deleted...press any key to continue";
+    			{  //add database connection for deleting publication record -- rw 446 --Feb 28th
+    				try {
+    					int index = Integer.parseInt(input);
+  	    		        /*verify with the db to delete the publications*/
+      				    int publicationId = variables.researchPublicationList.get(index);
+      				
+      				    variables.sqlString_con1 = "DELETE FROM res_pub WHERE res_pub_id=" + publicationId;
+      				    
+      				    int rsCount = this.InsertUpdateDeleteQuery_con1();
+      				    
+      				    if (rsCount !=0 )
+      				    {
+      				    	output = "Research Publication has been deleted...press any key to continue";
+      				    	this.variables.step_RESEARCH_PUBLICATIONS++;
+      				    }
+      				    else {
+      				    	output = "failed to delete research publication ...press any key to continue";
+      				    	this.variables.step_RESEARCH_PUBLICATIONS++;
+      				    }
+    				}
+    				catch (NumberFormatException e) 
+    				{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} 
+    				catch (Exception e) 
+    				{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
     			}
-    			
-    			this.variables.step_RESEARCH_PUBLICATIONS++;
     		}
     		
     	}
@@ -1891,6 +2042,7 @@ public class DocNetProtocol {
     		
     		output = this.screenOutput(variables.currentScreen);//update screen
     		variables.step_RESEARCH_PUBLICATIONS=0;
+    		variables.researchPublicationList.clear(); //rw446 -- Feb 28th -- Add to clear the research Publication List
     	}
     	return output;
     }
@@ -1904,7 +2056,7 @@ public class DocNetProtocol {
     	{
     		
     		//add a new announcement
-    		if (input.equals("1"))
+    		if (input.equals("a"))
     		{
     			this.variables.chosen_On_Screen_Action = input;
     			
@@ -1915,7 +2067,7 @@ public class DocNetProtocol {
     		}
     		
     		//delete an announcement
-    		else if (input.equals("2"))
+    		else if (input.equals("b"))
     		{
     			this.variables.chosen_On_Screen_Action = input;
     			
@@ -1926,7 +2078,7 @@ public class DocNetProtocol {
     		}
     		
     		//jma342 - Feb 26th - 4:16PM return to main posting board
-    		else if (input.equals("3"))
+    		else if (input.equals("c"))
     		{
     			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
         		variables.nextScreen = this.variables.MAIN_POSTING_BOARD_SCREEN;
@@ -1948,7 +2100,7 @@ public class DocNetProtocol {
     	else if (this.variables.step_ANNOUNCEMENTS == 2)
     	{
     		
-    		if(this.variables.chosen_On_Screen_Action.equals("1")) 
+    		if(this.variables.chosen_On_Screen_Action.equals("a")) 
     		{
     			//jma342 - feb 26th - updated to allow user to cancel addition operation
     			if(input.equals("-1"))
@@ -1956,17 +2108,38 @@ public class DocNetProtocol {
     				output = "Addition operation has been cancelled...press any key to continue";
     			}
     			else
-    			{
+    			{  //add in the announcement to database -- rw 446 --Feb 28th
+    				if(variables.step_queryingOrUpdatingDB == 0)
+    				{
+    					variables.announcementAdd = input;
+    				
+    				     variables.sqlString_con1 = "INSERT INTO ancmt (user_id, ancmt) VALUES " +
+									"(\'" + variables.loggedIn_User_ID + "\', \'" + variables.announcementAdd + "\')";
+    					
+    				     int rsCount = this.InsertUpdateDeleteQuery_con1();
+    					
+    					 variables.step_queryingOrUpdatingDB++;
+    					if (rsCount != 0) 
+						{
+							
+    						output = " Announcement update successful....press any key to continue";
+							
+						    variables.step_ANNOUNCEMENTS++;
+						}
+						else 
+						{
+							output = "Announcement update failed....press any key to continue";
+							
+							variables.step_ANNOUNCEMENTS++;
+						}
     				/*add the announcement to db + Along with the date and time appeneded to the front of the message*/
-    			
-    				output = "Annoucement has been added...Press anykey to continue";
+    		
     			}
-    			
-    			this.variables.step_ANNOUNCEMENTS++;
-    			
+    		
+    			}	
     		}
     		//delete publications
-    		else if (this.variables.chosen_On_Screen_Action.equals("2"))
+    		else if (this.variables.chosen_On_Screen_Action.equals("b"))
     		{
     		   //jma342 - feb 26th - updated to allow user to cancel deletion operation
     			if(input.equals("-1"))
@@ -1976,12 +2149,27 @@ public class DocNetProtocol {
     			
     			/*delete selected announcement*/
     			else
-    			{
-    				output = "Announcement has been deleted...press any key to continue";
+    			{   //rw446 -- Feb 28th - add in delete announcement records from DB
+    				int index = Integer.parseInt(input);
+	    		        
+  				    int announcementId = variables.accouncementListIDS.get(index);
+  				
+  				    variables.sqlString_con1 = "DELETE FROM res_pub WHERE res_pub_id=" + announcementId;
+  				    
+  				    int rsCount = this.InsertUpdateDeleteQuery_con1();
+  				    
+  				    if (rsCount !=0 )
+  				    {
+  				    	output = "Announcement has been deleted...press any key to continue";
+  				    	this.variables.step_ANNOUNCEMENTS++;
+  				    }
+  				    else {
+  				    	output = "failed to delete announcement ...press any key to continue";
+  				    	this.variables.step_ANNOUNCEMENTS++;
+  				    }
+    				
     			}
-    			
-    			
-    			this.variables.step_ANNOUNCEMENTS++;
+   
     		}
     	}
     	
@@ -1998,6 +2186,7 @@ public class DocNetProtocol {
     		
     		output = this.screenOutput(variables.currentScreen);//update screen
     		variables.step_ANNOUNCEMENTS=0;
+    		variables.accouncementListIDS.clear();// rw446 -- Feb 28th -- clear the accouncementListIDS
     	}
     	return output;
     }

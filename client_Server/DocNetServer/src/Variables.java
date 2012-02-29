@@ -83,8 +83,14 @@ public class Variables
     public String desiredFriendLastName = "";//hodlds the lastname of the friend that you desire to add
     public int requesterForFriendShip = 0;//used to hold user_id of the friend request that was chosen
     public int friendRequestChosen = 0;//used to hold the friend request that was chosen
-
-    
+    public Vector<Integer> researchPublicationList = new Vector<Integer>(); //holds the list of IDs of publication displayed on screen
+    public int researchPublicationCount = 1;//rw446 -- Feb 28th
+    public String researchTitleAdd = ""; //holds the title of the publication you want to add
+    public String researchAuthorAdd = ""; //holds the author of the publication you want to add
+    public Boolean UpdateStatus = false; //holds the status that whether the update is successful
+    public int announcementCount = 1;//rw446 -- Feb 28th
+    public Vector<Integer> accouncementListIDS = new Vector<Integer>(); //holds the list of IDS of announcement on screen -- rw446 -- Feb 28th
+    public String announcementAdd = ""; //holds the announcement string needs to be added-- rw446 -- Feb 28th
      //current step in a given conversation relative to each menu---jma342---Feb 14th
     
     //jma342 -- feb 21st -- both database connections
