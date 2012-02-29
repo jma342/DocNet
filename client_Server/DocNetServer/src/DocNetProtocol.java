@@ -72,6 +72,10 @@ public class DocNetProtocol {
     	{
     		output = this.researchGroupScreen(input);
     	}
+    	else if(variables.currentScreen == variables.RESEARCH_GROUP_TOPIC_SCREEN)
+    	{
+    		output = researchGroupTopicScreen(input);
+    	}
     	//jma342 - feb 25 1:52AM - Merging cindy's code
     	
     	/*else if(variables.currentScreen == variables.CREATED_PUB_DISC_or_RES_GRP_PRIVILEGES_SCREEN)
@@ -749,6 +753,11 @@ public class DocNetProtocol {
     			output = "4. Return to Main Posting Board";
     			variables.step_SCREEN_OUTPUT++;
     		}
+    		else if(variables.step_SCREEN_OUTPUT == 5)
+    		{
+    			output = "Please select an option from 1-4: ";
+    			variables.step_SCREEN_OUTPUT++;
+    		}
     		else
     		{
     			variables.step_SCREEN_OUTPUT = 0;
@@ -826,7 +835,7 @@ public class DocNetProtocol {
     		{
     			variables.step_SCREEN_OUTPUT = 0;
     			output = "userInput";
-    			variables.discussionListIDS.clear();
+    			//variables.discussionListIDS.clear();
     			variables.currentScreen = variables.nextScreen;
     		}
     	}
@@ -883,7 +892,117 @@ public class DocNetProtocol {
 					}
     			}
     		}
+    		
+    		else if(this.variables.step_SCREEN_OUTPUT == 1)
+    		{
+    			output ="1. Create Research Group";
+    			this.variables.step_SCREEN_OUTPUT++;	
+    		}
+    		
+    		else if(this.variables.step_SCREEN_OUTPUT == 2)
+    		{
+    			output = "2. Delete Research Group";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		
+    		else if(this.variables.step_SCREEN_OUTPUT == 3)
+    		{
+    			output = "3. Comment on Research group";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		
+    		else if(this.variables.step_SCREEN_OUTPUT == 4)
+    		{
+    			output = "4 . Return to your Main Posting Board";
+    			this.variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 5)
+    		{
+    			output = "Please select an option from 1-4";
+    			this.variables.step_SCREEN_OUTPUT ++;
+    		}
+    		else if(this.variables.step_SCREEN_OUTPUT == 6)
+    		{
+    			output = "userInput";
+    			variables.currentScreen = variables.nextScreen;
+    			this.variables.step_SCREEN_OUTPUT = 0;
+    		}
     	}
+    	
+    	//jma342 - Feb26th 1:54AM - merging in Cindy's code
+    	else if(screen==this.variables.RESEARCH_GROUP_TOPIC_SCREEN)
+    	{
+    		if(variables.step_SCREEN_OUTPUT ==0)
+    		{
+    			//retrieve discussion comments for chosen research group
+    			if(variables.step_queryingOrUpdatingDB == 0)
+    			{
+    				
+    				variables.sqlString_con1 = "Select * from res_gro_com where res_gro_id = " + 
+    						variables.researchGrpIDS.elementAt(variables.chosenResearchGrp);
+    				
+    				this.selectQuery_con1();
+    				variables.step_queryingOrUpdatingDB++;
+    				
+    			}
+    			
+    			//display all of the comments made to a research group consisting of the author and the corresponding
+    			//comment
+    			else if(variables.step_queryingOrUpdatingDB == 1)
+    			{
+    				try 
+    				{
+						if(variables.rs_con1.next())
+						{
+							//retrieves each authors name via user_id
+							variables.sqlString_con2 = "Select * from users where user_id  = " + 
+										variables.rs_con1.getString("user_id");
+							
+							//displays each authors name and corresponding comment
+							output = variables.researchGrpCommentCount + ". " + variables.rs_con2.getString("first_name") + " " + 
+										variables.rs_con2.getString("last_name") + ": " + 
+									variables.rs_con1.getString("comments");
+							
+							variables.researchGrpCommentCount++;
+							//store the comments ids
+							variables.researchGrpCommentsIDS.add(Integer.parseInt(variables.rs_con1.getString("res_gro_cmt_id")));
+							
+						}
+						else
+						{
+							variables.researchGrpCommentCount = 1;
+							variables.step_queryingOrUpdatingDB = 0;
+							variables.step_SCREEN_OUTPUT++;
+						}
+					} 
+    				catch (SQLException e) 
+    				{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+    			}
+    			
+    		}
+
+    		else if(variables.step_SCREEN_OUTPUT == 1)
+    		{
+    			output = "1. Add a new comment";
+    			variables.step_SCREEN_OUTPUT++;
+    		}
+    		else if(variables.step_SCREEN_OUTPUT == 2)
+    		{
+    			output = "2. Delete a comment";
+    			variables.step_SCREEN_OUTPUT++;
+    		}
+    		else
+    		{
+    			variables.step_SCREEN_OUTPUT = 0;
+    			output = "userInput";
+    			variables.currentScreen = variables.nextScreen;
+    		}
+    	}
+    	//jma342 - Feb26th 1:54AM - merging in Cindy's code
+
     	//change made - jma 342 - feb 19th
     	else if(screen == this.variables.user_FRIENDS_LIST_SCREEN || 
     			screen == this.variables.FRIEND_FRIENDS_LIST_SCREEN || screen == this.variables.SELECT_FRIENDS_FOR_PRIVILEGE_SCREEN)
@@ -2030,6 +2149,153 @@ public class DocNetProtocol {
     public String researchGroupScreen(String input)
     {
     	String output = "";
+    
+    	if(variables.step_RESEARCH_GROUPS == 0)
+    	{
+    		//create new discussion
+    		if(input.equals("1"))
+    		{
+                this.variables.chosen_On_Screen_Action = input;
+    			
+    			output = "Please enter the title of the new research group(enter -1 to cancel): ";
+    			
+    			this.variables.step_RESEARCH_GROUPS++;
+    		}
+    		
+    		//delete a discussion
+    		else if(input.equals("2"))
+    		{
+    			this.variables.chosen_On_Screen_Action = input;
+    			output = "Please enter the number of the research group you want to delete(enter -1 to cancel): ";
+    			this.variables.step_RESEARCH_GROUPS++;
+    		}
+    		
+    		//comment on existing research group screen
+    		else if(input.equals("3"))
+    		{
+       			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+        		variables.nextScreen = this.variables.RESEARCH_GROUP_TOPIC_SCREEN;
+        		
+        		output = this.screenOutput(variables.nextScreen);//update screen
+        		this.variables.step_RESEARCH_GROUPS=0;
+    			
+    		}
+    		//return to main posting board
+    		else if(input.equals("4"))
+    		{
+       			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+        		variables.nextScreen = this.variables.MAIN_POSTING_BOARD_SCREEN;
+        		variables.researchGrpIDS.clear();
+        		output = this.screenOutput(variables.nextScreen);//update screen
+        		this.variables.step_RESEARCH_GROUPS=0;
+    			
+    		}
+
+    	}
+    	
+    	else if (this.variables.step_RESEARCH_GROUPS==1)
+    	{
+    		output = "userInput";
+    		this.variables.step_RESEARCH_GROUPS++;
+    	}
+    	
+    	else if(this.variables.step_RESEARCH_GROUPS==2)
+    	{
+    		if(this.variables.chosen_On_Screen_Action.equals("1"))
+    		{
+    			if(input.equals("-1"))
+    			{
+    				output = "Addidition of research group has been cancelled...press any key to continue";
+    				this.variables.step_RESEARCH_GROUPS = 5;//skip to step 5
+    			}
+    			else
+    			{
+    				//add the research group to the database
+    				variables.sqlString_con1 = "Insert into res_gro (user_id,title) values (" 
+    							+ variables.loggedIn_User_ID + ", \'" + input + "\')";
+    				
+    				this.selectQuery_con1();
+    				
+	    			
+	    			//TO DO: retrieve id of discussion last inserted and store in variables.publicDiscussionID;
+    				
+	    			output = "Research group has been created...press any key to continue";
+	    			this.variables.step_RESEARCH_GROUPS=5;
+	    			//variables.createdPublicDiscussion = true;
+    			}
+    			
+    			
+    		}
+    		
+    		//confirm the desire to delete selected research group
+    		else if(this.variables.chosen_On_Screen_Action.equals("2"))
+    		{
+    			if(input.equals("-1"))
+    			{
+    				output = "Deletion of discussion has been cancelled...press any key to continue";
+    				this.variables.step_RESEARCH_GROUPS = 5;//skip to step 5
+    			}
+    			else
+    			{
+    				//store the chosen research group
+    				variables.chosenResearchGrp = Integer.parseInt(input);
+    				
+	    			output = "Are you sure(Yes,No): ";
+	    			
+	    			this.variables.step_RESEARCH_GROUPS++;
+    			}
+    		}
+    	}
+    	
+    	else if (this.variables.step_RESEARCH_GROUPS ==3)
+    	{
+    		
+			output = "userInput";
+    		this.variables.step_RESEARCH_GROUPS++;	
+    		
+    	}
+    	
+    	else if (this.variables.step_RESEARCH_GROUPS ==4)
+    	{
+    		//after the user confirms the choice either carry out delete operation or cancel the delete operation
+    		if(this.variables.chosen_On_Screen_Action.equals("2"))
+    		{
+    			if(input.toLowerCase().equals("yes"))
+    			{
+    				
+    				variables.sqlString_con1 = "Delete from res_gro where res_gro_id = " + variables.chosenResearchGrp;
+    				this.InsertUpdateDeleteQuery_con1();
+    				
+    				variables.sqlString_con2 = "Delete from res_gro_mem where res_gro_id = " + variables.chosenResearchGrp;
+    				this.InsertUpdateDeleteQuery_con1();
+    				
+    				output = "Research group has been deleted...press any key to continue";
+    				this.variables.step_RESEARCH_GROUPS++;
+    				
+    			}
+    			else if(input.toLowerCase().equals("no"))
+    			{
+    				output = "Deletion operation cancelled...press any key to continue";
+    				this.variables.step_RESEARCH_GROUPS++;
+    			}
+    				
+    		}
+    		
+    	}
+    	else if (this.variables.step_RESEARCH_GROUPS == 5)
+    	{
+    			output = "userInput";
+        		this.variables.step_PUBLIC_DISCUSSIONS++;
+    	}
+    	
+    	else if (this.variables.step_RESEARCH_GROUPS == 6)
+    	{			
+			variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+    		variables.nextScreen = this.variables.RESEARCH_GROUPS_SCREEN;
+    		variables.researchGrpIDS.clear();
+    		output = this.screenOutput(variables.nextScreen);//update screen
+    		variables.step_PUBLIC_DISCUSSIONS=0;
+    	}
     	
     	return output;
     	
@@ -2518,7 +2784,135 @@ public class DocNetProtocol {
     	
     	return output;
     }
-    
+   
+    //new screen for display all comments for one specific topic--rw446 Feb 18th
+    public String researchGroupTopicScreen(String input)
+    {
+    	String output = "";
+    	
+    	if(this.variables.step_RESEARCH_GROUP_TOPIC==0)
+    	{
+    		//add a new comment
+    		if(input.equals("1"))
+    		{
+    			this.variables.chosen_On_Screen_Action = input;
+    			
+    			output = "Please enter the comment: ";
+    			
+    			this.variables.step_RESEARCH_GROUP_TOPIC++;
+    		}
+    		
+    		//delete a comment
+    		else if(input.equals("2"))
+    		{
+    			this.variables.chosen_On_Screen_Action = input;
+    			
+    			output = "Please select the comment you want to delete";
+    			
+    			this.variables.step_RESEARCH_GROUP_TOPIC++;
+    		}
+    	}
+    	
+    	else if(this.variables.step_RESEARCH_GROUP_TOPIC==1)
+    	{
+    		output="userInput";
+    		this.variables.step_RESEARCH_GROUP_TOPIC++;
+    	}
+    	
+    	else if(this.variables.step_RESEARCH_GROUP_TOPIC==2)
+    	{
+    		if(this.variables.chosen_On_Screen_Action.equals("1"))
+    		{
+    			variables.sqlString_con1 = "Insert into res_gro_cmt (res_gro_id,user_id,comments) values (\'" + 
+    						variables.chosenDiscussion + "\' , " + variables.loggedIn_User_ID + 
+    						", \'" + input + "\')";
+    			
+    			this.selectQuery_con1();
+    			
+    			output = "Comment has been added...press any key to continue\n";
+    			this.variables.step_RESEARCH_GROUP_TOPIC++;
+    			
+    		}
+    		else if(this.variables.chosen_On_Screen_Action.equals("2"))
+    		{
+    			
+    			//determines if current user is the owner of the research group
+    			variables.sqlString_con1 = "Select * from res_gro where res_gro_id = " + 
+    						variables.chosenResearchGrp + " and user_id = " + variables.loggedIn_User_ID;
+    			
+    			this.selectQuery_con1();
+    			
+    			try 
+    			{
+    				//current user is the owner of the researg group that user can remove any comment from the research group
+					if(variables.rs_con1.next())
+					{
+						variables.sqlString_con1 = "Delete from res_gro_cmt where res_gro_cmt_id = " + 
+									variables.researchGrpCommentsIDS.elementAt(Integer.parseInt(input));
+
+						this.InsertUpdateDeleteQuery_con1();
+						variables.researchGrpCommentsIDS.clear();
+						output = "The comment has been deleted...press any key to continue";
+					}
+					
+					else
+					{
+						//since user is not owner of the research group determining whether user is author of comment
+						variables.sqlString_con1 = "Select * from res_gro_cmt where res_gro_cmt_id = " + 
+								variables.researchGrpCommentsIDS.elementAt(Integer.parseInt(input)) + " and " +
+								"user_id = " + variables.loggedIn_User_ID;
+						
+						this.selectQuery_con1();
+						
+						//user owns selected comment and is permitted to deleted
+						if(variables.rs_con1.next())
+						{
+							variables.sqlString_con1 = "Delete from res_gro_cmt where res_gro_cmt_id = " + 
+									variables.researchGrpCommentsIDS.elementAt(Integer.parseInt(input));
+
+							this.InsertUpdateDeleteQuery_con1();
+							variables.researchGrpCommentsIDS.clear();
+							
+							output = "The comment has been deleted...press any key to continue";
+						}
+						else
+						{
+							output = "Deletion operation aborted. You are not allowed to delete this" +
+									"comment...press any key to continue";
+						}
+						
+					}
+				} 
+    			catch (NumberFormatException e) 
+    			{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} 
+    			catch (SQLException e) 
+    			{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			
+    			this.variables.step_RESEARCH_GROUP_TOPIC++;
+    		}
+    	}
+    	else if(this.variables.step_RESEARCH_GROUP_TOPIC==3)
+    	{
+    		output = "userInput";
+    		this.variables.step_RESEARCH_GROUP_TOPIC++;
+    	}
+    	else if(this.variables.step_RESEARCH_GROUP_TOPIC==4)
+    	{
+    		variables.currentScreen = this.variables.CURRENT_OUTPUT_SCREEN;
+    		variables.nextScreen = this.variables.RESEARCH_GROUP_TOPIC_SCREEN;
+    		
+    		output = this.screenOutput(variables.currentScreen);//update screen
+    		this.variables.step_RESEARCH_GROUP_TOPIC = 0;
+    	}
+    	return output;
+    }
+
     //new screen for display all comments for one specific topic--rw446 Feb 18th
     public String discussionTopicScreen(String input)
     {

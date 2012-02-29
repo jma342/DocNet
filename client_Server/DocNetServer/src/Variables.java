@@ -41,6 +41,7 @@ public class Variables
     public static final int RESET_PRIVILEGE_SCRREN = 24; //added new screen for edit privilege-- rw 446 -Feb 26th
 
 
+    public static final int RESEARCH_GROUP_TOPIC_SCREEN = 25;//added new screen for specific topic and comments--rw446 Feb 18th    
 
     //MENUS---jma342---Feb 14th
     
@@ -64,6 +65,7 @@ public class Variables
     public int step_PUBLIC_DISCUSSION_TOPIC=0;//added for specific topic and comments--rw446--Feb 18th
     public int step_SET_VIEW_OR_POST_PRIVILEGES_SCREEN = 0;//added -- jma 342 - February 24th 2012 -
     public int step_RESET_PRIVILEGE = 0; //added -- rw  446 - Feb 26th 2012
+    public int step_RESEARCH_GROUP_TOPIC=0;//added for specific topic and comments--rw446--Feb 18th
     																 
     public int step_SELECT_FRIENDS_FOR_PRIVILEGE_SCREEN = 0;//added - jma342 Feb 26th
     /*current step in screens for accessing a friend's screens*/
