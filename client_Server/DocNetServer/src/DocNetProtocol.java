@@ -1972,6 +1972,7 @@ public class DocNetProtocol {
 			else if(input.equals("4"))
 			{
 				variables.editField_On_Screen = "gender";
+				output = "Edit Gender: ";
 				variables.usingDb_1 = true;
 				variables.step_PERSONAL_INFORMATION++;
 	    		/*variables.nextScreen = this.variables.GENDER_SCREEN;
